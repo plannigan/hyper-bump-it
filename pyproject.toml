@@ -1,0 +1,68 @@
+[project]
+name = "bump-it"
+version = "0.1.0"
+description = "A version bumping tool"
+readme = "README.md"
+requires-python = ">=3.9,<4.0"
+license = {text = "MIT"}
+dependencies = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: MIT License",
+]
+keywords = [
+    "version",
+    "bump",
+    "command line"
+]
+maintainers = [
+    {name = "Patrick Lannigan", email = "p.lannigan@gmail.com"}
+]
+
+[tool.setuptools]
+packages = ["bump_it"]
+
+[tool.setuptools.package-data]
+bump_it = ["py.typed"]
+
+
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310"]
+
+[tool.mypy]
+files = "bump_it"
+show_error_codes = true
+warn_unused_configs = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = "bump_it.*"
+strict = true
+disallow_any_explicit = true
+warn_unreachable = true
+
+[tool.isort]
+profile = "black"
+
+[tool.coverage.run]
+branch = true
+data_file = "/tmp/bump_it_coverage"
+
+[tool.coverage.report]
+fail_under = 90
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover"
+]
+
+[tool.pytest.ini_options]
+addopts = "--verbose --cov=bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools >= 61.0.0"]
+build-backend = "setuptools.build_meta"
