@@ -5,7 +5,9 @@ description = "A version bumping tool"
 readme = "README.md"
 requires-python = ">=3.9,<4.0"
 license = {text = "MIT"}
-dependencies = []
+dependencies = [
+    "semantic-version>=2.10.0,<3"
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -44,6 +46,12 @@ module = "bump_it.*"
 strict = true
 disallow_any_explicit = true
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+    "semantic_version",
+]
+ignore_missing_imports = true
 
 [tool.isort]
 profile = "black"
