@@ -72,3 +72,32 @@ def _planned_change_for(
             )
 
     raise VersionNotFound(file, search_pattern)
+
+
+def perform_change(change: PlannedChange) -> None:
+    try:
+        contents = change.file.read_bytes()
+    except FileNotFoundError:
+        raise ValueError(
+            f"Given file '{change.file}' does not exist. PlannedChange is not valid."
+        )
+    lines = contents.splitlines(keepends=True)
+    try:
+        old_line = lines[change.line_index]
+    except IndexError:
+        raise ValueError(
+            f"Given file '{change.file}' does not contain a line with the index of"
+            f" {change.line_index}. PlannedChange is not valid."
+        )
+    lines[change.line_index] = change.new_line.encode() + _line_ending(old_line)
+    change.file.write_bytes(b"".join(lines))
+
+
+def _line_ending(line: bytes) -> bytes:
+    # match line ending of file instead of assuming os.linesep
+    if line.endswith(b"\r\n"):
+        return b"\r\n"
+    if line.endswith(b"\n"):
+        return b"\n"
+    # no trailing new line
+    return b""

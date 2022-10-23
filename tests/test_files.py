@@ -140,3 +140,94 @@ def test_collect_planned_changes__no_files_matched__error(tmp_path: Path):
             FileConfig("non-existent.txt"),
             formatter=TEXT_FORMATTER,
         )
+
+
+@pytest.mark.parametrize(
+    "line_ending",
+    [
+        "",
+        "\n",
+        "\r\n",
+    ],
+)
+def test_perform_change__single_line_file__file_updated_proper_end(
+    line_ending: str, tmp_path: Path
+):
+    original_text = f"--{sd.SOME_VERSION}--"
+    replacement_text = f"--{sd.SOME_OTHER_VERSION}--"
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_bytes(f"{original_text}{line_ending}".encode())
+
+    files.perform_change(
+        PlannedChange(
+            some_file, line_index=0, old_line=original_text, new_line=replacement_text
+        )
+    )
+
+    expected = f"{replacement_text}{line_ending}".encode()
+    assert some_file.read_bytes() == expected
+
+
+@pytest.mark.parametrize(
+    "line_ending",
+    [
+        "\n",
+        "\r\n",
+    ],
+)
+def test_perform_change__multi_line_file__file_updated_proper_end(
+    line_ending: str, tmp_path: Path
+):
+    leading_line = "hello"
+    trailing_line = "goodbye"
+
+    def _create_content(center_line: str) -> bytes:
+        return line_ending.join([leading_line, center_line, trailing_line]).encode()
+
+    original_text = f"--{sd.SOME_VERSION}--"
+    replacement_text = f"--{sd.SOME_OTHER_VERSION}--"
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_bytes(_create_content(original_text))
+
+    files.perform_change(
+        PlannedChange(
+            some_file, line_index=1, old_line=original_text, new_line=replacement_text
+        )
+    )
+
+    expected = _create_content(replacement_text)
+    assert some_file.read_bytes() == expected
+
+
+def test_perform_change__invalid_file__error(tmp_path: Path):
+    some_non_existent_file = tmp_path / SOME_FILE_NAME
+    original_text = f"--{sd.SOME_VERSION}--"
+    replacement_text = f"--{sd.SOME_OTHER_VERSION}--"
+
+    with pytest.raises(ValueError):
+        files.perform_change(
+            PlannedChange(
+                some_non_existent_file,
+                line_index=0,
+                old_line=original_text,
+                new_line=replacement_text,
+            )
+        )
+
+
+def test_perform_change__invalid_line_index__error(tmp_path: Path):
+    some_too_large_index = 100000
+    some_file = tmp_path / SOME_FILE_NAME
+    original_text = f"--{sd.SOME_VERSION}--"
+    replacement_text = f"--{sd.SOME_OTHER_VERSION}--"
+    some_file.write_bytes(f"{original_text}\n".encode())
+
+    with pytest.raises(ValueError):
+        files.perform_change(
+            PlannedChange(
+                some_file,
+                line_index=some_too_large_index,
+                old_line=original_text,
+                new_line=replacement_text,
+            )
+        )
