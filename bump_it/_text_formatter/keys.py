@@ -1,3 +1,11 @@
+# general keys
+VERSION = "version"
+MAJOR = "major"
+MINOR = "minor"
+PATCH = "patch"
+PRERELEASE = "prerelease"
+BUILD = "build"
+# explicit keys
 CURRENT_VERSION = "current_version"
 CURRENT_MAJOR = "current_major"
 CURRENT_MINOR = "current_minor"
@@ -10,4 +18,5 @@ NEW_MINOR = "new_minor"
 NEW_PATCH = "new_patch"
 NEW_PRERELEASE = "new_prerelease"
 NEW_BUILD = "new_build"
+# helpful extras
 TODAY = "today"

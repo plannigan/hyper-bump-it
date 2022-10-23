@@ -3,7 +3,7 @@ import re
 import pytest
 
 from bump_it._error import FormatKeyError, FormatPatternError
-from bump_it._text_formatter import TextFormatter, keys
+from bump_it._text_formatter import FormatContext, TextFormatter, keys
 from tests import sample_data as sd
 
 ALL_KEYS = tuple(name for name in dir(keys) if not name.startswith("__"))
@@ -48,6 +48,30 @@ def test_format__use_optional_keys_for_version_without_values__empty_string_inse
         f"--{{{keys.NEW_PRERELEASE}}}__{{{keys.NEW_BUILD}}}--"
     )
     assert result == "--__--"
+
+
+@pytest.mark.parametrize(
+    ["context", "key", "expected_value"],
+    [
+        (FormatContext.current, keys.VERSION, str(sd.SOME_VERSION)),
+        (FormatContext.current, keys.MAJOR, str(sd.SOME_MAJOR)),
+        (FormatContext.current, keys.MINOR, str(sd.SOME_MINOR)),
+        (FormatContext.current, keys.PATCH, str(sd.SOME_PATCH)),
+        (FormatContext.current, keys.PRERELEASE, sd.SOME_PRERELEASE),
+        (FormatContext.current, keys.BUILD, sd.SOME_BUILD),
+        (FormatContext.new, keys.VERSION, str(sd.SOME_OTHER_VERSION)),
+        (FormatContext.new, keys.MAJOR, str(sd.SOME_OTHER_MAJOR)),
+        (FormatContext.new, keys.MINOR, str(sd.SOME_OTHER_MINOR)),
+        (FormatContext.new, keys.PATCH, str(sd.SOME_OTHER_PATCH)),
+        (FormatContext.new, keys.PRERELEASE, sd.SOME_OTHER_PRERELEASE),
+        (FormatContext.new, keys.BUILD, sd.SOME_OTHER_BUILD),
+    ],
+)
+def test_format__specified_context__respective_version(
+    context: FormatContext, key: str, expected_value: str
+):
+    result = TEXT_FORMATTER.format(f"--{{{key}}}--", context)
+    assert result == f"--{expected_value}--"
 
 
 @pytest.mark.parametrize("key", ALL_KEYS)

@@ -62,6 +62,28 @@ def test_collect_planned_changes__custom_search_replace__planned_change_with_new
     )
 
 
+def test_collect_planned_changes__only_search__planned_change_with_new_content(
+    tmp_path: Path,
+):
+    original_text = f"--{sd.SOME_VERSION}--"
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_text(original_text)
+
+    changes = files.collect_planned_changes(
+        tmp_path,
+        FileConfig(some_file.name, search_format_pattern=f"--{{{keys.VERSION}}}--"),
+        formatter=TEXT_FORMATTER,
+    )
+
+    assert len(changes) == 1
+    assert changes[0] == PlannedChange(
+        some_file,
+        line_index=0,
+        old_line=original_text,
+        new_line=f"--{sd.SOME_OTHER_VERSION}--",
+    )
+
+
 def test_collect_planned_changes__match_later_in_file__planned_change_with_matching_line_index(
     tmp_path: Path,
 ):
