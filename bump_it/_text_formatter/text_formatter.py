@@ -2,12 +2,18 @@
 Central place for performing text formatting.
 """
 from datetime import date
+from enum import Enum
 from typing import Optional
 
 from semantic_version import Version
 
 from bump_it._error import FormatKeyError, FormatPatternError
 from bump_it._text_formatter import keys
+
+
+class FormatContext(Enum):
+    current = 1
+    new = 2
 
 
 class TextFormatter:
@@ -28,11 +34,14 @@ class TextFormatter:
         self._new_version = new_version
         self._today = today or date.today()
 
-    def format(self, format_pattern: str) -> str:
+    def format(
+        self, format_pattern: str, context: FormatContext = FormatContext.current
+    ) -> str:
         """
         Perform string formatting on the given pattern.
 
         :param format_pattern: Pattern to be formatted.
+        :param context: Which version should be used for the general keys. Default: current.
         :return: Result of string formatting.
         :raises FormatError: Format pattern was invalid or attempted to use an invalid key.
         """
@@ -53,6 +62,19 @@ class TextFormatter:
             keys.NEW_BUILD: _merge_parts(self._new_version.build),
             keys.TODAY: self._today,
         }
+
+        def _add_general(version: Version) -> None:
+            values[keys.VERSION] = version
+            values[keys.MAJOR] = version.major
+            values[keys.MINOR] = version.minor
+            values[keys.PATCH] = version.patch
+            values[keys.PRERELEASE] = _merge_parts(version.prerelease)
+            values[keys.BUILD] = _merge_parts(version.build)
+
+        if context == FormatContext.current:
+            _add_general(self._current_version)
+        else:
+            _add_general(self._new_version)
 
         try:
             return format_pattern.format(**values)
