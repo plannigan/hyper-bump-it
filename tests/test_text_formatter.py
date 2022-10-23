@@ -1,65 +1,32 @@
 import re
-from datetime import date
 
 import pytest
-from semantic_version import Version
 
 from bump_it._error import FormatKeyError, FormatPatternError
 from bump_it._text_formatter import TextFormatter, keys
+from tests import sample_data as sd
 
 ALL_KEYS = tuple(name for name in dir(keys) if not name.startswith("__"))
 
-SOME_DATE = date(year=2022, month=10, day=19)
-SOME_MAJOR = 1
-SOME_MINOR = 2
-SOME_PATCH = 3
-SOME_PRERELEASE = "11.22"
-SOME_BUILD = "b123.321"
-SOME_VERSION = Version(
-    major=SOME_MAJOR,
-    minor=SOME_MINOR,
-    patch=SOME_PATCH,
-    prerelease=SOME_PRERELEASE.split("."),
-    build=SOME_BUILD.split("."),
-)
-SOME_OTHER_MAJOR = 4
-SOME_OTHER_MINOR = 5
-SOME_OTHER_PATCH = 6
-SOME_OTHER_PRERELEASE = "33.44"
-SOME_OTHER_BUILD = "b456.654"
-SOME_OTHER_VERSION = Version(
-    major=SOME_OTHER_MAJOR,
-    minor=SOME_OTHER_MINOR,
-    patch=SOME_OTHER_PATCH,
-    prerelease=SOME_OTHER_PRERELEASE.split("."),
-    build=SOME_OTHER_BUILD.split("."),
-)
-SOME_OTHER_PARTIAL_VERSION = Version(
-    major=SOME_OTHER_MAJOR,
-    minor=SOME_OTHER_MINOR,
-    patch=SOME_OTHER_PATCH,
-)
-TEXT_FORMATTER = TextFormatter(
-    current_version=SOME_VERSION, new_version=SOME_OTHER_VERSION, today=SOME_DATE
-)
+TEXT_FORMATTER = sd.some_text_formatter()
 
 
 @pytest.mark.parametrize(
     ["key", "expected_value"],
     [
-        (keys.CURRENT_VERSION, str(SOME_VERSION)),
-        (keys.CURRENT_MAJOR, str(SOME_MAJOR)),
-        (keys.CURRENT_MINOR, str(SOME_MINOR)),
-        (keys.CURRENT_PATCH, str(SOME_PATCH)),
-        (keys.CURRENT_PRERELEASE, SOME_PRERELEASE),
-        (keys.CURRENT_BUILD, SOME_BUILD),
-        (keys.NEW_VERSION, str(SOME_OTHER_VERSION)),
-        (keys.NEW_MAJOR, str(SOME_OTHER_MAJOR)),
-        (keys.NEW_MINOR, str(SOME_OTHER_MINOR)),
-        (keys.NEW_PATCH, str(SOME_OTHER_PATCH)),
-        (keys.NEW_PRERELEASE, SOME_OTHER_PRERELEASE),
-        (keys.NEW_BUILD, SOME_OTHER_BUILD),
-        (keys.TODAY, str(SOME_DATE)),
+        (keys.CURRENT_VERSION, str(sd.SOME_VERSION)),
+        (keys.CURRENT_MAJOR, str(sd.SOME_MAJOR)),
+        (keys.CURRENT_MINOR, str(sd.SOME_MINOR)),
+        (keys.CURRENT_PATCH, str(sd.SOME_PATCH)),
+        (keys.CURRENT_PRERELEASE, sd.SOME_PRERELEASE),
+        (keys.CURRENT_BUILD, sd.SOME_BUILD),
+        (keys.NEW_VERSION, str(sd.SOME_OTHER_VERSION)),
+        (keys.NEW_MAJOR, str(sd.SOME_OTHER_MAJOR)),
+        (keys.NEW_MINOR, str(sd.SOME_OTHER_MINOR)),
+        (keys.NEW_PATCH, str(sd.SOME_OTHER_PATCH)),
+        (keys.NEW_PRERELEASE, sd.SOME_OTHER_PRERELEASE),
+        (keys.NEW_BUILD, sd.SOME_OTHER_BUILD),
+        (keys.TODAY, str(sd.SOME_DATE)),
     ],
 )
 def test_format__replace_versions__new_version(key: str, expected_value: str):
@@ -74,7 +41,7 @@ def test_format__today__supported_with_formatters():
 
 def test_format__use_optional_keys_for_version_without_values__empty_string_inserted():
     text_formatter = TextFormatter(
-        SOME_VERSION, SOME_OTHER_PARTIAL_VERSION, today=SOME_DATE
+        sd.SOME_VERSION, sd.SOME_OTHER_PARTIAL_VERSION, today=sd.SOME_DATE
     )
 
     result = text_formatter.format(
