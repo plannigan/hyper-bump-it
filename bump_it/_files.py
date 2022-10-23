@@ -7,9 +7,9 @@ from typing import Optional
 
 from bump_it._error import FileGlobError, VersionNotFound
 from bump_it._text_formatter import TextFormatter, keys
+from bump_it._text_formatter.text_formatter import FormatContext
 
-DEFAULT_SEARCH_FORMAT_PATTERN = f"{{{keys.CURRENT_VERSION}}}"
-DEFAULT_REPLACE_FORMAT_PATTERN = f"{{{keys.NEW_VERSION}}}"
+DEFAULT_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
 
 
 @dataclass
@@ -40,10 +40,11 @@ def collect_planned_changes(
     :raises FileGlobError: Glob pattern for selecting files did not find any files.
     :raises VersionNotFound: A file did not contain the produced search text.
     """
+    search_pattern, replace_pattern = _select_format_patterns(
+        config.search_format_pattern, config.replace_format_pattern
+    )
     changes = [
-        _planned_change_for(
-            file, config.search_format_pattern, config.replace_format_pattern, formatter
-        )
+        _planned_change_for(file, search_pattern, replace_pattern, formatter)
         for file in project_root.glob(config.file_glob)
     ]
     if not changes:
@@ -53,17 +54,14 @@ def collect_planned_changes(
 
 def _planned_change_for(
     file: Path,
-    search_pattern: Optional[str],
-    replace_pattern: Optional[str],
+    search_pattern: str,
+    replace_pattern: str,
     formatter: TextFormatter,
 ) -> PlannedChange:
-
-    search_pattern = search_pattern or DEFAULT_SEARCH_FORMAT_PATTERN
-    replace_pattern = replace_pattern or DEFAULT_REPLACE_FORMAT_PATTERN
-    search_text = formatter.format(search_pattern)
+    search_text = formatter.format(search_pattern, FormatContext.current)
     for i, line in enumerate(file.read_text().splitlines()):
         if search_text in line:
-            replace_text = formatter.format(replace_pattern)
+            replace_text = formatter.format(replace_pattern, FormatContext.new)
             return PlannedChange(
                 file,
                 line_index=i,
@@ -72,6 +70,17 @@ def _planned_change_for(
             )
 
     raise VersionNotFound(file, search_pattern)
+
+
+def _select_format_patterns(
+    search_pattern: Optional[str], replace_pattern: Optional[str]
+) -> tuple[str, str]:
+    if search_pattern is not None and replace_pattern is None:
+        return search_pattern, search_pattern
+    return (
+        search_pattern or DEFAULT_FORMAT_PATTERN,
+        replace_pattern or DEFAULT_FORMAT_PATTERN,
+    )
 
 
 def perform_change(change: PlannedChange) -> None:
