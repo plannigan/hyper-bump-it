@@ -12,7 +12,8 @@ APP_DIR=$(pwd)
 cd /
 echo "------------------"
 echo "Installing package"
-pip install "${APP_DIR}/${WHEEL_LOCATION}/*.whl"
+# shellcheck disable=SC2086
+pip install ${APP_DIR}/${WHEEL_LOCATION}/*.whl
 
 echo "-----------------------------"
 echo "Attempting to import package"
