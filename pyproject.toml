@@ -1,6 +1,6 @@
 [project]
 name = "bump-it"
-version = "0.1.0"
+version = "0.0.1"
 description = "A version bumping tool"
 readme = "README.md"
 requires-python = ">=3.9,<4.0"
@@ -12,6 +12,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Development Status :: 2 - Pre-Alpha",
     "License :: OSI Approved :: MIT License",
 ]
@@ -24,8 +25,13 @@ maintainers = [
     {name = "Patrick Lannigan", email = "p.lannigan@gmail.com"}
 ]
 
-[tool.setuptools]
-packages = ["bump_it"]
+[project.urls]
+homepage = "https://github.com/plannigan/bump-it"
+changelog = "https://github.com/plannigan/bump-it/blob/main/CHANGELOG.md"
+
+
+[tool.setuptools.packages.find]
+exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
 
 [tool.setuptools.package-data]
 bump_it = ["py.typed"]
@@ -33,7 +39,7 @@ bump_it = ["py.typed"]
 
 [tool.black]
 line-length = 88
-target-version = ["py39", "py310"]
+target-version = ["py39", "py310", "py311"]
 
 [tool.mypy]
 files = "bump_it"
