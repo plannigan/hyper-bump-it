@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: ./docker/devbox.dockerfile
       context: .
-    image: "bump-it-devbox"
+    image: "hyper-bump-it-devbox"
     volumes:
       - ./:/app
 

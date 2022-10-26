@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from bump_it._error import FileGlobError, VersionNotFound
-from bump_it._text_formatter import TextFormatter, keys
-from bump_it._text_formatter.text_formatter import FormatContext
+from hyper_bump_it._error import FileGlobError, VersionNotFound
+from hyper_bump_it._text_formatter import TextFormatter, keys
+from hyper_bump_it._text_formatter.text_formatter import FormatContext
 
 DEFAULT_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
 

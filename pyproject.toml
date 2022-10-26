@@ -1,5 +1,5 @@
 [project]
-name = "bump-it"
+name = "hyper-bump-it"
 version = "0.0.1"
 description = "A version bumping tool"
 readme = "README.md"
@@ -26,15 +26,15 @@ maintainers = [
 ]
 
 [project.urls]
-homepage = "https://github.com/plannigan/bump-it"
-changelog = "https://github.com/plannigan/bump-it/blob/main/CHANGELOG.md"
+homepage = "https://github.com/plannigan/hyper-bump-it"
+changelog = "https://github.com/plannigan/hyper-bump-it/blob/main/CHANGELOG.md"
 
 
 [tool.setuptools.packages.find]
 exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
 
 [tool.setuptools.package-data]
-bump_it = ["py.typed"]
+hyper_bump_it = ["py.typed"]
 
 
 [tool.black]
@@ -42,13 +42,13 @@ line-length = 88
 target-version = ["py39", "py310", "py311"]
 
 [tool.mypy]
-files = "bump_it"
+files = "hyper_bump_it"
 show_error_codes = true
 warn_unused_configs = true
 pretty = true
 
 [[tool.mypy.overrides]]
-module = "bump_it.*"
+module = "hyper_bump_it.*"
 strict = true
 disallow_any_explicit = true
 warn_unreachable = true
@@ -64,7 +64,7 @@ profile = "black"
 
 [tool.coverage.run]
 branch = true
-data_file = "/tmp/bump_it_coverage"
+data_file = "/tmp/hyper_bump_it_coverage"
 
 [tool.coverage.report]
 fail_under = 90
@@ -74,7 +74,7 @@ exclude_lines = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--verbose --cov=bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
+addopts = "--verbose --cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
 testpaths = ["tests"]
 
 [build-system]

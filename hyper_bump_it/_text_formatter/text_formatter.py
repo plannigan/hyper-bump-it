@@ -7,8 +7,8 @@ from typing import Optional
 
 from semantic_version import Version
 
-from bump_it._error import FormatKeyError, FormatPatternError
-from bump_it._text_formatter import keys
+from hyper_bump_it._error import FormatKeyError, FormatPatternError
+from hyper_bump_it._text_formatter import keys
 
 
 class FormatContext(Enum):

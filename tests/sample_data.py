@@ -5,7 +5,7 @@ from datetime import date
 
 from semantic_version import Version
 
-from bump_it._text_formatter import TextFormatter
+from hyper_bump_it._text_formatter import TextFormatter
 
 SOME_DATE = date(year=2022, month=10, day=19)
 SOME_MAJOR = 1

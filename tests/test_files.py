@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from bump_it import _files as files
-from bump_it._error import FileGlobError, VersionNotFound
-from bump_it._files import FileConfig, PlannedChange
-from bump_it._text_formatter import keys
+from hyper_bump_it import _files as files
+from hyper_bump_it._error import FileGlobError, VersionNotFound
+from hyper_bump_it._files import FileConfig, PlannedChange
+from hyper_bump_it._text_formatter import keys
 from tests import sample_data as sd
 
 SOME_FILE_NAME = "foo.txt"

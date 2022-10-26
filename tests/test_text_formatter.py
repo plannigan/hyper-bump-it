@@ -2,8 +2,8 @@ import re
 
 import pytest
 
-from bump_it._error import FormatKeyError, FormatPatternError
-from bump_it._text_formatter import FormatContext, TextFormatter, keys
+from hyper_bump_it._error import FormatKeyError, FormatPatternError
+from hyper_bump_it._text_formatter import FormatContext, TextFormatter, keys
 from tests import sample_data as sd
 
 ALL_KEYS = tuple(name for name in dir(keys) if not name.startswith("__"))

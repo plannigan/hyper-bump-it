@@ -1,6 +1,6 @@
 FROM python:3.10-buster
 
-ARG _USER="bump_it"
+ARG _USER="hyper_bump_it"
 ARG _UID="1000"
 ARG _GID="100"
 ARG _SHELL="/bin/bash"
