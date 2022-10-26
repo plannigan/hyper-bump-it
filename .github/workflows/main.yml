@@ -1,0 +1,153 @@
+name: CI
+
+# Workflow does NOT trigger on a feature branch until a pull request is created.
+# Workflow will always run when a pull request is merged to the default branch.
+on:
+  pull_request: {}
+  push:
+      branches: ["main"]
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+        with:
+          test-requirements: "true"
+
+      - name: Run bandit
+        run: bandit --ini .bandit -r .
+
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - name: Set up Python
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+        with:
+          test-requirements: "true"
+
+      - name: Run black
+        run: black --check .
+
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Check out code
+          uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        - uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+        - name: Install dependencies
+          uses: ./.github/actions/install-dependencies
+          with:
+            test-requirements: "true"
+
+        - name: Run flake8
+          run: flake8
+
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+        with:
+          requirements: "true"
+          test-requirements: "true"
+
+      - name: Run isort
+        run: isort --check-only .
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Check out code
+          uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        - uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+        - name: Install dependencies
+          uses: ./.github/actions/install-dependencies
+          with:
+            test-requirements: "true"
+
+        - name: Run mypy
+          run: mypy
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+        - name: Check out code
+          uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        - uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+          with:
+            python-version: ${{ matrix.python-version }}
+        - name: Install dependencies
+          uses: ./.github/actions/install-dependencies
+          with:
+            requirements: "true"
+            test-requirements: "true"
+
+        - name: Run pytest
+          run: pytest --cov-report xml:coverage-${{ matrix.python-version }}.xml --junitxml=test-results-${{ matrix.python-version }}.xml
+
+        - name: Upload pytest test results artifact
+          uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # tag=v3.1.1
+          with:
+            name: pytest-results-${{ matrix.python-version }}
+            path: test-results-${{ matrix.python-version }}.xml
+          # Use always() to always run this step to publish test results when there are test failures
+          if: ${{ always() }}
+
+        - name: Upload coverage results artifact
+          uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # tag=v3.1.1
+          with:
+            name: pytest-coverage-${{ matrix.python-version }}
+            path: coverage-${{ matrix.python-version }}.xml
+          # Use always() to always run this step to publish test results when there are test failures
+          if: ${{ always() }}
+
+        - name: Publish coverage results to Codecov
+          uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # tag=v3.1.1
+          with:
+            file: coverage-${{ matrix.python-version }}.xml
+            fail_ci_if_error: true
+
+  verify-wheel:
+    runs-on: ubuntu-latest
+    strategy:
+          matrix:
+            python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # tag=v4.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build wheel
+        uses: ./.github/actions/build-dist
+      - name: Verify wheel
+        uses: ./.github/actions/verify-wheel
+        with:
+          package-import-name: "hyper_bump_it"
