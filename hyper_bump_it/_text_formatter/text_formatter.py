@@ -2,7 +2,7 @@
 Central place for performing text formatting.
 """
 from datetime import date
-from enum import Enum
+from enum import Enum, auto
 from typing import Optional
 
 from semantic_version import Version
@@ -12,8 +12,8 @@ from hyper_bump_it._text_formatter import keys
 
 
 class FormatContext(Enum):
-    current = 1
-    new = 2
+    search = auto()
+    replace = auto()
 
 
 class TextFormatter:
@@ -35,13 +35,14 @@ class TextFormatter:
         self._today = today or date.today()
 
     def format(
-        self, format_pattern: str, context: FormatContext = FormatContext.current
+        self, format_pattern: str, context: Optional[FormatContext] = None
     ) -> str:
         """
         Perform string formatting on the given pattern.
 
         :param format_pattern: Pattern to be formatted.
-        :param context: Which version should be used for the general keys. Default: current.
+        :param context: What context the format pattern is being evaluated. This controls that
+            values used for the optional general keys. Default: None.
         :return: Result of string formatting.
         :raises FormatError: Format pattern was invalid or attempted to use an invalid key.
         """
@@ -71,10 +72,11 @@ class TextFormatter:
             values[keys.PRERELEASE] = _merge_parts(version.prerelease)
             values[keys.BUILD] = _merge_parts(version.build)
 
-        if context == FormatContext.current:
-            _add_general(self._current_version)
-        else:
-            _add_general(self._new_version)
+        if context is not None:
+            if context == FormatContext.search:
+                _add_general(self._current_version)
+            else:
+                _add_general(self._new_version)
 
         try:
             return format_pattern.format(**values)

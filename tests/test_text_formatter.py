@@ -53,18 +53,18 @@ def test_format__use_optional_keys_for_version_without_values__empty_string_inse
 @pytest.mark.parametrize(
     ["context", "key", "expected_value"],
     [
-        (FormatContext.current, keys.VERSION, str(sd.SOME_VERSION)),
-        (FormatContext.current, keys.MAJOR, str(sd.SOME_MAJOR)),
-        (FormatContext.current, keys.MINOR, str(sd.SOME_MINOR)),
-        (FormatContext.current, keys.PATCH, str(sd.SOME_PATCH)),
-        (FormatContext.current, keys.PRERELEASE, sd.SOME_PRERELEASE),
-        (FormatContext.current, keys.BUILD, sd.SOME_BUILD),
-        (FormatContext.new, keys.VERSION, str(sd.SOME_OTHER_VERSION)),
-        (FormatContext.new, keys.MAJOR, str(sd.SOME_OTHER_MAJOR)),
-        (FormatContext.new, keys.MINOR, str(sd.SOME_OTHER_MINOR)),
-        (FormatContext.new, keys.PATCH, str(sd.SOME_OTHER_PATCH)),
-        (FormatContext.new, keys.PRERELEASE, sd.SOME_OTHER_PRERELEASE),
-        (FormatContext.new, keys.BUILD, sd.SOME_OTHER_BUILD),
+        (FormatContext.search, keys.VERSION, str(sd.SOME_VERSION)),
+        (FormatContext.search, keys.MAJOR, str(sd.SOME_MAJOR)),
+        (FormatContext.search, keys.MINOR, str(sd.SOME_MINOR)),
+        (FormatContext.search, keys.PATCH, str(sd.SOME_PATCH)),
+        (FormatContext.search, keys.PRERELEASE, sd.SOME_PRERELEASE),
+        (FormatContext.search, keys.BUILD, sd.SOME_BUILD),
+        (FormatContext.replace, keys.VERSION, str(sd.SOME_OTHER_VERSION)),
+        (FormatContext.replace, keys.MAJOR, str(sd.SOME_OTHER_MAJOR)),
+        (FormatContext.replace, keys.MINOR, str(sd.SOME_OTHER_MINOR)),
+        (FormatContext.replace, keys.PATCH, str(sd.SOME_OTHER_PATCH)),
+        (FormatContext.replace, keys.PRERELEASE, sd.SOME_OTHER_PRERELEASE),
+        (FormatContext.replace, keys.BUILD, sd.SOME_OTHER_BUILD),
     ],
 )
 def test_format__specified_context__respective_version(
@@ -77,7 +77,9 @@ def test_format__specified_context__respective_version(
 @pytest.mark.parametrize("key", ALL_KEYS)
 def test_format__each_key__valid_result(key: str):
     # ensure that each key is usable & we didn't forget to add an explicit test case
-    result = TEXT_FORMATTER.format(f"--{{{getattr(keys, key)}}}--")
+    result = TEXT_FORMATTER.format(
+        f"--{{{getattr(keys, key)}}}--", context=FormatContext.search
+    )
     assert re.match("^--.+-$", result)
 
 
