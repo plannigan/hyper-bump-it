@@ -58,10 +58,10 @@ def _planned_change_for(
     replace_pattern: str,
     formatter: TextFormatter,
 ) -> PlannedChange:
-    search_text = formatter.format(search_pattern, FormatContext.current)
+    search_text = formatter.format(search_pattern, FormatContext.search)
     for i, line in enumerate(file.read_text().splitlines()):
         if search_text in line:
-            replace_text = formatter.format(replace_pattern, FormatContext.new)
+            replace_text = formatter.format(replace_pattern, FormatContext.replace)
             return PlannedChange(
                 file,
                 line_index=i,
