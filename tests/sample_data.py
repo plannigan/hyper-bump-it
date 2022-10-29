@@ -5,7 +5,9 @@ from datetime import date
 
 from semantic_version import Version
 
-from hyper_bump_it._text_formatter import TextFormatter
+from hyper_bump_it._config import GitAction, GitActions, GitConfig
+from hyper_bump_it._git import GitOperationsInfo
+from hyper_bump_it._text_formatter import TextFormatter, keys
 
 SOME_DATE = date(year=2022, month=10, day=19)
 SOME_MAJOR = 1
@@ -45,3 +47,52 @@ def some_text_formatter(
     today: date = SOME_DATE,
 ) -> TextFormatter:
     return TextFormatter(current_version, new_version, today)
+
+
+SOME_REMOTE = "test-remote"
+SOME_COMMIT_MESSAGE = "test commit message"
+SOME_BRANCH = "test-branch"
+SOME_TAG = "test-tag"
+SOME_COMMIT_PATTERN = f"test commit {{{keys.NEW_VERSION}}}"
+SOME_BRANCH_PATTERN = f"test-branch-{{{keys.NEW_VERSION}}}"
+SOME_TAG_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
+
+
+def some_git_actions(
+    commit=GitAction.Create,
+    branch=GitAction.Create,
+    tag=GitAction.Create,
+) -> GitActions:
+    return GitActions(commit=commit, branch=branch, tag=tag)
+
+
+def some_git_config(
+    remote=SOME_REMOTE,
+    commit_format_pattern=SOME_COMMIT_PATTERN,
+    branch_format_pattern=SOME_BRANCH_PATTERN,
+    tag_format_pattern=SOME_TAG_PATTERN,
+    actions=some_git_actions(),
+) -> GitConfig:
+    return GitConfig(
+        remote=remote,
+        commit_format_pattern=commit_format_pattern,
+        branch_format_pattern=branch_format_pattern,
+        tag_format_pattern=tag_format_pattern,
+        actions=actions,
+    )
+
+
+def some_git_operations_info(
+    remote=SOME_REMOTE,
+    commit_message=SOME_COMMIT_MESSAGE,
+    branch_name=SOME_BRANCH,
+    tag_name=SOME_TAG,
+    actions=some_git_actions(),
+) -> GitOperationsInfo:
+    return GitOperationsInfo(
+        remote=remote,
+        commit_message=commit_message,
+        branch_name=branch_name,
+        tag_name=tag_name,
+        actions=actions,
+    )

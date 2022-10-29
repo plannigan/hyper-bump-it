@@ -4,6 +4,8 @@ Errors raised by the library.
 from pathlib import Path
 from typing import Collection
 
+from git import Repo
+
 
 class BumpItError(Exception):
     """Base for library errors"""
@@ -51,4 +53,45 @@ class VersionNotFound(BumpItError):
         self.search_pattern = search_pattern
         super().__init__(
             f"Current version not found in file '{self.file}' using pattern '{self.search_pattern}'"
+        )
+
+
+class GitError(BumpItError):
+    """Base for git errors"""
+
+
+class NoRepositoryError(GitError):
+    def __init__(self, project_root: Path) -> None:
+        self.project_root = project_root
+        super().__init__(
+            f"The project root '{self.project_root}' is not a git repository"
+        )
+
+
+class DirtyRepositoryError(GitError):
+    def __init__(self, repository: Repo) -> None:
+        self.repository = repository
+        super().__init__(f"The repository '{self.repository}' has uncommitted changes")
+
+
+class DetachedRepositoryError(GitError):
+    def __init__(self, repository: Repo) -> None:
+        self.repository = repository
+        super().__init__(
+            f"The repository '{self.repository}' is not currently on a branch"
+        )
+
+
+class MissingRemoteError(GitError):
+    def __init__(self, remote: str) -> None:
+        self.remote = remote
+        super().__init__(f"The repository does not define the remote '{self.remote}'")
+
+
+class AlreadyExistsError(GitError):
+    def __init__(self, ref_type: str, name: str) -> None:
+        self.ref_type = ref_type
+        self.name = name
+        super().__init__(
+            f"The repository already has a {self.ref_type} named '{self.name}'"
         )

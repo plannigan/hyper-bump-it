@@ -1,4 +1,4 @@
-FROM python:3.10-buster
+FROM python:3.11-bullseye
 
 ARG _USER="hyper_bump_it"
 ARG _UID="1000"
