@@ -20,6 +20,7 @@ from hyper_bump_it._config import (
     GitActions,
 )
 from hyper_bump_it._config.file import ConfigVersionUpdater
+from hyper_bump_it._files import PlannedChange
 from hyper_bump_it._git import GitOperationsInfo
 from hyper_bump_it._text_formatter import TextFormatter, keys
 
@@ -83,6 +84,10 @@ SOME_COMMIT_ACTION = GitAction.CreateAndPush
 SOME_BRANCH_ACTION = GitAction.Skip
 SOME_TAG_ACTION = GitAction.Create
 SOME_NON_GIT_ACTION_STRING = "other"
+
+SOME_FILE_INDEX = 3
+SOME_OLD_LINE = "start text"
+SOME_NEW_LINE = "updated text"
 
 
 def some_git_actions(
@@ -301,4 +306,15 @@ def some_application_config(
         git=git,
         dry_run=dry_run,
         config_version_updater=config_version_updater,
+    )
+
+
+def some_planned_change(
+    file=Path(SOME_GLOB_MATCHED_FILE_NAME),
+    line_index=SOME_FILE_INDEX,
+    old_line=SOME_OLD_LINE,
+    new_line=SOME_NEW_LINE,
+) -> PlannedChange:
+    return PlannedChange(
+        file=file, line_index=line_index, old_line=old_line, new_line=new_line
     )
