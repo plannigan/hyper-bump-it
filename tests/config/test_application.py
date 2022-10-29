@@ -3,7 +3,7 @@ from textwrap import dedent
 
 import pytest
 
-from hyper_bump_it._config import BumpPart, application, file
+from hyper_bump_it._config import BumpPart, GitAction, application, file
 from hyper_bump_it._config.core import (
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
@@ -25,6 +25,100 @@ def test_git_actions__invalid_combination__error(
 ):
     with pytest.raises(ValueError, match=match):
         application.GitActions(**invalid_combination)
+
+
+@pytest.mark.parametrize(
+    ["combination", "expected"],
+    [
+        (
+            {
+                "commit": GitAction.CreateAndPush,
+                "branch": GitAction.CreateAndPush,
+                "tag": GitAction.CreateAndPush,
+            },
+            True,
+        ),
+        (
+            {
+                "commit": GitAction.Skip,
+                "branch": GitAction.Skip,
+                "tag": GitAction.Skip,
+            },
+            False,
+        ),
+        (
+            {
+                "commit": GitAction.CreateAndPush,
+                "branch": GitAction.Skip,
+                "tag": GitAction.Skip,
+            },
+            True,
+        ),
+        (
+            {
+                "commit": GitAction.CreateAndPush,
+                "branch": GitAction.CreateAndPush,
+                "tag": GitAction.Skip,
+            },
+            True,
+        ),
+        (
+            {
+                "commit": GitAction.CreateAndPush,
+                "branch": GitAction.Skip,
+                "tag": GitAction.CreateAndPush,
+            },
+            True,
+        ),
+    ],
+)
+def test_git_actions__any_push__expected_result(
+    combination: GitActionCombination, expected: bool
+):
+    assert application.GitActions(**combination).any_push == expected
+
+
+@pytest.mark.parametrize(
+    ["combination", "expected"],
+    [
+        (
+            {
+                "commit": GitAction.Skip,
+                "branch": GitAction.Skip,
+                "tag": GitAction.Skip,
+            },
+            True,
+        ),
+        (
+            {
+                "commit": GitAction.Create,
+                "branch": GitAction.Skip,
+                "tag": GitAction.Skip,
+            },
+            False,
+        ),
+        (
+            {
+                "commit": GitAction.Create,
+                "branch": GitAction.Create,
+                "tag": GitAction.Skip,
+            },
+            False,
+        ),
+        (
+            {
+                "commit": GitAction.Create,
+                "branch": GitAction.Create,
+                "tag": GitAction.Skip,
+            },
+            False,
+        ),
+    ],
+)
+def test_git_actions__any_skip__expected_result(
+    combination: GitActionCombination, expected: bool
+):
+    assert application.GitActions(**combination).all_skip == expected
 
 
 def test_config_for_bump_to__explicit_config_file_version__expected_result(

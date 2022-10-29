@@ -1,4 +1,5 @@
 from io import StringIO
+from typing import Callable
 
 import pytest
 import rich
@@ -26,3 +27,11 @@ def wide_terminal(mocker) -> None:
     # Patch Typer to use the forced width value.
     mocker.patch.object(typer_rich_utils, "MAX_WIDTH", FORCED_TERMINAL_WIDTH)
     mocker.patch.object(typer_rich_utils, "FORCE_TERMINAL", False)
+
+
+@pytest.fixture
+def force_input(mocker) -> Callable[[str], None]:
+    def _force_input(text: str) -> None:
+        mocker.patch("builtins.input", return_value=text)
+
+    yield _force_input
