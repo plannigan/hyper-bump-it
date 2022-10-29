@@ -1,7 +1,7 @@
 """
 Program configuration
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
 
 from hyper_bump_it._text_formatter import keys
@@ -51,4 +51,4 @@ class GitConfig:
     commit_format_pattern: str = DEFAULT_COMMIT_PATTERN
     branch_format_pattern: str = DEFAULT_BRANCH_PATTERN
     tag_format_pattern: str = DEFAULT_TAG_PATTERN
-    actions: GitActions = GitActions()
+    actions: GitActions = field(default_factory=GitActions)
