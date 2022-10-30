@@ -1,11 +1,26 @@
+from pathlib import Path
+from textwrap import dedent
+from typing import Optional
+
 import pytest
+import tomlkit
 from pydantic import ValidationError
+from semantic_version import Version
 
 from hyper_bump_it._config import file
+from hyper_bump_it._error import (
+    ConfigurationFileReadError,
+    ConfigurationFileWriteError,
+    InvalidConfigurationError,
+    SubTableNotExistError,
+)
 from hyper_bump_it._text_formatter import keys
 
+PYPROJECT_ROOT_TABLE = ".".join(file.PYPROJECT_SUB_TABLE_KEYS)
+SOME_FILE_NAME = "config.toml"
 SOME_FILE_GLOB = "foo.txt"
 SOME_VERSION = "1.2.3"
+SOME_OTHER_VERSION = "2.3.4"
 SOME_INVALID_OBJECT = {"not_valid_key": "some value"}
 # These "non" values are chosen based on things that would be coerced into the true type
 SOME_NON_STRING = 1234
@@ -191,3 +206,225 @@ def test_config_file__just_files__valid(files, current_version, description):
 def test_config_file__invalid__error(values, description):
     with pytest.raises(ValidationError):
         file.ConfigFile(**values)
+
+
+def test_read_pyproject_config__not_a_file__error(tmp_path: Path):
+    with pytest.raises(ConfigurationFileReadError):
+        file.read_pyproject_config(tmp_path)
+
+
+def test_read_pyproject_config__invalid_toml__error(tmp_path: Path):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text("{-not valid{")
+
+    with pytest.raises(ConfigurationFileReadError):
+        file.read_pyproject_config(config_file)
+
+
+def test_read_pyproject_config__sub_table_missing__error(tmp_path: Path):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text("[foo]")
+
+    with pytest.raises(SubTableNotExistError):
+        file.read_pyproject_config(config_file)
+
+
+def test_read_pyproject_config__configuration_invalid__error(tmp_path: Path):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(
+        dedent(
+            f"""\
+        [{PYPROJECT_ROOT_TABLE}]
+"""
+        )
+    )
+
+    with pytest.raises(InvalidConfigurationError):
+        file.read_pyproject_config(config_file)
+
+
+def test_read_pyproject_config__valid_current_version__config_returned(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(
+        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, SOME_VERSION)
+    )
+
+    config, updater = file.read_pyproject_config(config_file)
+
+    assert config == file.ConfigFile(
+        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+    )
+
+
+def test_read_pyproject_config__valid_current_version__returned_updater_updates_file(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(
+        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, SOME_VERSION)
+    )
+
+    config, updater = file.read_pyproject_config(config_file)
+
+    assert updater is not None
+    updater(Version(SOME_OTHER_VERSION))
+
+    assert config_file.read_text() == _some_minimal_config_text(
+        PYPROJECT_ROOT_TABLE, SOME_OTHER_VERSION
+    )
+
+
+def test_read_pyproject_config__valid_keystone__config_returned(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(_some_minimal_config_text(PYPROJECT_ROOT_TABLE, None))
+
+    config, updater = file.read_pyproject_config(config_file)
+
+    assert config == file.ConfigFile(
+        current_version=None, files=[file.File(file_glob=SOME_FILE_GLOB, keystone=True)]
+    )
+
+
+def test_read_pyproject_config__valid_keystone__no_updater_returned(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(_some_minimal_config_text(PYPROJECT_ROOT_TABLE, None))
+
+    config, updater = file.read_pyproject_config(config_file)
+
+    assert updater is None
+
+
+def test_read_hyper_config__not_a_file__error(tmp_path: Path):
+    with pytest.raises(ConfigurationFileReadError):
+        file.read_hyper_config(tmp_path)
+
+
+def test_read_hyper_config__invalid_toml__error(tmp_path: Path):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text("{-not valid{")
+
+    with pytest.raises(ConfigurationFileReadError):
+        file.read_hyper_config(config_file)
+
+
+def test_read_hyper_config__sub_table_missing__error(tmp_path: Path):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text("[foo]")
+
+    with pytest.raises(SubTableNotExistError):
+        file.read_hyper_config(config_file)
+
+
+def test_read_hyper_config__configuration_invalid__error(tmp_path: Path):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(
+        dedent(
+            f"""\
+        [{file.ROOT_TABLE_KEY}]
+"""
+        )
+    )
+
+    with pytest.raises(InvalidConfigurationError):
+        file.read_hyper_config(config_file)
+
+
+def test_read_hyper_config__valid_current_version__config_returned(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+
+    config, updater = file.read_hyper_config(config_file)
+
+    assert config == file.ConfigFile(
+        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+    )
+
+
+def test_read_hyper_config__valid_current_version__returned_updater_updates_file(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+
+    config, updater = file.read_hyper_config(config_file)
+
+    assert updater is not None
+    updater(Version(SOME_OTHER_VERSION))
+
+    assert config_file.read_text() == _some_minimal_config_text(
+        file.ROOT_TABLE_KEY, SOME_OTHER_VERSION
+    )
+
+
+def test_read_hyper_config__valid_keystone__config_returned(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, None))
+
+    config, updater = file.read_hyper_config(config_file)
+
+    assert config == file.ConfigFile(
+        current_version=None, files=[file.File(file_glob=SOME_FILE_GLOB, keystone=True)]
+    )
+
+
+def test_read_hyper_config__valid_keystone__no_updater_returned(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+
+    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, None))
+
+    config, updater = file.read_hyper_config(config_file)
+
+    assert updater is None
+
+
+def test_config_version_updater__write_fails__error(
+    tmp_path: Path,
+):
+    # attempt to write to a directory
+    with pytest.raises(ConfigurationFileWriteError):
+        file.ConfigVersionUpdater(tmp_path, tomlkit.document(), tomlkit.document())(
+            Version(SOME_VERSION)
+        )
+
+
+def _some_minimal_config_text(table_root: str, version: Optional[str]) -> str:
+    if version is None:
+        current_version = ""
+        keystone = "keystone = true"
+    else:
+        current_version = f'current_version = "{version}"'
+        keystone = ""
+    return dedent(
+        f"""\
+        [{table_root}]
+        {current_version}
+        [[{table_root}.files]]
+        file_glob = "{SOME_FILE_GLOB}"
+        {keystone}
+"""
+    )

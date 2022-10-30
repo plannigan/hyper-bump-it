@@ -1,9 +1,31 @@
+from collections.abc import Sequence
 from enum import Enum
+from pathlib import Path
 from typing import Optional, Union, cast
 
-from pydantic import BaseModel, Field, StrictBool, StrictStr, root_validator
+import tomlkit
+from pydantic import (
+    BaseModel,
+    Field,
+    StrictBool,
+    StrictStr,
+    ValidationError,
+    root_validator,
+)
+from semantic_version import Version
+from tomlkit import TOMLDocument
+from tomlkit.exceptions import TOMLKitError
 
+from hyper_bump_it._error import (
+    ConfigurationFileReadError,
+    ConfigurationFileWriteError,
+    InvalidConfigurationError,
+    SubTableNotExistError,
+)
 from hyper_bump_it._text_formatter import keys
+
+ROOT_TABLE_KEY = "hyper-bump-it"
+PYPROJECT_SUB_TABLE_KEYS = ("tool", ROOT_TABLE_KEY)
 
 
 class GitFileAction(str, Enum):
@@ -70,3 +92,91 @@ class ConfigFile(HyperBaseMode):
                 "Configuration can't specify the current_version while also having a keystone file"
             )
         return values
+
+
+class ConfigVersionUpdater:
+    def __init__(
+        self,
+        config_file: Path,
+        full_document: TOMLDocument,
+        config_table: TOMLDocument,
+    ) -> None:
+        """
+        Initialize instance.
+
+        :param config_file: File to write updated contents to.
+        :param full_document: Config document to be written to file. Possibly including other
+            values beyond what is used for this program.
+        :param config_table: Config document with only the values used for this program.
+        """
+        self._config_file = config_file
+        self._full_document = full_document
+        self._config_table = config_table
+
+    def __call__(self, new_version: Version) -> None:
+        """
+        Write the new version back to the configuration file.
+
+        :param new_version: Version that should be stored in the configuration file.
+        :raises ConfigurationFileWriteError: An error occurred writing out the configuration file.
+        """
+
+        self._config_table["current_version"] = str(new_version)
+        try:
+            self._config_file.write_text(tomlkit.dumps(self._full_document))
+        except OSError as ex:
+            raise ConfigurationFileWriteError(self._config_file, ex)
+
+
+def read_pyproject_config(
+    pyproject_file: Path,
+) -> tuple[ConfigFile, Optional[ConfigVersionUpdater]]:
+    """
+    Read configuration from pyproject file.
+
+    :param pyproject_file: Path to the file to read.
+    :return: Parsed configuration content and an object that can be used to update the version
+        stored in the configuration file. If the configuration uses a keystone file, this second
+        values will be `None`.
+    :raises ConfigurationError: Some error exists in the configuration file.
+    """
+    return _read_config(pyproject_file, PYPROJECT_SUB_TABLE_KEYS)
+
+
+def read_hyper_config(
+    hyper_config_file: Path,
+) -> tuple[ConfigFile, Optional[ConfigVersionUpdater]]:
+    """
+    Read configuration from pyproject file.
+
+    :param hyper_config_file: Path to the decided configuration file to read.
+    :return: Parsed configuration content and an object that can be used to update the version
+        stored in the configuration file. If the configuration uses a keystone file, this second
+        values will be `None`.
+    :raises ConfigurationError: Some error exists in the configuration file.
+    """
+    return _read_config(hyper_config_file, [ROOT_TABLE_KEY])
+
+
+def _read_config(
+    config_file: Path, sub_tables: Sequence[str]
+) -> tuple[ConfigFile, Optional[ConfigVersionUpdater]]:
+    try:
+        full_document = tomlkit.parse(config_file.read_text())
+    except (OSError, TOMLKitError) as ex:
+        raise ConfigurationFileReadError(config_file, ex) from ex
+    config_table = full_document
+    for key in sub_tables:
+        config_table = config_table.get(key)
+        if config_table is None:
+            raise SubTableNotExistError(config_file, PYPROJECT_SUB_TABLE_KEYS)
+
+    try:
+        config = ConfigFile(**config_table)
+    except ValidationError as ex:
+        raise InvalidConfigurationError(config_file, ex)
+
+    if config.current_version is None:
+        # uses keystone file & doesn't need to write back to pyproject file.
+        return config, None
+    return config, ConfigVersionUpdater(config_file, full_document, config_table)
