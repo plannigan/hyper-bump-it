@@ -15,27 +15,27 @@ DEFAULT_TAG_PATTERN = f"v{{{keys.NEW_VERSION}}}"
 
 
 class GitAction(Enum):
-    DoNothing = auto()
+    Skip = auto()
     Create = auto()
     CreateAndPush = auto()
 
     @property
     def should_create(self) -> bool:
-        return self != GitAction.DoNothing
+        return self != GitAction.Skip
 
 
 @dataclass
 class GitActions:
     commit: GitAction = GitAction.Create
-    branch: GitAction = GitAction.DoNothing
-    tag: GitAction = GitAction.DoNothing
+    branch: GitAction = GitAction.Skip
+    tag: GitAction = GitAction.Skip
 
     def __post_init__(self) -> None:
-        if self.commit == GitAction.DoNothing:
-            if self.branch != GitAction.DoNothing:
-                raise ValueError("if 'commit' is DoNothing, 'branch' must be DoNothing")
-            if self.tag != GitAction.DoNothing:
-                raise ValueError("if 'commit' is DoNothing, 'tag' must be DoNothing")
+        if self.commit == GitAction.Skip:
+            if self.branch != GitAction.Skip:
+                raise ValueError("if 'commit' is Skip, 'branch' must be DoNothing")
+            if self.tag != GitAction.Skip:
+                raise ValueError("if 'commit' is Skip, 'tag' must be DoNothing")
 
     @property
     def any_push(self) -> bool:
