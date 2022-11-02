@@ -87,7 +87,7 @@ def test_get_vetted_repo__existing_branch_no_branching__repo_returned(tmp_path: 
 
     result = git.get_vetted_repo(
         repo.path,
-        sd.some_git_operations_info(actions=GitActions(branch=GitAction.DoNothing)),
+        sd.some_git_operations_info(actions=GitActions(branch=GitAction.Skip)),
     )
 
     assert result == repo.repo
@@ -102,7 +102,7 @@ def test_get_vetted_repo__existing_tag__error(tmp_path: Path):
             sd.some_git_operations_info(
                 actions=sd.some_git_actions(
                     commit=GitAction.Create,
-                    branch=GitAction.DoNothing,
+                    branch=GitAction.Skip,
                     tag=GitAction.Create,
                 )
             ),
@@ -116,9 +116,9 @@ def test_get_vetted_repo__existing_tag_no_tagging__repo_returned(tmp_path: Path)
         repo.path,
         sd.some_git_operations_info(
             actions=GitActions(
-                commit=GitAction.DoNothing,
-                branch=GitAction.DoNothing,
-                tag=GitAction.DoNothing,
+                commit=GitAction.Skip,
+                branch=GitAction.Skip,
+                tag=GitAction.Skip,
             ),
         ),
     )
@@ -215,7 +215,7 @@ def test_push_changes__no_branch_no_tag__only_commit_pushed(tmp_path: Path):
     git.push_changes(
         repo.repo,
         sd.some_git_operations_info(
-            actions=GitActions(branch=GitAction.DoNothing, tag=GitAction.DoNothing),
+            actions=GitActions(branch=GitAction.Skip, tag=GitAction.Skip),
         ),
     )
 
@@ -231,9 +231,7 @@ def test_push_changes__tag_no_push__commit_pushed_but_not_tag(tmp_path: Path):
     git.push_changes(
         repo.repo,
         sd.some_git_operations_info(
-            actions=sd.some_git_actions(
-                branch=GitAction.DoNothing, tag=GitAction.Create
-            ),
+            actions=sd.some_git_actions(branch=GitAction.Skip, tag=GitAction.Create),
         ),
     )
 
@@ -248,7 +246,7 @@ def test_push_changes__tag_and_push__commit_and_tag_pushed(tmp_path: Path):
     git.push_changes(
         repo.repo,
         sd.some_git_operations_info(
-            actions=GitActions(branch=GitAction.DoNothing, tag=GitAction.CreateAndPush),
+            actions=GitActions(branch=GitAction.Skip, tag=GitAction.CreateAndPush),
         ),
     )
 
