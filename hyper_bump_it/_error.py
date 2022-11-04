@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Collection
 
 from git import Repo
+from pydantic import ValidationError
 
 
 class BumpItError(Exception):
@@ -94,4 +95,45 @@ class AlreadyExistsError(GitError):
         self.name = name
         super().__init__(
             f"The repository already has a {self.ref_type} named '{self.name}'"
+        )
+
+
+class ConfigurationError(BumpItError):
+    """Base for configuration errors"""
+
+
+class ConfigurationFileReadError(ConfigurationError):
+    def __init__(self, file: Path, cause: Exception) -> None:
+        self.file = file
+        self.cause = cause
+        super().__init__(
+            f"The configuration file ({self.file}) could not be read: {self.cause}"
+        )
+
+
+class ConfigurationFileWriteError(ConfigurationError):
+    def __init__(self, file: Path, cause: Exception) -> None:
+        self.file = file
+        self.cause = cause
+        super().__init__(
+            f"The configuration file ({self.file}) could not be written to: {self.cause}"
+        )
+
+
+class SubTableNotExistError(ConfigurationError):
+    def __init__(self, file: Path, sub_tables: tuple[str, str]) -> None:
+        self.file = file
+        self.sub_tables = sub_tables
+        super().__init__(
+            f"The configuration file ({self.file}) "
+            f"is missing the sub-table '{'.'.join(self.sub_tables)}'"
+        )
+
+
+class InvalidConfigurationError(ConfigurationError):
+    def __init__(self, file: Path, cause: ValidationError) -> None:
+        self.file = file
+        self.cause = cause
+        super().__init__(
+            f"The configuration file ({self.file}) is not valid: {self.cause}"
         )
