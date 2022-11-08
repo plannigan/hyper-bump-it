@@ -6,8 +6,6 @@ from hyper_bump_it._error import FormatKeyError, FormatPatternError
 from hyper_bump_it._text_formatter import FormatContext, TextFormatter, keys
 from tests import sample_data as sd
 
-ALL_KEYS = tuple(name for name in dir(keys) if not name.startswith("__"))
-
 TEXT_FORMATTER = sd.some_text_formatter()
 
 
@@ -74,12 +72,10 @@ def test_format__specified_context__respective_version(
     assert result == f"--{expected_value}--"
 
 
-@pytest.mark.parametrize("key", ALL_KEYS)
+@pytest.mark.parametrize("key", sd.ALL_KEYS)
 def test_format__each_key__valid_result(key: str):
     # ensure that each key is usable & we didn't forget to add an explicit test case
-    result = TEXT_FORMATTER.format(
-        f"--{{{getattr(keys, key)}}}--", context=FormatContext.search
-    )
+    result = TEXT_FORMATTER.format(f"--{{{key}}}--", context=FormatContext.search)
     assert re.match("^--.+-$", result)
 
 

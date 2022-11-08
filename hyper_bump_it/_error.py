@@ -39,6 +39,28 @@ class FormatPatternError(FormatError):
         )
 
 
+class TodayFormatKeyError(FormatError):
+    """Today key using unsupported format directive"""
+
+    def __init__(self, date_format_pattern: str, valid_keys: Collection[str]) -> None:
+        self.date_format_pattern = date_format_pattern
+        self.valid_keys = valid_keys
+        super().__init__(
+            f"Today format directive '{self.date_format_pattern}' used an unsupported key for "
+            f"keystone parsing. Valid keys are: {','.join(self.valid_keys)}"
+        )
+
+
+class IncompleteKeystoneVersionError(FormatError):
+    def __init__(self, file: Path, search_pattern: str) -> None:
+        self.file = file
+        self.search_pattern = search_pattern
+        super().__init__(
+            f"Keystone version found in file '{self.file}' using pattern '{self.search_pattern}'"
+            f" was incomplete."
+        )
+
+
 class FileGlobError(BumpItError):
     def __init__(self, working_dir: Path, file_glob: str) -> None:
         self.working_dir = working_dir
