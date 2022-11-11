@@ -9,6 +9,8 @@ from hyper_bump_it._config import GitAction, GitActions, GitConfig
 from hyper_bump_it._git import GitOperationsInfo
 from hyper_bump_it._text_formatter import TextFormatter, keys
 
+ALL_KEYS = tuple(getattr(keys, name) for name in dir(keys) if not name.startswith("__"))
+
 SOME_DATE = date(year=2022, month=10, day=19)
 SOME_MAJOR = 1
 SOME_MINOR = 2
