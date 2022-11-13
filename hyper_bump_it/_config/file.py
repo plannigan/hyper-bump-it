@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union, cast
+from typing import Optional, TypeAlias, Union, cast
 
 import tomlkit
 from pydantic import (
@@ -17,6 +17,7 @@ from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
 from hyper_bump_it._error import (
+    ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
     ConfigurationFileWriteError,
     InvalidConfigurationError,
@@ -26,6 +27,8 @@ from hyper_bump_it._text_formatter import keys
 
 ROOT_TABLE_KEY = "hyper-bump-it"
 PYPROJECT_SUB_TABLE_KEYS = ("tool", ROOT_TABLE_KEY)
+HYPER_CONFIG_FILE_NAME = "hyper-bump-it.toml"
+PYPROJECT_FILE_NAME = "pyproject.toml"
 
 
 class GitFileAction(str, Enum):
@@ -128,9 +131,41 @@ class ConfigVersionUpdater:
             raise ConfigurationFileWriteError(self._config_file, ex)
 
 
+ConfigReadResult: TypeAlias = tuple[ConfigFile, Optional[ConfigVersionUpdater]]
+
+
+def read_config(config_file: Optional[Path], project_root: Path) -> ConfigReadResult:
+    """
+    Read the appropriate configuration file.
+
+    If `config_file` is given, that will be used as the dedicated configuration file to read.
+    If `config_file` is not given, look for a configuration file in the project root. First check for a dedicated
+    configuration file. If that doesn't exist, try pyproject.toml.
+
+    :param config_file: Hyper config file to read from.
+    :param project_root: Directory to look for a configuration file.
+    :return: Parsed configuration content and an object that can be used to update the version
+        stored in the configuration file. If the configuration uses a keystone file, this second
+        values will be `None`.
+    :raises ConfigurationError: No file was found or there was some error in the file.
+    """
+    if config_file is not None:
+        return read_hyper_config(config_file)
+
+    hyper_config_file = project_root / HYPER_CONFIG_FILE_NAME
+    if hyper_config_file.exists():
+        return read_hyper_config(hyper_config_file)
+
+    pyproject_config_file = project_root / PYPROJECT_FILE_NAME
+    if pyproject_config_file.exists():
+        return read_pyproject_config(pyproject_config_file)
+
+    raise ConfigurationFileNotFoundError(project_root)
+
+
 def read_pyproject_config(
     pyproject_file: Path,
-) -> tuple[ConfigFile, Optional[ConfigVersionUpdater]]:
+) -> ConfigReadResult:
     """
     Read configuration from pyproject file.
 
@@ -145,7 +180,7 @@ def read_pyproject_config(
 
 def read_hyper_config(
     hyper_config_file: Path,
-) -> tuple[ConfigFile, Optional[ConfigVersionUpdater]]:
+) -> ConfigReadResult:
     """
     Read configuration from pyproject file.
 
@@ -158,9 +193,7 @@ def read_hyper_config(
     return _read_config(hyper_config_file, [ROOT_TABLE_KEY])
 
 
-def _read_config(
-    config_file: Path, sub_tables: Sequence[str]
-) -> tuple[ConfigFile, Optional[ConfigVersionUpdater]]:
+def _read_config(config_file: Path, sub_tables: Sequence[str]) -> ConfigReadResult:
     try:
         full_document = tomlkit.parse(config_file.read_text())
     except (OSError, TOMLKitError) as ex:

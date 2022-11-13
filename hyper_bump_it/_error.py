@@ -124,6 +124,14 @@ class ConfigurationError(BumpItError):
     """Base for configuration errors"""
 
 
+class ConfigurationFileNotFoundError(ConfigurationError):
+    def __init__(self, project_root: Path) -> None:
+        self.project_root = project_root
+        super().__init__(
+            f"No configuration file found in directory {self.project_root.resolve()}"
+        )
+
+
 class ConfigurationFileReadError(ConfigurationError):
     def __init__(self, file: Path, cause: Exception) -> None:
         self.file = file

@@ -9,6 +9,7 @@ from semantic_version import Version
 
 from hyper_bump_it._config import file
 from hyper_bump_it._error import (
+    ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
     ConfigurationFileWriteError,
     InvalidConfigurationError,
@@ -211,6 +212,61 @@ def test_config_file__invalid__error(values, description):
 def test_read_pyproject_config__not_a_file__error(tmp_path: Path):
     with pytest.raises(ConfigurationFileReadError):
         file.read_pyproject_config(tmp_path)
+
+
+def test_read_config__config_file_given__read_hyper_config_file_ignoring_project_root(
+    tmp_path: Path,
+):
+    config_file = tmp_path / SOME_FILE_NAME
+    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+    some_other_dir = tmp_path / "other_dir"
+    some_other_dir.mkdir()
+
+    config, _ = file.read_config(config_file, project_root=some_other_dir)
+
+    assert config == file.ConfigFile(
+        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+    )
+
+
+@pytest.mark.parametrize(
+    ["filename", "root_table"],
+    [
+        (file.HYPER_CONFIG_FILE_NAME, file.ROOT_TABLE_KEY),
+        (file.PYPROJECT_FILE_NAME, PYPROJECT_ROOT_TABLE),
+    ],
+)
+def test_read_config__project_dir_given__read_from_given_dir(
+    filename: str, root_table: str, tmp_path: Path
+):
+    config_file = tmp_path / filename
+    config_file.write_text(_some_minimal_config_text(root_table, SOME_VERSION))
+
+    config, _ = file.read_config(config_file=None, project_root=tmp_path)
+
+    assert config == file.ConfigFile(
+        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+    )
+
+
+def test_read_config__dedicated_and_pyproject__prefer_dedicated(tmp_path: Path):
+    config_file = tmp_path / file.HYPER_CONFIG_FILE_NAME
+    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+    config_file = tmp_path / file.PYPROJECT_FILE_NAME
+    config_file.write_text(
+        _some_minimal_config_text(file.PYPROJECT_SUB_TABLE_KEYS, SOME_OTHER_VERSION)
+    )
+
+    config, _ = file.read_config(config_file=None, project_root=tmp_path)
+
+    assert config == file.ConfigFile(
+        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+    )
+
+
+def test_read_config__no_file__error(tmp_path: Path):
+    with pytest.raises(ConfigurationFileNotFoundError):
+        file.read_config(config_file=None, project_root=tmp_path)
 
 
 def test_read_pyproject_config__invalid_toml__error(tmp_path: Path):
