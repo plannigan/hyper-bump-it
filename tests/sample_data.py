@@ -5,7 +5,7 @@ from datetime import date
 
 from semantic_version import Version
 
-from hyper_bump_it._config import GitAction, GitActions, GitConfig
+from hyper_bump_it._config import File, Git, GitAction, GitActions
 from hyper_bump_it._git import GitOperationsInfo
 from hyper_bump_it._text_formatter import TextFormatter, keys
 
@@ -24,6 +24,7 @@ SOME_VERSION = Version(
     prerelease=SOME_PRERELEASE.split("."),
     build=SOME_BUILD.split("."),
 )
+SOME_VERSION_STRING = str(SOME_VERSION)
 SOME_OTHER_MAJOR = 4
 SOME_OTHER_MINOR = 5
 SOME_OTHER_PATCH = 6
@@ -36,11 +37,13 @@ SOME_OTHER_VERSION = Version(
     prerelease=SOME_OTHER_PRERELEASE.split("."),
     build=SOME_OTHER_BUILD.split("."),
 )
+SOME_OTHER_VERSION_STRING = str(SOME_OTHER_VERSION)
 SOME_OTHER_PARTIAL_VERSION = Version(
     major=SOME_OTHER_MAJOR,
     minor=SOME_OTHER_MINOR,
     patch=SOME_OTHER_PATCH,
 )
+SOME_OTHER_PARTIAL_VERSION_STRING = str(SOME_OTHER_PARTIAL_VERSION)
 
 
 def some_text_formatter(
@@ -68,19 +71,36 @@ def some_git_actions(
     return GitActions(commit=commit, branch=branch, tag=tag)
 
 
-def some_git_config(
+def some_git(
     remote=SOME_REMOTE,
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
     tag_format_pattern=SOME_TAG_PATTERN,
     actions=some_git_actions(),
-) -> GitConfig:
-    return GitConfig(
+) -> Git:
+    return Git(
         remote=remote,
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
         actions=actions,
+    )
+
+
+SOME_FILE_GLOB = "foo.txt"
+SOME_SEARCH_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
+SOME_REPLACE_FORMAT_PATTERN = f"{{{keys.NEW_VERSION}}}"
+
+
+def some_file(
+    file_glob=SOME_FILE_GLOB,
+    search_format_pattern=SOME_SEARCH_FORMAT_PATTERN,
+    replace_format_pattern=SOME_REPLACE_FORMAT_PATTERN,
+) -> File:
+    return File(
+        file_glob=file_glob,
+        search_format_pattern=search_format_pattern,
+        replace_format_pattern=replace_format_pattern,
     )
 
 

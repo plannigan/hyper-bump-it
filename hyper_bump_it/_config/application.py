@@ -1,34 +1,21 @@
 """
 Program configuration
 """
-from dataclasses import dataclass, field
-from enum import Enum, auto
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional
 
-from hyper_bump_it._text_formatter import keys
+from semantic_version import Version
 
-DEFAULT_REMOTE = "origin"
-DEFAULT_COMMIT_PATTERN = (
-    f"Bump version: {{{keys.CURRENT_VERSION}}} → {{{keys.NEW_VERSION}}}"
-)
-DEFAULT_BRANCH_PATTERN = f"bump_version_to_{{{keys.NEW_VERSION}}}"
-DEFAULT_TAG_PATTERN = f"v{{{keys.NEW_VERSION}}}"
-
-
-class GitAction(Enum):
-    Skip = auto()
-    Create = auto()
-    CreateAndPush = auto()
-
-    @property
-    def should_create(self) -> bool:
-        return self != GitAction.Skip
+from hyper_bump_it._config.core import GitAction
+from hyper_bump_it._config.file import ConfigVersionUpdater
 
 
 @dataclass
 class GitActions:
-    commit: GitAction = GitAction.Create
-    branch: GitAction = GitAction.Skip
-    tag: GitAction = GitAction.Skip
+    commit: GitAction
+    branch: GitAction
+    tag: GitAction
 
     def __post_init__(self) -> None:
         if self.commit == GitAction.Skip:
@@ -46,9 +33,26 @@ class GitActions:
 
 
 @dataclass
-class GitConfig:
-    remote: str = DEFAULT_REMOTE
-    commit_format_pattern: str = DEFAULT_COMMIT_PATTERN
-    branch_format_pattern: str = DEFAULT_BRANCH_PATTERN
-    tag_format_pattern: str = DEFAULT_TAG_PATTERN
-    actions: GitActions = field(default_factory=GitActions)
+class Git:
+    remote: str
+    commit_format_pattern: str
+    branch_format_pattern: str
+    tag_format_pattern: str
+    actions: GitActions
+
+
+@dataclass
+class File:
+    file_glob: str
+    search_format_pattern: str
+    replace_format_pattern: str
+
+
+@dataclass
+class Config:
+    current_version: Version
+    new_version: Version
+    project_root: Path
+    files: list[File]
+    git: Git
+    config_version_updater: Optional[ConfigVersionUpdater]

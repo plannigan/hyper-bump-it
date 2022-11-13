@@ -24,7 +24,7 @@ SOME_OTHER_FILE = "bar.txt"
 
 def test_from_config__names_formatted_from_pattern():
     git_actions = sd.some_git_actions()
-    initial_config = sd.some_git_config(actions=git_actions)
+    initial_config = sd.some_git(actions=git_actions)
 
     operations_info = GitOperationsInfo.from_config(initial_config, TEXT_FORMATTER)
 
@@ -87,7 +87,7 @@ def test_get_vetted_repo__existing_branch_no_branching__repo_returned(tmp_path: 
 
     result = git.get_vetted_repo(
         repo.path,
-        sd.some_git_operations_info(actions=GitActions(branch=GitAction.Skip)),
+        sd.some_git_operations_info(actions=sd.some_git_actions(branch=GitAction.Skip)),
     )
 
     assert result == repo.repo
@@ -215,7 +215,7 @@ def test_push_changes__no_branch_no_tag__only_commit_pushed(tmp_path: Path):
     git.push_changes(
         repo.repo,
         sd.some_git_operations_info(
-            actions=GitActions(branch=GitAction.Skip, tag=GitAction.Skip),
+            actions=sd.some_git_actions(branch=GitAction.Skip, tag=GitAction.Skip),
         ),
     )
 
@@ -246,7 +246,9 @@ def test_push_changes__tag_and_push__commit_and_tag_pushed(tmp_path: Path):
     git.push_changes(
         repo.repo,
         sd.some_git_operations_info(
-            actions=GitActions(branch=GitAction.Skip, tag=GitAction.CreateAndPush),
+            actions=sd.some_git_actions(
+                branch=GitAction.Skip, tag=GitAction.CreateAndPush
+            ),
         ),
     )
 
