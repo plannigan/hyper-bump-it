@@ -17,7 +17,7 @@
     "before 4am"
   ],
 
-  "python": {
+  "pip_requirements": {
     "fileMatch": ["requirements-\\.*.txt"]
   }
 }
