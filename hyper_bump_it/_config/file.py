@@ -1,7 +1,13 @@
+import sys
 from collections.abc import Sequence
 from enum import Enum
 from pathlib import Path
-from typing import Optional, TypeAlias, Union, cast
+from typing import Optional, Union, cast
+
+if sys.version_info < (3, 10):
+    from typing_extensions import TypeAlias  # this supports python < 3.10
+else:
+    from typing import TypeAlias  # this is available in python 3.10+
 
 import tomlkit
 from pydantic import (
