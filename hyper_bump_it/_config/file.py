@@ -1,6 +1,5 @@
 import sys
 from collections.abc import Sequence
-from enum import Enum
 from pathlib import Path
 from typing import Optional, Union, cast
 
@@ -22,6 +21,19 @@ from semantic_version import Version
 from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
+from hyper_bump_it._config.core import (
+    DEFAULT_BRANCH_ACTION,
+    DEFAULT_BRANCH_FORMAT_PATTERN,
+    DEFAULT_COMMIT_ACTION,
+    DEFAULT_COMMIT_FORMAT_PATTERN,
+    DEFAULT_REMOTE,
+    DEFAULT_SEARCH_PATTERN,
+    DEFAULT_TAG_ACTION,
+    DEFAULT_TAG_FORMAT_PATTERN,
+    HYPER_CONFIG_FILE_NAME,
+    PYPROJECT_FILE_NAME,
+    GitAction,
+)
 from hyper_bump_it._error import (
     ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
@@ -29,18 +41,9 @@ from hyper_bump_it._error import (
     InvalidConfigurationError,
     SubTableNotExistError,
 )
-from hyper_bump_it._text_formatter import keys
 
 ROOT_TABLE_KEY = "hyper-bump-it"
 PYPROJECT_SUB_TABLE_KEYS = ("tool", ROOT_TABLE_KEY)
-HYPER_CONFIG_FILE_NAME = "hyper-bump-it.toml"
-PYPROJECT_FILE_NAME = "pyproject.toml"
-
-
-class GitFileAction(str, Enum):
-    Skip = "skip"
-    Create = "create"
-    CreateAndPush = "create-and-push"
 
 
 class HyperBaseMode(BaseModel):
@@ -51,25 +54,23 @@ class HyperBaseMode(BaseModel):
 
 
 class GitActions(HyperBaseMode):
-    commit: GitFileAction = GitFileAction.Create
-    branch: GitFileAction = GitFileAction.Skip
-    tag: GitFileAction = GitFileAction.Skip
+    commit: GitAction = DEFAULT_COMMIT_ACTION
+    branch: GitAction = DEFAULT_BRANCH_ACTION
+    tag: GitAction = DEFAULT_TAG_ACTION
 
 
 class Git(HyperBaseMode):
-    remote: StrictStr = "origin"
-    commit_format_pattern: StrictStr = (
-        f"Bump version: {{{keys.CURRENT_VERSION}}} → {{{keys.NEW_VERSION}}}"
-    )
-    branch_format_pattern: StrictStr = f"bump_version_to_{{{keys.NEW_VERSION}}}"
-    tag_format_pattern: StrictStr = f"v{{{keys.NEW_VERSION}}}"
+    remote: StrictStr = DEFAULT_REMOTE
+    commit_format_pattern: StrictStr = DEFAULT_COMMIT_FORMAT_PATTERN
+    branch_format_pattern: StrictStr = DEFAULT_BRANCH_FORMAT_PATTERN
+    tag_format_pattern: StrictStr = DEFAULT_TAG_FORMAT_PATTERN
     actions: GitActions = GitActions()
 
 
 class File(HyperBaseMode):
     file_glob: StrictStr  # relative to project root directory
     keystone: StrictBool = False
-    search_format_pattern: StrictStr = keys.VERSION
+    search_format_pattern: StrictStr = DEFAULT_SEARCH_PATTERN
     replace_format_pattern: Optional[StrictStr] = None
 
 

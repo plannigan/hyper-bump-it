@@ -4,7 +4,7 @@ import pytest
 
 from hyper_bump_it import _files as files
 from hyper_bump_it._error import FileGlobError, VersionNotFound
-from hyper_bump_it._files import FileConfig, PlannedChange
+from hyper_bump_it._files import PlannedChange
 from hyper_bump_it._text_formatter import keys
 from tests import sample_data as sd
 
@@ -23,7 +23,7 @@ def test_collect_planned_changes__default_search_replace__planned_change_with_ne
 
     changes = files.collect_planned_changes(
         tmp_path,
-        FileConfig(some_file.name),
+        sd.some_file(some_file.name),
         formatter=TEXT_FORMATTER,
     )
 
@@ -45,7 +45,7 @@ def test_collect_planned_changes__custom_search_replace__planned_change_with_new
 
     changes = files.collect_planned_changes(
         tmp_path,
-        FileConfig(
+        sd.some_file(
             some_file.name,
             search_format_pattern=f"--{{{keys.CURRENT_MAJOR}}}.{{{keys.CURRENT_MINOR}}}--",
             replace_format_pattern=f"--{{{keys.NEW_MAJOR}}}.{{{keys.NEW_MINOR}}}--",
@@ -62,28 +62,6 @@ def test_collect_planned_changes__custom_search_replace__planned_change_with_new
     )
 
 
-def test_collect_planned_changes__only_search__planned_change_with_new_content(
-    tmp_path: Path,
-):
-    original_text = f"--{sd.SOME_VERSION}--"
-    some_file = tmp_path / SOME_FILE_NAME
-    some_file.write_text(original_text)
-
-    changes = files.collect_planned_changes(
-        tmp_path,
-        FileConfig(some_file.name, search_format_pattern=f"--{{{keys.VERSION}}}--"),
-        formatter=TEXT_FORMATTER,
-    )
-
-    assert len(changes) == 1
-    assert changes[0] == PlannedChange(
-        some_file,
-        line_index=0,
-        old_line=original_text,
-        new_line=f"--{sd.SOME_OTHER_VERSION}--",
-    )
-
-
 def test_collect_planned_changes__match_later_in_file__planned_change_with_matching_line_index(
     tmp_path: Path,
 ):
@@ -94,7 +72,7 @@ def test_collect_planned_changes__match_later_in_file__planned_change_with_match
 
     changes = files.collect_planned_changes(
         tmp_path,
-        FileConfig(some_file.name),
+        sd.some_file(some_file.name),
         formatter=TEXT_FORMATTER,
     )
 
@@ -120,7 +98,7 @@ def test_collect_planned_changes__multiple_files__planned_change_for_both(
 
     changes = files.collect_planned_changes(
         tmp_path,
-        FileConfig("*.txt"),
+        sd.some_file("*.txt"),
         formatter=TEXT_FORMATTER,
     )
 
@@ -147,7 +125,7 @@ def test_collect_planned_changes__version_not_found__error(tmp_path: Path):
     with pytest.raises(VersionNotFound):
         files.collect_planned_changes(
             tmp_path,
-            FileConfig(some_file.name),
+            sd.some_file(some_file.name),
             formatter=TEXT_FORMATTER,
         )
 
@@ -159,7 +137,7 @@ def test_collect_planned_changes__no_files_matched__error(tmp_path: Path):
     with pytest.raises(FileGlobError):
         files.collect_planned_changes(
             tmp_path,
-            FileConfig("non-existent.txt"),
+            sd.some_file("non-existent.txt"),
             formatter=TEXT_FORMATTER,
         )
 

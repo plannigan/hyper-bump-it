@@ -7,7 +7,7 @@ import tomlkit
 from pydantic import ValidationError
 from semantic_version import Version
 
-from hyper_bump_it._config import file
+from hyper_bump_it._config import GitAction, file
 from hyper_bump_it._error import (
     ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
@@ -16,12 +16,10 @@ from hyper_bump_it._error import (
     SubTableNotExistError,
 )
 from hyper_bump_it._text_formatter import keys
+from tests import sample_data as sd
 
 PYPROJECT_ROOT_TABLE = ".".join(file.PYPROJECT_SUB_TABLE_KEYS)
 SOME_FILE_NAME = "config.toml"
-SOME_FILE_GLOB = "foo.txt"
-SOME_VERSION = "1.2.3"
-SOME_OTHER_VERSION = "2.3.4"
 SOME_INVALID_OBJECT = {"not_valid_key": "some value"}
 # These "non" values are chosen based on things that would be coerced into the true type
 SOME_NON_STRING = 1234
@@ -33,7 +31,7 @@ SOME_NON_OBJECT = "not an object with fields"
     ["values", "expected"],
     [
         ({key: action.value}, file.GitActions(**{key: action}))
-        for action in file.GitFileAction
+        for action in GitAction
         for key in ("commit", "branch", "tag")
     ],
 )
@@ -99,10 +97,10 @@ def test_git__invalid__error(values, description):
 
 
 def test_file__just_file_glob__valid():
-    result = file.File(file_glob=SOME_FILE_GLOB)
+    result = file.File(file_glob=sd.SOME_FILE_GLOB)
 
     assert result == file.File(
-        file_glob=SOME_FILE_GLOB,
+        file_glob=sd.SOME_FILE_GLOB,
         keystone=False,
         search_format_pattern=keys.VERSION,
         replace_format_pattern=None,
@@ -116,15 +114,15 @@ def test_file__just_file_glob__valid():
         ("file glob not a string", {"file_glob": SOME_NON_STRING}),
         (
             "keystone not a bool",
-            {"file_glob": SOME_FILE_GLOB, "keystone": SOME_NON_BOOL},
+            {"file_glob": sd.SOME_FILE_GLOB, "keystone": SOME_NON_BOOL},
         ),
         (
             "search format pattern not a string",
-            {"file_glob": SOME_FILE_GLOB, "search_format_pattern": SOME_NON_STRING},
+            {"file_glob": sd.SOME_FILE_GLOB, "search_format_pattern": SOME_NON_STRING},
         ),
         (
             "replace format pattern not a string",
-            {"file_glob": SOME_FILE_GLOB, "replace_format_pattern": SOME_NON_STRING},
+            {"file_glob": sd.SOME_FILE_GLOB, "replace_format_pattern": SOME_NON_STRING},
         ),
     ],
 )
@@ -138,13 +136,13 @@ def test_file__invalid__error(values, description):
     [
         (
             "just a single keystone file",
-            [file.File(file_glob=SOME_FILE_GLOB, keystone=True)],
+            [file.File(file_glob=sd.SOME_FILE_GLOB, keystone=True)],
             None,
         ),
         (
             "a single file & current version",
-            [file.File(file_glob=SOME_FILE_GLOB)],
-            SOME_VERSION,
+            [file.File(file_glob=sd.SOME_FILE_GLOB)],
+            sd.SOME_VERSION_STRING,
         ),
     ],
 )
@@ -179,22 +177,22 @@ def test_config_file__just_files__valid(files, current_version, description):
         (
             "current_version and keystone file specified",
             {
-                "current_version": SOME_VERSION,
-                "files": [{"file_glob": SOME_FILE_GLOB, "keystone": True}],
+                "current_version": sd.SOME_VERSION_STRING,
+                "files": [{"file_glob": sd.SOME_FILE_GLOB, "keystone": True}],
             },
         ),
         (
             "no current_version or keystone file specified",
             {
-                "files": [{"file_glob": SOME_FILE_GLOB}],
+                "files": [{"file_glob": sd.SOME_FILE_GLOB}],
             },
         ),
         (
             "multiple keystone file specified",
             {
                 "files": [
-                    {"file_glob": SOME_FILE_GLOB, "keystone": True},
-                    {"file_glob": SOME_FILE_GLOB, "keystone": True},
+                    {"file_glob": sd.SOME_FILE_GLOB, "keystone": True},
+                    {"file_glob": sd.SOME_FILE_GLOB, "keystone": True},
                 ]
             },
         ),
@@ -218,14 +216,17 @@ def test_read_config__config_file_given__read_hyper_config_file_ignoring_project
     tmp_path: Path,
 ):
     config_file = tmp_path / SOME_FILE_NAME
-    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+    config_file.write_text(
+        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+    )
     some_other_dir = tmp_path / "other_dir"
     some_other_dir.mkdir()
 
     config, _ = file.read_config(config_file, project_root=some_other_dir)
 
     assert config == file.ConfigFile(
-        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+        current_version=sd.SOME_VERSION_STRING,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB)],
     )
 
 
@@ -240,27 +241,35 @@ def test_read_config__project_dir_given__read_from_given_dir(
     filename: str, root_table: str, tmp_path: Path
 ):
     config_file = tmp_path / filename
-    config_file.write_text(_some_minimal_config_text(root_table, SOME_VERSION))
+    config_file.write_text(
+        _some_minimal_config_text(root_table, sd.SOME_VERSION_STRING)
+    )
 
     config, _ = file.read_config(config_file=None, project_root=tmp_path)
 
     assert config == file.ConfigFile(
-        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+        current_version=sd.SOME_VERSION_STRING,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB)],
     )
 
 
 def test_read_config__dedicated_and_pyproject__prefer_dedicated(tmp_path: Path):
     config_file = tmp_path / file.HYPER_CONFIG_FILE_NAME
-    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+    config_file.write_text(
+        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+    )
     config_file = tmp_path / file.PYPROJECT_FILE_NAME
     config_file.write_text(
-        _some_minimal_config_text(file.PYPROJECT_SUB_TABLE_KEYS, SOME_OTHER_VERSION)
+        _some_minimal_config_text(
+            file.PYPROJECT_SUB_TABLE_KEYS, sd.SOME_OTHER_VERSION_STRING
+        )
     )
 
     config, _ = file.read_config(config_file=None, project_root=tmp_path)
 
     assert config == file.ConfigFile(
-        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+        current_version=sd.SOME_VERSION_STRING,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB)],
     )
 
 
@@ -308,13 +317,14 @@ def test_read_pyproject_config__valid_current_version__config_returned(
     config_file = tmp_path / SOME_FILE_NAME
 
     config_file.write_text(
-        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, SOME_VERSION)
+        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, sd.SOME_VERSION_STRING)
     )
 
     config, updater = file.read_pyproject_config(config_file)
 
     assert config == file.ConfigFile(
-        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+        current_version=sd.SOME_VERSION_STRING,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB)],
     )
 
 
@@ -324,16 +334,16 @@ def test_read_pyproject_config__valid_current_version__returned_updater_updates_
     config_file = tmp_path / SOME_FILE_NAME
 
     config_file.write_text(
-        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, SOME_VERSION)
+        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, sd.SOME_VERSION_STRING)
     )
 
     config, updater = file.read_pyproject_config(config_file)
 
     assert updater is not None
-    updater(Version(SOME_OTHER_VERSION))
+    updater(Version(sd.SOME_OTHER_VERSION_STRING))
 
     assert config_file.read_text() == _some_minimal_config_text(
-        PYPROJECT_ROOT_TABLE, SOME_OTHER_VERSION
+        PYPROJECT_ROOT_TABLE, sd.SOME_OTHER_VERSION_STRING
     )
 
 
@@ -347,7 +357,8 @@ def test_read_pyproject_config__valid_keystone__config_returned(
     config, updater = file.read_pyproject_config(config_file)
 
     assert config == file.ConfigFile(
-        current_version=None, files=[file.File(file_glob=SOME_FILE_GLOB, keystone=True)]
+        current_version=None,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB, keystone=True)],
     )
 
 
@@ -406,12 +417,15 @@ def test_read_hyper_config__valid_current_version__config_returned(
 ):
     config_file = tmp_path / SOME_FILE_NAME
 
-    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+    config_file.write_text(
+        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+    )
 
     config, updater = file.read_hyper_config(config_file)
 
     assert config == file.ConfigFile(
-        current_version=SOME_VERSION, files=[file.File(file_glob=SOME_FILE_GLOB)]
+        current_version=sd.SOME_VERSION_STRING,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB)],
     )
 
 
@@ -420,15 +434,17 @@ def test_read_hyper_config__valid_current_version__returned_updater_updates_file
 ):
     config_file = tmp_path / SOME_FILE_NAME
 
-    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, SOME_VERSION))
+    config_file.write_text(
+        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+    )
 
     config, updater = file.read_hyper_config(config_file)
 
     assert updater is not None
-    updater(Version(SOME_OTHER_VERSION))
+    updater(Version(sd.SOME_OTHER_VERSION_STRING))
 
     assert config_file.read_text() == _some_minimal_config_text(
-        file.ROOT_TABLE_KEY, SOME_OTHER_VERSION
+        file.ROOT_TABLE_KEY, sd.SOME_OTHER_VERSION_STRING
     )
 
 
@@ -442,7 +458,8 @@ def test_read_hyper_config__valid_keystone__config_returned(
     config, updater = file.read_hyper_config(config_file)
 
     assert config == file.ConfigFile(
-        current_version=None, files=[file.File(file_glob=SOME_FILE_GLOB, keystone=True)]
+        current_version=None,
+        files=[file.File(file_glob=sd.SOME_FILE_GLOB, keystone=True)],
     )
 
 
@@ -464,7 +481,7 @@ def test_config_version_updater__write_fails__error(
     # attempt to write to a directory
     with pytest.raises(ConfigurationFileWriteError):
         file.ConfigVersionUpdater(tmp_path, tomlkit.document(), tomlkit.document())(
-            Version(SOME_VERSION)
+            Version(sd.SOME_VERSION_STRING)
         )
 
 
@@ -480,7 +497,7 @@ def _some_minimal_config_text(table_root: str, version: Optional[str]) -> str:
         [{table_root}]
         {current_version}
         [[{table_root}.files]]
-        file_glob = "{SOME_FILE_GLOB}"
+        file_glob = "{sd.SOME_FILE_GLOB}"
         {keystone}
 """
     )

@@ -3,20 +3,11 @@ Operation on files.
 """
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
+from hyper_bump_it._config import File
 from hyper_bump_it._error import FileGlobError, VersionNotFound
-from hyper_bump_it._text_formatter import TextFormatter, keys
+from hyper_bump_it._text_formatter import TextFormatter
 from hyper_bump_it._text_formatter.text_formatter import FormatContext
-
-DEFAULT_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
-
-
-@dataclass
-class FileConfig:
-    file_glob: str  # relative to project root directory
-    search_format_pattern: Optional[str] = None
-    replace_format_pattern: Optional[str] = None
 
 
 @dataclass
@@ -28,7 +19,7 @@ class PlannedChange:
 
 
 def collect_planned_changes(
-    project_root: Path, config: FileConfig, formatter: TextFormatter
+    project_root: Path, config: File, formatter: TextFormatter
 ) -> list[PlannedChange]:
     """
     Aggregate a collection of changes that would occur across multiple files.
@@ -40,11 +31,10 @@ def collect_planned_changes(
     :raises FileGlobError: Glob pattern for selecting files did not find any files.
     :raises VersionNotFound: A file did not contain the produced search text.
     """
-    search_pattern, replace_pattern = _select_format_patterns(
-        config.search_format_pattern, config.replace_format_pattern
-    )
     changes = [
-        _planned_change_for(file, search_pattern, replace_pattern, formatter)
+        _planned_change_for(
+            file, config.search_format_pattern, config.replace_format_pattern, formatter
+        )
         for file in project_root.glob(config.file_glob)
     ]
     if not changes:
@@ -70,17 +60,6 @@ def _planned_change_for(
             )
 
     raise VersionNotFound(file, search_pattern)
-
-
-def _select_format_patterns(
-    search_pattern: Optional[str], replace_pattern: Optional[str]
-) -> tuple[str, str]:
-    if search_pattern is not None and replace_pattern is None:
-        return search_pattern, search_pattern
-    return (
-        search_pattern or DEFAULT_FORMAT_PATTERN,
-        replace_pattern or DEFAULT_FORMAT_PATTERN,
-    )
 
 
 def perform_change(change: PlannedChange) -> None:

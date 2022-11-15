@@ -8,7 +8,7 @@ from typing import Iterator
 
 from git import InvalidGitRepositoryError, Repo
 
-from hyper_bump_it._config import GitAction, GitActions, GitConfig
+from hyper_bump_it._config import Git, GitAction, GitActions
 from hyper_bump_it._error import (
     AlreadyExistsError,
     DetachedRepositoryError,
@@ -28,9 +28,7 @@ class GitOperationsInfo:
     actions: GitActions
 
     @classmethod
-    def from_config(
-        cls, config: GitConfig, formatter: TextFormatter
-    ) -> "GitOperationsInfo":
+    def from_config(cls, config: Git, formatter: TextFormatter) -> "GitOperationsInfo":
         """
         Convert the configuration into the necessary operation information.
 
