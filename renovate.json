@@ -20,6 +20,6 @@
   ],
 
   "pip_requirements": {
-    "fileMatch": ["requirements-\\.*.txt"]
+    "fileMatch": ["(^|/)([\\w-]*)requirements[-\\w]*\\.(txt|pip)$"]
   }
 }
