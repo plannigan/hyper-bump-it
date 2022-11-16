@@ -3,11 +3,12 @@ Program configuration
 """
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, cast
+from typing import Callable, Optional, Union, cast
 
 from semantic_version import Version
 
 from hyper_bump_it._config import file, keystone_parser
+from hyper_bump_it._config.cli import BumpByArgs, BumpPart, BumpToArgs
 from hyper_bump_it._config.core import GitAction
 from hyper_bump_it._error import KeystoneFileGlobError
 
@@ -56,36 +57,74 @@ class Config:
     project_root: Path
     files: list[File]
     git: Git
+    dry_run: bool
     config_version_updater: Optional[file.ConfigVersionUpdater]
 
 
-def config_from_file(
-    new_version: Version, config_file: Optional[Path], project_root: Path
-) -> Config:
+BUMP_FUNCTIONS: dict[BumpPart, Callable[[Version], Version]] = {
+    BumpPart.Major: Version.next_major,
+    BumpPart.Minor: Version.next_minor,
+    BumpPart.Patch: Version.next_patch,
+}
+
+
+def config_for_bump_to(args: BumpToArgs) -> Config:
     """
     Produce an application configuration.
 
-    :param new_version: New version that will be used for the update operations.
-    :param config_file: Dedicated config file to read from instead of doing config file discovery.
-    :param project_root: Directory to look for a configuration file.
+    :param args: Arguments passed to command line command.
     :return: Configuration for how the application should execute.
     :raises ConfigurationError: No file was found or there was some error in the file.
     :raises FormatError: Search pattern for keystone file could not be converted.
     :raises KeystoneError: Keystone configuration could not produce the current version.
     """
-    file_config, version_updater = file.read_config(config_file, project_root)
+    file_config, version_updater = file.read_config(args.config_file, args.project_root)
 
     return Config(
-        current_version=_current_version(file_config, project_root),
-        new_version=new_version,
-        project_root=project_root,
+        current_version=_current_version(
+            args.current_version, file_config, args.project_root
+        ),
+        new_version=args.new_version,
+        project_root=args.project_root,
         files=_convert_files(file_config.files),
-        git=_convert_git(file_config.git),
+        git=_convert_git(args, file_config.git),
+        dry_run=args.dry_run,
         config_version_updater=version_updater,
     )
 
 
-def _current_version(file_config: file.ConfigFile, project_root: Path) -> Version:
+def config_for_bump_by(args: BumpByArgs) -> Config:
+    """
+    Produce an application configuration.
+
+    :param args: Arguments passed to command line command.
+    :return: Configuration for how the application should execute.
+    :raises ConfigurationError: No file was found or there was some error in the file.
+    :raises FormatError: Search pattern for keystone file could not be converted.
+    :raises KeystoneError: Keystone configuration could not produce the current version.
+    """
+    file_config, version_updater = file.read_config(args.config_file, args.project_root)
+    current_version = _current_version(
+        args.current_version, file_config, args.project_root
+    )
+
+    return Config(
+        current_version=current_version,
+        new_version=BUMP_FUNCTIONS[args.part_to_bump](current_version),
+        project_root=args.project_root,
+        files=_convert_files(file_config.files),
+        git=_convert_git(args, file_config.git),
+        dry_run=args.dry_run,
+        config_version_updater=version_updater,
+    )
+
+
+def _current_version(
+    args_version: Version, file_config: file.ConfigFile, project_root: Path
+) -> Version:
+    if args_version is not None:
+        return args_version
+
     if file_config.current_version is not None:
         return file_config.current_version
 
@@ -112,15 +151,15 @@ def _convert_files(config_files: list[file.File]) -> list[File]:
     ]
 
 
-def _convert_git(git: file.Git) -> Git:
+def _convert_git(args: Union[BumpToArgs, BumpByArgs], git: file.Git) -> Git:
     return Git(
-        remote=git.remote,
-        commit_format_pattern=git.commit_format_pattern,
-        branch_format_pattern=git.branch_format_pattern,
-        tag_format_pattern=git.tag_format_pattern,
+        remote=args.remote or git.remote,
+        commit_format_pattern=args.commit_format_pattern or git.commit_format_pattern,
+        branch_format_pattern=args.branch_format_pattern or git.branch_format_pattern,
+        tag_format_pattern=args.tag_format_pattern or git.tag_format_pattern,
         actions=GitActions(
-            commit=git.actions.commit,
-            branch=git.actions.branch,
-            tag=git.actions.tag,
+            commit=args.commit or git.actions.commit,
+            branch=args.branch or git.actions.branch,
+            tag=args.tag or git.actions.tag,
         ),
     )

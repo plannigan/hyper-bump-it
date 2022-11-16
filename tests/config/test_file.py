@@ -44,9 +44,9 @@ def test_git_actions__enum_value__created_as_enum(values, expected):
         {"commit": None},
         {"branch": None},
         {"tag": None},
-        {"commit": "other"},
-        {"branch": "other"},
-        {"tag": "other"},
+        {"commit": sd.SOME_NON_GIT_ACTION_STRING},
+        {"branch": sd.SOME_NON_GIT_ACTION_STRING},
+        {"tag": sd.SOME_NON_GIT_ACTION_STRING},
         {"not_valid_key": "some value"},
     ],
 )
