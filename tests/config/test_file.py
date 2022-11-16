@@ -156,6 +156,17 @@ def test_config_file__just_files__valid(files, current_version, description):
     ), description
 
 
+def test_config_file__current_version_already_parsed__valid():
+    files = [file.File(file_glob=sd.SOME_FILE_GLOB)]
+    result = file.ConfigFile(files=files, current_version=sd.SOME_VERSION)
+
+    assert result == file.ConfigFile(
+        files=files,
+        current_version=sd.SOME_VERSION,
+        git=file.Git(),
+    )
+
+
 @pytest.mark.parametrize(
     ["description", "values"],
     [

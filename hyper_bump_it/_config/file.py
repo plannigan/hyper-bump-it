@@ -1,7 +1,7 @@
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional, Union, cast
+from typing import Callable, Iterator, Optional, Union, cast
 
 if sys.version_info < (3, 10):
     from typing_extensions import TypeAlias  # this supports python < 3.10
@@ -74,12 +74,31 @@ class File(HyperBaseMode):
     replace_format_pattern: Optional[StrictStr] = None
 
 
-HyperConfigFileValues = dict[str, Union[list[File], Optional[StrictStr], Git]]
+HyperConfigFileValues: TypeAlias = dict[
+    str, Union[list[File], Optional[StrictStr], Git]
+]
+
+
+# type ignore can be removed once type hints are added https://github.com/rbarrois/python-semanticversion/issues/138
+class ValidVersion(Version):  # type: ignore[misc]
+    @classmethod
+    def __get_validators__(cls) -> Iterator[Callable[[object], "ValidVersion"]]:
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value: object) -> "ValidVersion":
+        if isinstance(value, Version):
+            return cls(str(value))
+        if isinstance(value, str):
+            return cls(value)
+        raise TypeError(
+            "Value must be a version or a string that can be parsed into a version"
+        )
 
 
 class ConfigFile(HyperBaseMode):
     files: list[File] = Field(..., min_items=1)
-    current_version: Optional[StrictStr] = None
+    current_version: Optional[ValidVersion] = None
     git: Git = Git()
 
     @root_validator(skip_on_failure=True)
