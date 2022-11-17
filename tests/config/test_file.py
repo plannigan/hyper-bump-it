@@ -57,6 +57,20 @@ def test_git_actions__invalid__error(values):
         file.GitActions(**values)
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        {"branch": GitAction.Create.value},
+        {"branch": GitAction.CreateAndPush.value},
+        {"tag": GitAction.Create.value},
+        {"tag": GitAction.CreateAndPush.value},
+    ],
+)
+def test_git_actions__create_skip_other_not_skip__error(value):
+    with pytest.raises(ValidationError, match="must also be Skip"):
+        file.GitActions(commit=GitAction.Skip, **value)
+
+
 def test_git__no_args__valid():
     result = file.Git()
 

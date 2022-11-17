@@ -58,6 +58,18 @@ class GitActions(HyperBaseMode):
     branch: GitAction = DEFAULT_BRANCH_ACTION
     tag: GitAction = DEFAULT_TAG_ACTION
 
+    @root_validator(skip_on_failure=True)
+    def check_keystone_files(
+        cls,
+        values: dict[str, GitAction],
+    ) -> dict[str, GitAction]:
+        if not values["commit"].should_create:
+            if values["branch"].should_create:
+                raise ValueError("if 'commit' is Skip, 'branch' must also be Skip")
+            if values["tag"].should_create:
+                raise ValueError("if 'commit' is Skip, 'tag' must also be Skip")
+        return values
+
 
 class Git(HyperBaseMode):
     remote: StrictStr = DEFAULT_REMOTE
