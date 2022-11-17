@@ -134,6 +134,13 @@ class ConfigFile(HyperBaseMode):
             )
         return values
 
+    @property
+    def keystone_config(self) -> Optional[tuple[str, str]]:
+        for file in self.files:
+            if file.keystone:
+                return file.file_glob, file.search_format_pattern
+        return None
+
 
 class ConfigVersionUpdater:
     def __init__(
@@ -243,7 +250,8 @@ def _read_config(config_file: Path, sub_tables: Sequence[str]) -> ConfigReadResu
             raise SubTableNotExistError(config_file, PYPROJECT_SUB_TABLE_KEYS)
 
     try:
-        config = ConfigFile(**config_table)
+        # Unwrap TOML objects so that the rest of the application operates on native types.
+        config = ConfigFile(**config_table.unwrap())
     except ValidationError as ex:
         raise InvalidConfigurationError(config_file, ex)
 

@@ -1,6 +1,5 @@
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional
 
 import pytest
 import tomlkit
@@ -20,7 +19,6 @@ from hyper_bump_it._text_formatter import FormatContext, keys
 from tests import sample_data as sd
 
 PYPROJECT_ROOT_TABLE = ".".join(file.PYPROJECT_SUB_TABLE_KEYS)
-SOME_FILE_NAME = "config.toml"
 SOME_INVALID_OBJECT = {"not_valid_key": "some value"}
 # These "non" values are chosen based on things that would be coerced into the true type
 SOME_NON_STRING = 1234
@@ -181,6 +179,37 @@ def test_config_file__just_files__valid(files, current_version, description):
     ), description
 
 
+@pytest.mark.parametrize(
+    ["description", "files", "current_version", "expected"],
+    [
+        (
+            "a single keystone file",
+            [
+                file.File(
+                    file_glob=sd.SOME_FILE_GLOB,
+                    keystone=True,
+                    search_format_pattern=sd.SOME_SEARCH_FORMAT_PATTERN,
+                )
+            ],
+            None,
+            (sd.SOME_FILE_GLOB, sd.SOME_SEARCH_FORMAT_PATTERN),
+        ),
+        (
+            "a single file & current version",
+            [file.File(file_glob=sd.SOME_FILE_GLOB)],
+            sd.SOME_VERSION_STRING,
+            None,
+        ),
+    ],
+)
+def test_config_file__keystone_config_based_on_file__expected_result(
+    files, current_version, expected, description
+):
+    result = file.ConfigFile(files=files, current_version=current_version)
+
+    assert result.keystone_config == expected, description
+
+
 def test_config_file__current_version_already_parsed__valid():
     files = [file.File(file_glob=sd.SOME_FILE_GLOB)]
     result = file.ConfigFile(files=files, current_version=sd.SOME_VERSION)
@@ -251,9 +280,9 @@ def test_read_pyproject_config__not_a_file__error(tmp_path: Path):
 def test_read_config__config_file_given__read_hyper_config_file_ignoring_project_root(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
     config_file.write_text(
-        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
     )
     some_other_dir = tmp_path / "other_dir"
     some_other_dir.mkdir()
@@ -278,7 +307,7 @@ def test_read_config__project_dir_given__read_from_given_dir(
 ):
     config_file = tmp_path / filename
     config_file.write_text(
-        _some_minimal_config_text(root_table, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(root_table, sd.SOME_VERSION_STRING)
     )
 
     config, _ = file.read_config(config_file=None, project_root=tmp_path)
@@ -292,11 +321,11 @@ def test_read_config__project_dir_given__read_from_given_dir(
 def test_read_config__dedicated_and_pyproject__prefer_dedicated(tmp_path: Path):
     config_file = tmp_path / file.HYPER_CONFIG_FILE_NAME
     config_file.write_text(
-        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
     )
     config_file = tmp_path / file.PYPROJECT_FILE_NAME
     config_file.write_text(
-        _some_minimal_config_text(
+        sd.some_minimal_config_text(
             file.PYPROJECT_SUB_TABLE_KEYS, sd.SOME_OTHER_VERSION_STRING
         )
     )
@@ -315,7 +344,7 @@ def test_read_config__no_file__error(tmp_path: Path):
 
 
 def test_read_pyproject_config__invalid_toml__error(tmp_path: Path):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text("{-not valid{")
 
@@ -324,7 +353,7 @@ def test_read_pyproject_config__invalid_toml__error(tmp_path: Path):
 
 
 def test_read_pyproject_config__sub_table_missing__error(tmp_path: Path):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text("[foo]")
 
@@ -333,7 +362,7 @@ def test_read_pyproject_config__sub_table_missing__error(tmp_path: Path):
 
 
 def test_read_pyproject_config__configuration_invalid__error(tmp_path: Path):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text(
         dedent(
@@ -350,10 +379,10 @@ def test_read_pyproject_config__configuration_invalid__error(tmp_path: Path):
 def test_read_pyproject_config__valid_current_version__config_returned(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text(
-        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(PYPROJECT_ROOT_TABLE, sd.SOME_VERSION_STRING)
     )
 
     config, updater = file.read_pyproject_config(config_file)
@@ -367,10 +396,10 @@ def test_read_pyproject_config__valid_current_version__config_returned(
 def test_read_pyproject_config__valid_current_version__returned_updater_updates_file(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text(
-        _some_minimal_config_text(PYPROJECT_ROOT_TABLE, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(PYPROJECT_ROOT_TABLE, sd.SOME_VERSION_STRING)
     )
 
     config, updater = file.read_pyproject_config(config_file)
@@ -378,7 +407,7 @@ def test_read_pyproject_config__valid_current_version__returned_updater_updates_
     assert updater is not None
     updater(Version(sd.SOME_OTHER_VERSION_STRING))
 
-    assert config_file.read_text() == _some_minimal_config_text(
+    assert config_file.read_text() == sd.some_minimal_config_text(
         PYPROJECT_ROOT_TABLE, sd.SOME_OTHER_VERSION_STRING
     )
 
@@ -386,9 +415,9 @@ def test_read_pyproject_config__valid_current_version__returned_updater_updates_
 def test_read_pyproject_config__valid_keystone__config_returned(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
-    config_file.write_text(_some_minimal_config_text(PYPROJECT_ROOT_TABLE, None))
+    config_file.write_text(sd.some_minimal_config_text(PYPROJECT_ROOT_TABLE, None))
 
     config, updater = file.read_pyproject_config(config_file)
 
@@ -401,9 +430,9 @@ def test_read_pyproject_config__valid_keystone__config_returned(
 def test_read_pyproject_config__valid_keystone__no_updater_returned(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
-    config_file.write_text(_some_minimal_config_text(PYPROJECT_ROOT_TABLE, None))
+    config_file.write_text(sd.some_minimal_config_text(PYPROJECT_ROOT_TABLE, None))
 
     config, updater = file.read_pyproject_config(config_file)
 
@@ -416,7 +445,7 @@ def test_read_hyper_config__not_a_file__error(tmp_path: Path):
 
 
 def test_read_hyper_config__invalid_toml__error(tmp_path: Path):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text("{-not valid{")
 
@@ -425,7 +454,7 @@ def test_read_hyper_config__invalid_toml__error(tmp_path: Path):
 
 
 def test_read_hyper_config__sub_table_missing__error(tmp_path: Path):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text("[foo]")
 
@@ -434,7 +463,7 @@ def test_read_hyper_config__sub_table_missing__error(tmp_path: Path):
 
 
 def test_read_hyper_config__configuration_invalid__error(tmp_path: Path):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text(
         dedent(
@@ -451,10 +480,10 @@ def test_read_hyper_config__configuration_invalid__error(tmp_path: Path):
 def test_read_hyper_config__valid_current_version__config_returned(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text(
-        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
     )
 
     config, updater = file.read_hyper_config(config_file)
@@ -468,10 +497,10 @@ def test_read_hyper_config__valid_current_version__config_returned(
 def test_read_hyper_config__valid_current_version__returned_updater_updates_file(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
     config_file.write_text(
-        _some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
+        sd.some_minimal_config_text(file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING)
     )
 
     config, updater = file.read_hyper_config(config_file)
@@ -479,7 +508,7 @@ def test_read_hyper_config__valid_current_version__returned_updater_updates_file
     assert updater is not None
     updater(Version(sd.SOME_OTHER_VERSION_STRING))
 
-    assert config_file.read_text() == _some_minimal_config_text(
+    assert config_file.read_text() == sd.some_minimal_config_text(
         file.ROOT_TABLE_KEY, sd.SOME_OTHER_VERSION_STRING
     )
 
@@ -487,9 +516,9 @@ def test_read_hyper_config__valid_current_version__returned_updater_updates_file
 def test_read_hyper_config__valid_keystone__config_returned(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
-    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, None))
+    config_file.write_text(sd.some_minimal_config_text(file.ROOT_TABLE_KEY, None))
 
     config, updater = file.read_hyper_config(config_file)
 
@@ -502,9 +531,9 @@ def test_read_hyper_config__valid_keystone__config_returned(
 def test_read_hyper_config__valid_keystone__no_updater_returned(
     tmp_path: Path,
 ):
-    config_file = tmp_path / SOME_FILE_NAME
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
-    config_file.write_text(_some_minimal_config_text(file.ROOT_TABLE_KEY, None))
+    config_file.write_text(sd.some_minimal_config_text(file.ROOT_TABLE_KEY, None))
 
     config, updater = file.read_hyper_config(config_file)
 
@@ -519,21 +548,3 @@ def test_config_version_updater__write_fails__error(
         file.ConfigVersionUpdater(tmp_path, tomlkit.document(), tomlkit.document())(
             Version(sd.SOME_VERSION_STRING)
         )
-
-
-def _some_minimal_config_text(table_root: str, version: Optional[str]) -> str:
-    if version is None:
-        current_version = ""
-        keystone = "keystone = true"
-    else:
-        current_version = f'current_version = "{version}"'
-        keystone = ""
-    return dedent(
-        f"""\
-        [{table_root}]
-        {current_version}
-        [[{table_root}.files]]
-        file_glob = "{sd.SOME_FILE_GLOB}"
-        {keystone}
-"""
-    )
