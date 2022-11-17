@@ -2,6 +2,8 @@
 Common test data that can be used across multiple test cases.
 """
 from datetime import date
+from textwrap import dedent
+from typing import Optional
 
 from semantic_version import Version
 
@@ -44,6 +46,7 @@ SOME_OTHER_PARTIAL_VERSION = Version(
     patch=SOME_OTHER_PATCH,
 )
 SOME_OTHER_PARTIAL_VERSION_STRING = str(SOME_OTHER_PARTIAL_VERSION)
+SOME_CONFIG_FILE_NAME = "config.toml"
 
 
 def some_text_formatter(
@@ -87,7 +90,9 @@ def some_git(
     )
 
 
-SOME_FILE_GLOB = "foo.txt"
+SOME_FILE_GLOB = "foo*.txt"
+SOME_GLOB_MATCHED_FILE_NAME = "foo-1.txt"
+SOME_OTHER_GLOB_MATCHED_FILE_NAME = "foo-2.txt"
 SOME_SEARCH_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
 SOME_REPLACE_FORMAT_PATTERN = f"{{{keys.NEW_VERSION}}}"
 
@@ -117,4 +122,22 @@ def some_git_operations_info(
         branch_name=branch_name,
         tag_name=tag_name,
         actions=actions,
+    )
+
+
+def some_minimal_config_text(table_root: str, version: Optional[str]) -> str:
+    if version is None:
+        current_version = ""
+        keystone = "keystone = true"
+    else:
+        current_version = f'current_version = "{version}"'
+        keystone = ""
+    return dedent(
+        f"""\
+        [{table_root}]
+        {current_version}
+        [[{table_root}.files]]
+        file_glob = "{SOME_FILE_GLOB}"
+        {keystone}
+"""
     )

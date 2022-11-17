@@ -70,7 +70,27 @@ class FileGlobError(BumpItError):
         )
 
 
-class VersionNotFound(BumpItError):
+class KeystoneError(BumpItError):
+    """Base for keystone file errors"""
+
+
+class KeystoneFileGlobError(KeystoneError):
+    def __init__(self, file_glob: str, matches: list[Path]) -> None:
+        self.file_glob = file_glob
+        self.matches = matches
+        super().__init__(
+            f"The file glob ({self.file_glob}) for the keystone files must match exactly one file."
+            f" {self._matched_description}"
+        )
+
+    @property
+    def _matched_description(self) -> str:
+        if self.matches:
+            return f"Matched: {','.join(str(match) for match in self.matches)}"
+        return "No files matched"
+
+
+class VersionNotFound(KeystoneError):
     def __init__(self, file: Path, search_pattern: str) -> None:
         self.file = file
         self.search_pattern = search_pattern

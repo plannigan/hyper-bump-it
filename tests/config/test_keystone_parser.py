@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from semantic_version import Version
 
-from hyper_bump_it import _keystone_parser as keystone_parser
+from hyper_bump_it._config import keystone_parser
 from hyper_bump_it._error import (
     FormatKeyError,
     FormatPatternError,
