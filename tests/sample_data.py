@@ -90,8 +90,9 @@ def some_git(
     )
 
 
-SOME_FILE_GLOB = "foo.txt"
-SOME_GLOB_MATCHED_FILE_NAME = "foo.txt"
+SOME_FILE_GLOB = "foo*.txt"
+SOME_GLOB_MATCHED_FILE_NAME = "foo-1.txt"
+SOME_OTHER_GLOB_MATCHED_FILE_NAME = "foo-2.txt"
 SOME_SEARCH_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
 SOME_REPLACE_FORMAT_PATTERN = f"{{{keys.NEW_VERSION}}}"
 

@@ -86,7 +86,7 @@ class KeystoneFileGlobError(KeystoneError):
     @property
     def _matched_description(self) -> str:
         if self.matches:
-            return f"Matched : {','.join(str(match) for match in self.matches)}"
+            return f"Matched: {','.join(str(match) for match in self.matches)}"
         return "No files matched"
 
 

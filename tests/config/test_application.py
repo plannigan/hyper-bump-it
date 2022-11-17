@@ -101,7 +101,29 @@ def test_config_from_file__keystone_glob_no_match__error(tmp_path: Path):
         sd.some_minimal_config_text(file.ROOT_TABLE_KEY, version=None)
     )
 
-    with pytest.raises(KeystoneFileGlobError):
+    with pytest.raises(KeystoneFileGlobError, match="No files matched"):
+        application.config_from_file(sd.SOME_OTHER_VERSION, config_file, tmp_path)
+
+
+def test_config_from_file__keystone_glob_multi_match__error(tmp_path: Path):
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
+    config_file.write_text(
+        sd.some_minimal_config_text(file.ROOT_TABLE_KEY, version=None)
+    )
+    for keystone_file_name in (
+        sd.SOME_GLOB_MATCHED_FILE_NAME,
+        sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME,
+    ):
+        keystone_file = tmp_path / keystone_file_name
+        keystone_file.write_text(
+            dedent(
+                f"""\
+        version: {sd.SOME_VERSION_STRING}
+        """
+            )
+        )
+
+    with pytest.raises(KeystoneFileGlobError, match="Matched: "):
         application.config_from_file(sd.SOME_OTHER_VERSION, config_file, tmp_path)
 
 
