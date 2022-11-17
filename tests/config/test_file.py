@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from semantic_version import Version
 
 from hyper_bump_it._config import GitAction, file
+from hyper_bump_it._config.core import DEFAULT_SEARCH_PATTERN
 from hyper_bump_it._error import (
     ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
@@ -15,7 +16,7 @@ from hyper_bump_it._error import (
     InvalidConfigurationError,
     SubTableNotExistError,
 )
-from hyper_bump_it._text_formatter import keys
+from hyper_bump_it._text_formatter import FormatContext, keys
 from tests import sample_data as sd
 
 PYPROJECT_ROOT_TABLE = ".".join(file.PYPROJECT_SUB_TABLE_KEYS)
@@ -102,9 +103,19 @@ def test_file__just_file_glob__valid():
     assert result == file.File(
         file_glob=sd.SOME_FILE_GLOB,
         keystone=False,
-        search_format_pattern=keys.VERSION,
+        search_format_pattern=DEFAULT_SEARCH_PATTERN,
         replace_format_pattern=None,
     )
+
+
+def test_file__default_search_pattern__formats_to_version():
+    search_pattern = file.File(file_glob=sd.SOME_FILE_GLOB).search_format_pattern
+
+    formatted_search_text = sd.some_text_formatter().format(
+        search_pattern, FormatContext.search
+    )
+
+    assert formatted_search_text == sd.SOME_VERSION_STRING
 
 
 @pytest.mark.parametrize(
