@@ -18,11 +18,11 @@ class GitActions:
     tag: GitAction
 
     def __post_init__(self) -> None:
-        if self.commit == GitAction.Skip:
-            if self.branch != GitAction.Skip:
-                raise ValueError("if 'commit' is Skip, 'branch' must be DoNothing")
-            if self.tag != GitAction.Skip:
-                raise ValueError("if 'commit' is Skip, 'tag' must be DoNothing")
+        if not self.commit.should_create:
+            if self.branch.should_create:
+                raise ValueError("if 'commit' is Skip, 'branch' must also be Skip")
+            if self.tag.should_create:
+                raise ValueError("if 'commit' is Skip, 'tag' must also be Skip")
 
     @property
     def any_push(self) -> bool:
