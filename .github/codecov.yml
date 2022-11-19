@@ -10,7 +10,9 @@ coverage:
     project:
       default:
         target: 90
-    patch: true
+    patch:
+      default:
+        target: 95
     changes: true
 
 comment:

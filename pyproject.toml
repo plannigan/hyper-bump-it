@@ -9,6 +9,7 @@ dependencies = [
     "semantic-version>=2.10.0,<3",
     "GitPython>=3.1.29,<4",
     "tomlkit>=0.11.6,<1.0",
+    "typer>=0.7.0,<1.0",
     "pydantic>=1.10.2,<2",
     "typing-extensions>=4.4.0,<5; python_version < '3.10'",
 ]
@@ -33,6 +34,10 @@ authors = [
 homepage = "https://github.com/plannigan/hyper-bump-it"
 changelog = "https://github.com/plannigan/hyper-bump-it/blob/main/CHANGELOG.md"
 issues = "https://github.com/plannigan/hyper-bump-it/issues"
+
+[project.scripts]
+hyper-bump-it = "hyper_bump_it._cli:app"
+
 
 
 [tool.setuptools.packages.find]

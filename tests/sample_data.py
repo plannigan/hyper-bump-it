@@ -2,12 +2,24 @@
 Common test data that can be used across multiple test cases.
 """
 from datetime import date
+from pathlib import Path
 from textwrap import dedent
 from typing import Optional
 
 from semantic_version import Version
+from tomlkit import TOMLDocument
 
-from hyper_bump_it._config import File, Git, GitAction, GitActions
+from hyper_bump_it._config import (
+    BumpByArgs,
+    BumpPart,
+    BumpToArgs,
+    Config,
+    File,
+    Git,
+    GitAction,
+    GitActions,
+)
+from hyper_bump_it._config.file import ConfigVersionUpdater
 from hyper_bump_it._git import GitOperationsInfo
 from hyper_bump_it._text_formatter import TextFormatter, keys
 
@@ -46,7 +58,9 @@ SOME_OTHER_PARTIAL_VERSION = Version(
     patch=SOME_OTHER_PATCH,
 )
 SOME_OTHER_PARTIAL_VERSION_STRING = str(SOME_OTHER_PARTIAL_VERSION)
+SOME_BUMP_PART = BumpPart.Minor
 SOME_CONFIG_FILE_NAME = "config.toml"
+SOME_DIRECTORY_NAME = "test-dir"
 
 
 def some_text_formatter(
@@ -65,11 +79,16 @@ SOME_COMMIT_PATTERN = f"test commit {{{keys.NEW_VERSION}}}"
 SOME_BRANCH_PATTERN = f"test-branch-{{{keys.NEW_VERSION}}}"
 SOME_TAG_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
 
+SOME_COMMIT_ACTION = GitAction.Create
+SOME_BRANCH_ACTION = GitAction.CreateAndPush
+SOME_TAG_ACTION = GitAction.Skip
+SOME_NON_GIT_ACTION_STRING = "other"
+
 
 def some_git_actions(
-    commit=GitAction.Create,
-    branch=GitAction.Create,
-    tag=GitAction.Create,
+    commit=SOME_COMMIT_ACTION,
+    branch=SOME_BRANCH_ACTION,
+    tag=SOME_TAG_ACTION,
 ) -> GitActions:
     return GitActions(commit=commit, branch=branch, tag=tag)
 
@@ -140,4 +159,146 @@ def some_minimal_config_text(table_root: str, version: Optional[str]) -> str:
         file_glob = "{SOME_FILE_GLOB}"
         {keystone}
 """
+    )
+
+
+def no_config_override_bump_to_args(
+    project_root: Path,
+    new_version: Version = SOME_OTHER_VERSION,
+    config_file: Optional[Path] = None,
+    dry_run: bool = False,
+) -> BumpToArgs:
+    return BumpToArgs(
+        new_version=new_version,
+        config_file=config_file,
+        project_root=project_root,
+        dry_run=dry_run,
+        current_version=None,
+        commit=None,
+        branch=None,
+        tag=None,
+        remote=None,
+        commit_format_pattern=None,
+        branch_format_pattern=None,
+        tag_format_pattern=None,
+    )
+
+
+def some_bump_to_args(
+    project_root: Path,
+    new_version: Version = SOME_OTHER_VERSION,
+    config_file: Optional[Path] = None,
+    dry_run: bool = False,
+    current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
+    commit: Optional[GitAction] = SOME_COMMIT_ACTION,
+    branch: Optional[GitAction] = SOME_BRANCH_ACTION,
+    tag: Optional[GitAction] = SOME_TAG_ACTION,
+    remote: Optional[str] = SOME_REMOTE,
+    commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
+    branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
+    tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+) -> BumpToArgs:
+    return BumpToArgs(
+        new_version=new_version,
+        config_file=config_file,
+        project_root=project_root,
+        dry_run=dry_run,
+        current_version=current_version,
+        commit=commit,
+        branch=branch,
+        tag=tag,
+        remote=remote,
+        commit_format_pattern=commit_format_pattern,
+        branch_format_pattern=branch_format_pattern,
+        tag_format_pattern=tag_format_pattern,
+    )
+
+
+def no_config_override_bump_by_args(
+    project_root: Path,
+    part_to_bump: BumpPart = SOME_BUMP_PART,
+    config_file: Optional[Path] = None,
+    dry_run: bool = False,
+) -> BumpByArgs:
+    return BumpByArgs(
+        part_to_bump=part_to_bump,
+        config_file=config_file,
+        project_root=project_root,
+        dry_run=dry_run,
+        current_version=None,
+        commit=None,
+        branch=None,
+        tag=None,
+        remote=None,
+        commit_format_pattern=None,
+        branch_format_pattern=None,
+        tag_format_pattern=None,
+    )
+
+
+def some_bump_by_args(
+    project_root: Path,
+    part_to_bump: BumpPart = SOME_BUMP_PART,
+    config_file: Optional[Path] = None,
+    dry_run: bool = False,
+    current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
+    commit: Optional[GitAction] = SOME_COMMIT_ACTION,
+    branch: Optional[GitAction] = SOME_BRANCH_ACTION,
+    tag: Optional[GitAction] = SOME_TAG_ACTION,
+    remote: Optional[str] = SOME_REMOTE,
+    commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
+    branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
+    tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+) -> BumpByArgs:
+    return BumpByArgs(
+        part_to_bump=part_to_bump,
+        config_file=config_file,
+        project_root=project_root,
+        dry_run=dry_run,
+        current_version=current_version,
+        commit=commit,
+        branch=branch,
+        tag=tag,
+        remote=remote,
+        commit_format_pattern=commit_format_pattern,
+        branch_format_pattern=branch_format_pattern,
+        tag_format_pattern=tag_format_pattern,
+    )
+
+
+class AnyConfigVersionUpdater(ConfigVersionUpdater):
+    """A helper object that compares equal to any ConfigVersionUpdater instance."""
+
+    def __init__(self):
+        super().__init__(Path(), TOMLDocument(), TOMLDocument())
+
+    def __eq__(self, other):
+        return isinstance(other, ConfigVersionUpdater)
+
+    def __ne__(self, other):
+        return not isinstance(other, ConfigVersionUpdater)
+
+    def __repr__(self):
+        return "<AnyConfigVersionUpdater>"
+
+
+def some_application_config(
+    project_root: Path,
+    current_version: Version = SOME_VERSION,
+    new_version: Version = SOME_OTHER_VERSION,
+    files: Optional[list[File]] = None,
+    git: Git = some_git(),
+    dry_run: bool = False,
+    config_version_updater: Optional[ConfigVersionUpdater] = AnyConfigVersionUpdater(),
+) -> Config:
+    if files is None:
+        files = [some_file()]
+    return Config(
+        current_version=current_version,
+        new_version=new_version,
+        project_root=project_root,
+        files=files,
+        git=git,
+        dry_run=dry_run,
+        config_version_updater=config_version_updater,
     )
