@@ -125,36 +125,20 @@ def test_get_vetted_repo__existing_tag_no_tagging__repo_returned(tmp_path: Path)
     assert result == repo.repo
 
 
-def test_switch_to_branch__on_branch_in_context(tmp_path: Path):
+def test_create_branch__result_has_name(tmp_path: Path):
     repo = _init_repo(tmp_path)
 
-    with git.switch_to_branch(repo.repo, sd.SOME_BRANCH):
-        assert repo.repo.active_branch.name == sd.SOME_BRANCH
+    git.create_branch(repo.repo, sd.SOME_BRANCH)
+
+    assert sd.SOME_BRANCH in repo.repo.heads
 
 
-def test_switch_to_branch__back_to_initial_branch_after_context(tmp_path: Path):
-    repo = _init_repo(tmp_path)
+def test_switch_to__active_branch_is_expected(tmp_path: Path):
+    repo = _init_repo(tmp_path, branch=sd.SOME_BRANCH)
 
-    initial_branch = repo.repo.active_branch
-    with git.switch_to_branch(repo.repo, sd.some_git_operations_info().branch_name):
-        pass
+    git.switch_to(repo.repo, sd.SOME_BRANCH)
 
-    assert repo.repo.active_branch == initial_branch
-
-
-def test_switch_to_branch__exception__back_to_initial_branch_after_context(
-    tmp_path: Path,
-):
-    repo = _init_repo(tmp_path)
-
-    initial_branch = repo.repo.active_branch
-    try:
-        with git.switch_to_branch(repo.repo, sd.some_git_operations_info().branch_name):
-            raise FakeException("A test exception")
-    except FakeException:
-        pass
-
-    assert repo.repo.active_branch == initial_branch
+    assert repo.repo.active_branch.name == sd.SOME_BRANCH
 
 
 def test_commit_change__edited_file__in_commit(tmp_path: Path):
