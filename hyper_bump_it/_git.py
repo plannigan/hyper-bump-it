@@ -1,10 +1,8 @@
 """
 Operation on git repositories.
 """
-from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 from git import InvalidGitRepositoryError, Repo
 
@@ -83,15 +81,12 @@ def get_vetted_repo(project_root: Path, operation_info: GitOperationsInfo) -> Re
     return repo
 
 
-@contextmanager
-def switch_to_branch(repo: Repo, branch_name: str) -> Iterator[None]:
-    initial_branch = repo.active_branch
-    branch = repo.create_head(branch_name)
-    branch.checkout()
-    try:
-        yield
-    finally:
-        initial_branch.checkout()
+def create_branch(repo: Repo, branch_name: str) -> None:
+    repo.create_head(branch_name)
+
+
+def switch_to(repo: Repo, branch_name: str) -> None:
+    repo.heads[branch_name].checkout()
 
 
 def commit_changes(repo: Repo, commit_message: str) -> None:
