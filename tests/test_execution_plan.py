@@ -1,5 +1,6 @@
 from datetime import datetime
 from io import StringIO
+from itertools import zip_longest
 from pathlib import Path
 from typing import Type
 
@@ -463,7 +464,7 @@ def test_push_changes__display__show_description(
         ),
     ],
 )
-def test_git_actions_(
+def test_git_actions__some_git_actions__expected_action_lists(
     actions,
     expected_initial_actions: list[Type],
     expected_final_actions: list[Type],
@@ -473,12 +474,8 @@ def test_git_actions_(
         sd.some_git_operations_info(actions=actions), repo=mocker.Mock()
     )
 
-    for action, expected_type in zip(
-        initial_actions, expected_initial_actions, strict=True
-    ):
+    for action, expected_type in zip_longest(initial_actions, expected_initial_actions):
         assert isinstance(action, expected_type)
 
-    for action, expected_type in zip(
-        final_actions, expected_final_actions, strict=True
-    ):
+    for action, expected_type in zip_longest(final_actions, expected_final_actions):
         assert isinstance(action, expected_type)
