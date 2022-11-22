@@ -25,3 +25,4 @@ def capture_rich() -> StringIO:
 def wide_terminal(mocker) -> None:
     # Patch Typer to use the forced width value.
     mocker.patch.object(typer_rich_utils, "MAX_WIDTH", FORCED_TERMINAL_WIDTH)
+    mocker.patch.object(typer_rich_utils, "FORCE_TERMINAL", False)
