@@ -27,3 +27,24 @@ DEFAULT_SEARCH_PATTERN = f"{{{keys.VERSION}}}"
 
 HYPER_CONFIG_FILE_NAME = "hyper-bump-it.toml"
 PYPROJECT_FILE_NAME = "pyproject.toml"
+
+
+def validate_git_action_combination(
+    commit: GitAction, branch: GitAction, tag: GitAction
+) -> None:
+    if not commit.should_create:
+        if branch.should_create:
+            raise ValueError("if commit is 'skip', branch must also be 'skip'")
+        if tag.should_create:
+            raise ValueError("if commit is 'skip', tag must also be 'skip'")
+    if commit == GitAction.Create:
+        if branch == GitAction.CreateAndPush:
+            raise ValueError(
+                "if branch is 'create-and-push', 'commit' must also be 'create-and-push'"
+            )
+        if tag == GitAction.CreateAndPush:
+            raise ValueError(
+                "if tag is 'create-and-push', 'commit' must also be 'create-and-push'"
+            )
+    if commit == GitAction.CreateAndPush and branch == GitAction.Create:
+        raise ValueError("if branch is 'create', commit must also be 'create'")

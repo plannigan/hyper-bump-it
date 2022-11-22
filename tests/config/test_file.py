@@ -17,6 +17,7 @@ from hyper_bump_it._error import (
 )
 from hyper_bump_it._text_formatter import FormatContext, keys
 from tests import sample_data as sd
+from tests.git_action_combinations import INVALID_COMBINATIONS, GitActionCombination
 
 PYPROJECT_ROOT_TABLE = ".".join(file.PYPROJECT_SUB_TABLE_KEYS)
 SOME_INVALID_OBJECT = {"not_valid_key": "some value"}
@@ -26,13 +27,26 @@ SOME_NON_BOOL = 1
 SOME_NON_OBJECT = "not an object with fields"
 
 
+def _gen_enum_value_parameters() -> list[tuple[dict[str, str], file.GitActions]]:
+    parameters = []
+    for action in iter(GitAction):
+        for key in ("commit", "branch", "tag"):
+            if action == GitAction.CreateAndPush and key in ("branch", "tag"):
+                param = (
+                    {"commit": GitAction.CreateAndPush.value, key: action.value}
+                ), file.GitActions(commit=GitAction.CreateAndPush, **{key: action})
+            else:
+                param = (
+                    {key: action.value},
+                    file.GitActions(**{key: action}),
+                )
+            parameters.append(param)
+    return parameters
+
+
 @pytest.mark.parametrize(
     ["values", "expected"],
-    [
-        ({key: action.value}, file.GitActions(**{key: action}))
-        for action in GitAction
-        for key in ("commit", "branch", "tag")
-    ],
+    _gen_enum_value_parameters(),
 )
 def test_git_actions__enum_value__created_as_enum(values, expected):
     assert file.GitActions(**values) == expected
@@ -55,18 +69,12 @@ def test_git_actions__invalid__error(values):
         file.GitActions(**values)
 
 
-@pytest.mark.parametrize(
-    "value",
-    [
-        {"branch": GitAction.Create.value},
-        {"branch": GitAction.CreateAndPush.value},
-        {"tag": GitAction.Create.value},
-        {"tag": GitAction.CreateAndPush.value},
-    ],
-)
-def test_git_actions__create_skip_other_not_skip__error(value):
-    with pytest.raises(ValidationError, match="must also be Skip"):
-        file.GitActions(commit=GitAction.Skip, **value)
+@pytest.mark.parametrize(["invalid_combination", "match"], INVALID_COMBINATIONS)
+def test_git_actions__invalid_combination__error(
+    invalid_combination: GitActionCombination, match: str
+):
+    with pytest.raises(ValidationError, match=match):
+        file.GitActions(**invalid_combination)
 
 
 def test_git__no_args__valid():

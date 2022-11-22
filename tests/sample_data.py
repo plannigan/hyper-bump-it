@@ -79,9 +79,9 @@ SOME_COMMIT_PATTERN = f"test commit {{{keys.NEW_VERSION}}}"
 SOME_BRANCH_PATTERN = f"test-branch-{{{keys.NEW_VERSION}}}"
 SOME_TAG_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
 
-SOME_COMMIT_ACTION = GitAction.Create
-SOME_BRANCH_ACTION = GitAction.CreateAndPush
-SOME_TAG_ACTION = GitAction.Skip
+SOME_COMMIT_ACTION = GitAction.CreateAndPush
+SOME_BRANCH_ACTION = GitAction.Skip
+SOME_TAG_ACTION = GitAction.Create
 SOME_NON_GIT_ACTION_STRING = "other"
 
 
