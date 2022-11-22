@@ -4,7 +4,8 @@ Operation on git repositories.
 from dataclasses import dataclass
 from pathlib import Path
 
-from git import InvalidGitRepositoryError, Repo
+from git import InvalidGitRepositoryError
+from git import Repo as Repo
 
 from hyper_bump_it._config import Git, GitAction, GitActions
 from hyper_bump_it._error import (
