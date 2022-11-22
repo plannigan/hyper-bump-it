@@ -9,7 +9,7 @@ from semantic_version import Version
 
 from hyper_bump_it._config import file, keystone_parser
 from hyper_bump_it._config.cli import BumpByArgs, BumpPart, BumpToArgs
-from hyper_bump_it._config.core import GitAction
+from hyper_bump_it._config.core import GitAction, validate_git_action_combination
 from hyper_bump_it._error import KeystoneFileGlobError
 
 
@@ -20,11 +20,9 @@ class GitActions:
     tag: GitAction
 
     def __post_init__(self) -> None:
-        if not self.commit.should_create:
-            if self.branch.should_create:
-                raise ValueError("if 'commit' is Skip, 'branch' must also be Skip")
-            if self.tag.should_create:
-                raise ValueError("if 'commit' is Skip, 'tag' must also be Skip")
+        validate_git_action_combination(
+            commit=self.commit, branch=self.branch, tag=self.tag
+        )
 
     @property
     def any_push(self) -> bool:

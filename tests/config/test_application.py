@@ -16,6 +16,15 @@ from hyper_bump_it._config.core import (
 )
 from hyper_bump_it._error import KeystoneFileGlobError
 from tests import sample_data as sd
+from tests.git_action_combinations import INVALID_COMBINATIONS, GitActionCombination
+
+
+@pytest.mark.parametrize(["invalid_combination", "match"], INVALID_COMBINATIONS)
+def test_git_actions__invalid_combination__error(
+    invalid_combination: GitActionCombination, match: str
+):
+    with pytest.raises(ValueError, match=match):
+        application.GitActions(**invalid_combination)
 
 
 def test_config_for_bump_to__explicit_config_file_version__expected_result(

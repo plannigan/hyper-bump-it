@@ -77,7 +77,9 @@ def test_get_vetted_repo__existing_branch__error(tmp_path: Path):
         git.get_vetted_repo(
             repo.path,
             sd.some_git_operations_info(
-                actions=sd.some_git_actions(branch=GitAction.Create)
+                actions=sd.some_git_actions(
+                    commit=GitAction.Create, branch=GitAction.Create
+                )
             ),
         )
 
@@ -87,7 +89,9 @@ def test_get_vetted_repo__existing_branch_no_branching__repo_returned(tmp_path: 
 
     result = git.get_vetted_repo(
         repo.path,
-        sd.some_git_operations_info(actions=sd.some_git_actions(branch=GitAction.Skip)),
+        sd.some_git_operations_info(
+            actions=sd.some_git_actions(commit=GitAction.Create, branch=GitAction.Skip)
+        ),
     )
 
     assert result == repo.repo

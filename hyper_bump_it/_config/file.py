@@ -33,6 +33,7 @@ from hyper_bump_it._config.core import (
     HYPER_CONFIG_FILE_NAME,
     PYPROJECT_FILE_NAME,
     GitAction,
+    validate_git_action_combination,
 )
 from hyper_bump_it._error import (
     ConfigurationFileNotFoundError,
@@ -63,11 +64,7 @@ class GitActions(HyperBaseMode):
         cls,
         values: dict[str, GitAction],
     ) -> dict[str, GitAction]:
-        if not values["commit"].should_create:
-            if values["branch"].should_create:
-                raise ValueError("if 'commit' is Skip, 'branch' must also be Skip")
-            if values["tag"].should_create:
-                raise ValueError("if 'commit' is Skip, 'tag' must also be Skip")
+        validate_git_action_combination(**values)
         return values
 
 
