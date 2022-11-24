@@ -1,7 +1,7 @@
 """
 Program configuration
 """
-from dataclasses import dataclass
+from dataclasses import astuple, dataclass
 from pathlib import Path
 from typing import Callable, Optional, Union, cast
 
@@ -26,10 +26,11 @@ class GitActions:
 
     @property
     def any_push(self) -> bool:
-        return any(
-            action == GitAction.CreateAndPush
-            for action in (self.commit, self.branch, self.tag)
-        )
+        return any(action == GitAction.CreateAndPush for action in astuple(self))
+
+    @property
+    def all_skip(self) -> bool:
+        return all(action == GitAction.Skip for action in astuple(self))
 
 
 @dataclass
