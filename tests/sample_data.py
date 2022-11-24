@@ -1,11 +1,13 @@
 """
 Common test data that can be used across multiple test cases.
 """
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from textwrap import dedent
 from typing import Optional
 
+from git import Repo
 from semantic_version import Version
 from tomlkit import TOMLDocument
 
@@ -318,3 +320,57 @@ def some_planned_change(
     return PlannedChange(
         file=file, line_index=line_index, old_line=old_line, new_line=new_line
     )
+
+
+@dataclass
+class InitedRepo:
+    repo: Repo
+    path: Path
+    remote_repo: Repo
+    committed_file: Path
+
+
+def some_git_repo(
+    test_root: Path,
+    remote: Optional[str] = None,
+    branch: Optional[str] = None,
+    tag: Optional[str] = None,
+    detached: bool = False,
+) -> InitedRepo:
+    """
+    Initialize test repository setup (a primary with a single commit and remote with no commits)
+
+    :param test_root: Directory to store repositories.
+    :param remote: Name to use when referencing remote repo. If `None` the remote repo will not be
+        linked to the primary_repo.
+    :param branch: Name to use for an additional branch created on the primary repository. If
+        `None`, no branch will be created.
+    :param tag: Name to use for a tag created on the primary repository. If `None`, no tag will be
+        created.
+    :param detached: If `True`, switch from the default branch to a detached HEAD situation that
+        only points to the initial commit.
+    :return: Data about the initialized repos.
+    """
+    repo_dir = test_root / "primary"
+    repo = Repo.init(repo_dir, mkdir=True)
+    remote_path = test_root / "other"
+    remote_repo = Repo.init(test_root / "other", mkdir=True, bare=True)
+
+    file = repo_dir / SOME_GLOB_MATCHED_FILE_NAME
+    file.touch()
+    repo.index.add([file])
+    repo.index.commit("a first commit")
+
+    if remote is not None:
+        repo.create_remote(remote, str(remote_path))
+
+    if branch is not None:
+        repo.create_head(branch)
+
+    if tag is not None:
+        repo.create_tag(tag)
+
+    if detached:
+        repo.head.reference = repo.commit("HEAD")
+
+    return InitedRepo(repo, repo_dir, remote_repo, file)
