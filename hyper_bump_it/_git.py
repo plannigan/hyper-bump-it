@@ -60,24 +60,24 @@ def get_vetted_repo(project_root: Path, operation_info: GitOperationsInfo) -> Re
         raise NoRepositoryError(project_root)
 
     if repo.is_dirty():
-        raise DirtyRepositoryError(repo)
+        raise DirtyRepositoryError(project_root)
 
     if repo.head.is_detached:
-        raise DetachedRepositoryError(repo)
+        raise DetachedRepositoryError(project_root)
 
     if operation_info.actions.any_push and operation_info.remote not in repo.remotes:
-        raise MissingRemoteError(operation_info.remote)
+        raise MissingRemoteError(operation_info.remote, project_root)
 
     if (
         operation_info.actions.branch.should_create
         and operation_info.branch_name in repo.heads
     ):
-        raise AlreadyExistsError("branch", operation_info.branch_name)
+        raise AlreadyExistsError("branch", operation_info.branch_name, project_root)
     if (
         operation_info.actions.tag.should_create
         and operation_info.tag_name in repo.tags
     ):
-        raise AlreadyExistsError("tag", operation_info.tag_name)
+        raise AlreadyExistsError("tag", operation_info.tag_name, project_root)
 
     return repo
 
