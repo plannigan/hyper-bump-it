@@ -1,7 +1,11 @@
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional, overload
+from typing import Iterator, Optional, overload
 
 import typer
+from rich import print
+from rich.align import AlignMethod
+from rich.panel import Panel
 from semantic_version import Version
 
 from hyper_bump_it import _core as core
@@ -13,10 +17,16 @@ from hyper_bump_it._config import (
     config_for_bump_by,
     config_for_bump_to,
 )
+from hyper_bump_it._error import BumpItError
 
 app = typer.Typer()
 
 OVERRIDE_PANEL_NAME = "Configuration File Override"
+# These values match what typer uses
+ERROR_PANEL_NAME = "Error"
+ERROR_PANEL_BORDER_STYLE = "red"
+ERROR_PANEL_TILE_ALIGN_: AlignMethod = "left"
+
 
 CONFIG_FILE = typer.Option(
     None,
@@ -106,24 +116,25 @@ def to(
     new_version_parsed = _parse_version(new_version, "NEW_VERSION")
     current_version_parsed = _parse_version(current_version, "--current-version")
 
-    app_config = config_for_bump_to(
-        BumpToArgs(
-            new_version=new_version_parsed,
-            config_file=config_file,
-            project_root=project_root,
-            dry_run=dry_run,
-            current_version=current_version_parsed,
-            commit=commit,
-            branch=branch,
-            tag=tag,
-            remote=remote,
-            commit_format_pattern=commit_format_pattern,
-            branch_format_pattern=branch_format_pattern,
-            tag_format_pattern=tag_format_pattern,
+    with _handle_bump_errors():
+        app_config = config_for_bump_to(
+            BumpToArgs(
+                new_version=new_version_parsed,
+                config_file=config_file,
+                project_root=project_root,
+                dry_run=dry_run,
+                current_version=current_version_parsed,
+                commit=commit,
+                branch=branch,
+                tag=tag,
+                remote=remote,
+                commit_format_pattern=commit_format_pattern,
+                branch_format_pattern=branch_format_pattern,
+                tag_format_pattern=tag_format_pattern,
+            )
         )
-    )
 
-    core.do_bump(app_config)
+        core.do_bump(app_config)
 
 
 @app.command()
@@ -148,24 +159,25 @@ def by(
     """
     current_version_parsed = _parse_version(current_version, "--current-version")
 
-    app_config = config_for_bump_by(
-        BumpByArgs(
-            part_to_bump,
-            config_file=config_file,
-            project_root=project_root,
-            dry_run=dry_run,
-            current_version=current_version_parsed,
-            commit=commit,
-            branch=branch,
-            tag=tag,
-            remote=remote,
-            commit_format_pattern=commit_format_pattern,
-            branch_format_pattern=branch_format_pattern,
-            tag_format_pattern=tag_format_pattern,
+    with _handle_bump_errors():
+        app_config = config_for_bump_by(
+            BumpByArgs(
+                part_to_bump,
+                config_file=config_file,
+                project_root=project_root,
+                dry_run=dry_run,
+                current_version=current_version_parsed,
+                commit=commit,
+                branch=branch,
+                tag=tag,
+                remote=remote,
+                commit_format_pattern=commit_format_pattern,
+                branch_format_pattern=branch_format_pattern,
+                tag_format_pattern=tag_format_pattern,
+            )
         )
-    )
 
-    core.do_bump(app_config)
+        core.do_bump(app_config)
 
 
 @overload
@@ -188,3 +200,20 @@ def _parse_version(version: Optional[str], parameter_name: str) -> Optional[Vers
             raise typer.BadParameter(
                 f"'{version}' is not a valid version", param_hint=parameter_name
             )
+
+
+@contextmanager
+def _handle_bump_errors() -> Iterator[None]:
+    try:
+        yield
+    except BumpItError as ex:
+        print(
+            Panel(
+                ex,
+                border_style="red",
+                title="Error",
+                title_align="left",
+                highlight=True,
+            )
+        )
+        raise typer.Exit(1)
