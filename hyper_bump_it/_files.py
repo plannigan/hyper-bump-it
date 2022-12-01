@@ -11,11 +11,16 @@ from hyper_bump_it._text_formatter.text_formatter import FormatContext
 
 
 @dataclass
-class PlannedChange:
-    file: Path  # including project root directory
+class LineChange:
     line_index: int
     old_line: str
     new_line: str
+
+
+@dataclass
+class PlannedChange:
+    file: Path  # including project root directory
+    line_changes: list[LineChange]
 
 
 def collect_planned_changes(
@@ -49,15 +54,20 @@ def _planned_change_for(
     formatter: TextFormatter,
 ) -> PlannedChange:
     search_text = formatter.format(search_pattern, FormatContext.search)
+    changes: list[LineChange] = []
     for i, line in enumerate(file.read_text().splitlines()):
         if search_text in line:
             replace_text = formatter.format(replace_pattern, FormatContext.replace)
-            return PlannedChange(
-                file,
-                line_index=i,
-                old_line=line,
-                new_line=line.replace(search_text, replace_text),
+            changes.append(
+                LineChange(
+                    line_index=i,
+                    old_line=line,
+                    new_line=line.replace(search_text, replace_text),
+                )
             )
+
+    if changes:
+        return PlannedChange(file, changes)
 
     raise VersionNotFound(file, search_pattern)
 
@@ -70,14 +80,17 @@ def perform_change(change: PlannedChange) -> None:
             f"Given file '{change.file}' does not exist. PlannedChange is not valid."
         )
     lines = contents.splitlines(keepends=True)
-    try:
-        old_line = lines[change.line_index]
-    except IndexError:
-        raise ValueError(
-            f"Given file '{change.file}' does not contain a line with the index of"
-            f" {change.line_index}. PlannedChange is not valid."
+    for line_change in change.line_changes:
+        try:
+            old_line = lines[line_change.line_index]
+        except IndexError:
+            raise ValueError(
+                f"Given file '{change.file}' does not contain a line with the index of"
+                f" {line_change.line_index}. PlannedChange is not valid."
+            )
+        lines[line_change.line_index] = line_change.new_line.encode() + _line_ending(
+            old_line
         )
-    lines[change.line_index] = change.new_line.encode() + _line_ending(old_line)
     change.file.write_bytes(b"".join(lines))
 
 
