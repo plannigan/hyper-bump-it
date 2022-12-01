@@ -239,9 +239,41 @@ def test_update_file_actions__display__message_displayed(capture_rich: StringIO)
     action.display()
 
     output = capture_rich.getvalue()
-    assert f"{sd.SOME_GLOB_MATCHED_FILE_NAME}:{sd.SOME_FILE_INDEX+1}" in output
-    assert f"- {sd.SOME_OLD_LINE}" in output
-    assert f"+ {sd.SOME_NEW_LINE}" in output
+    assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
+    assert (
+        f"{sd.SOME_FILE_INDEX + 1}: - {sd.SOME_OLD_LINE}\n"
+        f"{sd.SOME_FILE_INDEX + 1}: + {sd.SOME_NEW_LINE}" in output
+    )
+
+
+def test_update_file_actions__display_multi_line_change__both_displayed(
+    capture_rich: StringIO,
+):
+    action = execution_plan.update_file_actions(
+        [
+            sd.some_planned_change(
+                line_changes=[
+                    sd.some_line_change(),
+                    sd.some_line_change(
+                        sd.SOME_OTHER_FILE_INDEX,
+                        sd.SOME_OTHER_OLD_LINE,
+                        sd.SOME_OTHER_NEW_LINE,
+                    ),
+                ]
+            )
+        ]
+    )
+
+    action.display()
+
+    output = capture_rich.getvalue()
+    assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
+    assert (
+        f"{sd.SOME_FILE_INDEX + 1}: - {sd.SOME_OLD_LINE}\n"
+        f"{sd.SOME_FILE_INDEX + 1}: + {sd.SOME_NEW_LINE}\n"
+        f"{sd.SOME_OTHER_FILE_INDEX + 1}: - {sd.SOME_OTHER_OLD_LINE}\n"
+        f"{sd.SOME_OTHER_FILE_INDEX + 1}: + {sd.SOME_OTHER_NEW_LINE}"
+    ) in output
 
 
 def test_update_file_actions__multi_display__each_name_appears(capture_rich: StringIO):

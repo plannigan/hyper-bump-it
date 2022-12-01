@@ -8,6 +8,7 @@ from functools import cached_property
 from typing import Optional, Protocol, TypeVar
 
 from rich import print
+from rich.rule import Rule
 from semantic_version import Version
 
 from hyper_bump_it import _files as files
@@ -91,9 +92,12 @@ class ChangeFileAction:
         files.perform_change(self._change)
 
     def display(self) -> None:
-        print(f"[bold]{self._change.file}:{self._change.line_index + 1}")
-        print(f"[red]- {self._change.old_line}")
-        print(f"[green]+ {self._change.new_line.strip()}")
+        print(Rule(title=str(self._change.file)))
+        for line_change in self._change.line_changes:
+            print(f"{line_change.line_index + 1}: [red]- {line_change.old_line}")
+            print(
+                f"{line_change.line_index + 1}: [green]+ {line_change.new_line.strip()}"
+            )
 
 
 def update_file_actions(planned_changes: list[files.PlannedChange]) -> Action:

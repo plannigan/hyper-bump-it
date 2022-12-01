@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional
+from typing import Optional, Union
 
 from git import Repo
 from semantic_version import Version
@@ -22,7 +22,7 @@ from hyper_bump_it._config import (
     GitActions,
 )
 from hyper_bump_it._config.file import ConfigVersionUpdater
-from hyper_bump_it._files import PlannedChange
+from hyper_bump_it._files import LineChange, PlannedChange
 from hyper_bump_it._git import GitOperationsInfo
 from hyper_bump_it._text_formatter import TextFormatter, keys
 
@@ -88,8 +88,11 @@ SOME_TAG_ACTION = GitAction.Create
 SOME_NON_GIT_ACTION_STRING = "other"
 
 SOME_FILE_INDEX = 3
+SOME_OTHER_FILE_INDEX = 5
 SOME_OLD_LINE = "start text"
+SOME_OTHER_OLD_LINE = "other start text"
 SOME_NEW_LINE = "updated text"
+SOME_OTHER_NEW_LINE = "other updated text"
 
 
 def some_git_actions(
@@ -311,15 +314,21 @@ def some_application_config(
     )
 
 
-def some_planned_change(
-    file=Path(SOME_GLOB_MATCHED_FILE_NAME),
+def some_line_change(
     line_index=SOME_FILE_INDEX,
     old_line=SOME_OLD_LINE,
     new_line=SOME_NEW_LINE,
+) -> LineChange:
+    return LineChange(line_index=line_index, old_line=old_line, new_line=new_line)
+
+
+def some_planned_change(
+    file=Path(SOME_GLOB_MATCHED_FILE_NAME),
+    line_changes: Union[LineChange, list[LineChange]] = some_line_change(),
 ) -> PlannedChange:
-    return PlannedChange(
-        file=file, line_index=line_index, old_line=old_line, new_line=new_line
-    )
+    if not isinstance(line_changes, list):
+        line_changes = [line_changes]
+    return PlannedChange(file=file, line_changes=line_changes)
 
 
 @dataclass

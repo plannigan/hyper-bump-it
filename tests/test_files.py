@@ -4,7 +4,7 @@ import pytest
 
 from hyper_bump_it import _files as files
 from hyper_bump_it._error import FileGlobError, VersionNotFound
-from hyper_bump_it._files import PlannedChange
+from hyper_bump_it._files import LineChange, PlannedChange
 from hyper_bump_it._text_formatter import keys
 from tests import sample_data as sd
 
@@ -14,10 +14,21 @@ SOME_OTHER_FILE_NAME = "bar.txt"
 TEXT_FORMATTER = sd.some_text_formatter()
 
 
-def test_collect_planned_changes__default_search_replace__planned_change_with_new_content(
+@pytest.mark.parametrize(
+    ["original_text", "expected_line"],
+    [
+        (f"--{sd.SOME_VERSION}--", f"--{sd.SOME_OTHER_VERSION}--"),
+        (
+            f"--{sd.SOME_VERSION}-- --{sd.SOME_VERSION}--",
+            f"--{sd.SOME_OTHER_VERSION}-- --{sd.SOME_OTHER_VERSION}--",
+        ),
+    ],
+)
+def test_collect_planned_changes__default_search_replace_single_line__planned_change_with_new_content(
+    original_text,
+    expected_line,
     tmp_path: Path,
 ):
-    original_text = f"--{sd.SOME_VERSION}--"
     some_file = tmp_path / SOME_FILE_NAME
     some_file.write_text(original_text)
 
@@ -27,13 +38,52 @@ def test_collect_planned_changes__default_search_replace__planned_change_with_ne
         formatter=TEXT_FORMATTER,
     )
 
-    assert len(changes) == 1
-    assert changes[0] == PlannedChange(
-        some_file,
-        line_index=0,
-        old_line=original_text,
-        new_line=f"--{sd.SOME_OTHER_VERSION}--",
+    assert changes == [
+        PlannedChange(
+            some_file,
+            [
+                LineChange(
+                    line_index=0,
+                    old_line=original_text,
+                    new_line=expected_line,
+                )
+            ],
+        )
+    ]
+
+
+def test_collect_planned_changes__multi_occurrence__multiple_planned_change_with_new_content(
+    tmp_path: Path,
+):
+    original_line_1 = f"--{sd.SOME_VERSION}--"
+    original_line_2 = f"++{sd.SOME_VERSION}++"
+    original_text = f"{original_line_1}\n\n{original_line_2}"
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_text(original_text)
+
+    changes = files.collect_planned_changes(
+        tmp_path,
+        sd.some_file(some_file.name),
+        formatter=TEXT_FORMATTER,
     )
+
+    assert changes == [
+        PlannedChange(
+            some_file,
+            [
+                LineChange(
+                    line_index=0,
+                    old_line=original_line_1,
+                    new_line=f"--{sd.SOME_OTHER_VERSION}--",
+                ),
+                LineChange(
+                    line_index=2,
+                    old_line=original_line_2,
+                    new_line=f"++{sd.SOME_OTHER_VERSION}++",
+                ),
+            ],
+        ),
+    ]
 
 
 def test_collect_planned_changes__custom_search_replace__planned_change_with_new_content(
@@ -53,13 +103,18 @@ def test_collect_planned_changes__custom_search_replace__planned_change_with_new
         formatter=TEXT_FORMATTER,
     )
 
-    assert len(changes) == 1
-    assert changes[0] == PlannedChange(
-        some_file,
-        line_index=0,
-        old_line=original_text,
-        new_line=f"--{sd.SOME_OTHER_MAJOR}.{sd.SOME_OTHER_MINOR}--",
-    )
+    assert changes == [
+        PlannedChange(
+            some_file,
+            [
+                LineChange(
+                    line_index=0,
+                    old_line=original_text,
+                    new_line=f"--{sd.SOME_OTHER_MAJOR}.{sd.SOME_OTHER_MINOR}--",
+                )
+            ],
+        )
+    ]
 
 
 def test_collect_planned_changes__match_later_in_file__planned_change_with_matching_line_index(
@@ -76,13 +131,18 @@ def test_collect_planned_changes__match_later_in_file__planned_change_with_match
         formatter=TEXT_FORMATTER,
     )
 
-    assert len(changes) == 1
-    assert changes[0] == PlannedChange(
-        some_file,
-        line_index=some_line_index,
-        old_line=original_text,
-        new_line=f"--{sd.SOME_OTHER_VERSION}--",
-    )
+    assert changes == [
+        PlannedChange(
+            some_file,
+            [
+                LineChange(
+                    line_index=some_line_index,
+                    old_line=original_text,
+                    new_line=f"--{sd.SOME_OTHER_VERSION}--",
+                )
+            ],
+        )
+    ]
 
 
 def test_collect_planned_changes__multiple_files__planned_change_for_both(
@@ -105,15 +165,23 @@ def test_collect_planned_changes__multiple_files__planned_change_for_both(
     assert sorted(changes, key=lambda x: x.file) == [
         PlannedChange(
             some_other_file,
-            line_index=0,
-            old_line=other_original_text,
-            new_line=f"++{sd.SOME_OTHER_VERSION}++",
+            [
+                LineChange(
+                    line_index=0,
+                    old_line=other_original_text,
+                    new_line=f"++{sd.SOME_OTHER_VERSION}++",
+                )
+            ],
         ),
         PlannedChange(
             some_file,
-            line_index=0,
-            old_line=original_text,
-            new_line=f"--{sd.SOME_OTHER_VERSION}--",
+            [
+                LineChange(
+                    line_index=0,
+                    old_line=original_text,
+                    new_line=f"--{sd.SOME_OTHER_VERSION}--",
+                )
+            ],
         ),
     ]
 
@@ -160,7 +228,14 @@ def test_perform_change__single_line_file__file_updated_proper_end(
 
     files.perform_change(
         PlannedChange(
-            some_file, line_index=0, old_line=original_text, new_line=replacement_text
+            some_file,
+            [
+                LineChange(
+                    line_index=0,
+                    old_line=original_text,
+                    new_line=replacement_text,
+                )
+            ],
         )
     )
 
@@ -191,7 +266,14 @@ def test_perform_change__multi_line_file__file_updated_proper_end(
 
     files.perform_change(
         PlannedChange(
-            some_file, line_index=1, old_line=original_text, new_line=replacement_text
+            some_file,
+            [
+                LineChange(
+                    line_index=1,
+                    old_line=original_text,
+                    new_line=replacement_text,
+                )
+            ],
         )
     )
 
@@ -208,9 +290,13 @@ def test_perform_change__invalid_file__error(tmp_path: Path):
         files.perform_change(
             PlannedChange(
                 some_non_existent_file,
-                line_index=0,
-                old_line=original_text,
-                new_line=replacement_text,
+                [
+                    LineChange(
+                        line_index=0,
+                        old_line=original_text,
+                        new_line=replacement_text,
+                    )
+                ],
             )
         )
 
@@ -226,8 +312,12 @@ def test_perform_change__invalid_line_index__error(tmp_path: Path):
         files.perform_change(
             PlannedChange(
                 some_file,
-                line_index=some_too_large_index,
-                old_line=original_text,
-                new_line=replacement_text,
+                [
+                    LineChange(
+                        line_index=some_too_large_index,
+                        old_line=original_text,
+                        new_line=replacement_text,
+                    )
+                ],
             )
         )
