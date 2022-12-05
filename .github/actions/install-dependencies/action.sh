@@ -10,13 +10,13 @@ if [[ "${INSTALL_REQUIREMENTS}" == "true"  ]]; then
 fi
 
 if [[ "${INSTALL_TEST_REQUIREMENTS}" == "true"  ]]; then
-  message="${message}- test requirements"
-  install_args="${install_args} -r requirements-test.txt\n"
+  message="${message}- test requirements\n"
+  install_args="${install_args} -r requirements-test.txt"
 fi
 
 if [[ "${INSTALL_DOCS_REQUIREMENTS}" == "true"  ]]; then
-  message="${message}- docs requirements"
-  install_args="${install_args} -r requirements-docs.txt\n"
+  message="${message}- docs requirements\n"
+  install_args="${install_args} -r requirements-docs.txt"
 fi
 
 if [[ "${install_args}" == "" ]]; then
