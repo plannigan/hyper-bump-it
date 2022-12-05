@@ -1,0 +1,26 @@
+site_name: hyper-bump-it Documentation
+site_url: https://plannigan.github.io/hyper-bump-it/
+repo_url: https://github.com/plannigan/hyper-bump-it
+repo_name: plannigan/hyper-bump-it
+edit_uri: edit/main/docs/
+docs_dir: docs
+nav:
+  - Overview: index.md
+  - Changelog: changelog.md
+theme: material
+markdown_extensions:
+  - markdown_include.include:
+      base_path: docs
+  - admonition
+  - codehilite
+  - footnotes
+  - pymdownx.highlight
+  - pymdownx.keys
+  - pymdownx.superfences
+plugins:
+  - search
+extra:
+  version:
+    provider: mike
+extra_css:
+  - css/mkdocstrings.css
