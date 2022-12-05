@@ -2,16 +2,21 @@ set -euo pipefail
 
 echo "Ensuring pip is up to date"
 python -m pip install --upgrade pip
+message="Will install:\n"
 install_args=""
 if [[ "${INSTALL_REQUIREMENTS}" == "true"  ]]; then
-  echo "Installing code requirements"
+  message="${message}- code requirements\n"
   install_args="${install_args} -r requirements.txt"
-  pip install -r requirements.txt
 fi
 
 if [[ "${INSTALL_TEST_REQUIREMENTS}" == "true"  ]]; then
-  echo "Installing test requirements"
-  install_args="${install_args} -r requirements-test.txt"
+  message="${message}- test requirements"
+  install_args="${install_args} -r requirements-test.txt\n"
+fi
+
+if [[ "${INSTALL_DOCS_REQUIREMENTS}" == "true"  ]]; then
+  message="${message}- docs requirements"
+  install_args="${install_args} -r requirements-docs.txt\n"
 fi
 
 if [[ "${install_args}" == "" ]]; then
@@ -19,6 +24,7 @@ if [[ "${install_args}" == "" ]]; then
   exit 1
 fi
 
+echo "${message}"
 # shellcheck disable=SC2086
 pip install ${install_args}
 
