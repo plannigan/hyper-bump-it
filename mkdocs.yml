@@ -6,8 +6,16 @@ edit_uri: edit/main/docs/
 docs_dir: docs
 nav:
   - Overview: index.md
+  - Getting Started: getting-started.md
+  - Usage Guide:
+    - Configuration: usage-guide/configuration.md
+    - Format Patterns: usage-guide/format-patterns.md
+    - Git Integration: usage-guide/git-integration.md
   - Changelog: changelog.md
-theme: material
+theme:
+  name: material
+  features:
+    - content.tabs.link
 markdown_extensions:
   - markdown_include.include:
       base_path: docs
@@ -17,6 +25,9 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.keys
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
 plugins:
   - search
 extra:
