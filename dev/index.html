@@ -269,6 +269,97 @@
   
   
     <li class="md-nav__item">
+      <a href="getting-started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Usage Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Usage Guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage Guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage-guide/configuration/" class="md-nav__link">
+        Configuration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage-guide/format-patterns/" class="md-nav__link">
+        Format Patterns
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage-guide/git-integration/" class="md-nav__link">
+        Git Integration
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="changelog/" class="md-nav__link">
         Changelog
       </a>
@@ -335,35 +426,43 @@
 <a href="http://mypy-lang.org/"><img alt="Checked with mypy" src="https://img.shields.io/badge/mypy-checked-blue" /></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-black.svg" /></a></p>
 <p>A version bumping tool.</p>
-<p><code>hyper-bump-it</code>'s features include:
-* Updating the version to a new fully specified value
-* Increasing the version base on a specific version part
-* Optional Git integrations:
-  * Commit changes
-  * Create a new branch or tag
-  * Push changes to a remote repository
-* Customizable search and replacement patterns
-* Safe by default, but can be overridden:
-  * Request confirmation before editing files
-  * Explicit configuration need to push changes
-  * Won't run if there are unstaged changes
-* TOML configuration file (can be part of <code>pyproject.toml</code>)</p>
+<p><code>hyper-bump-it</code>'s features include:</p>
+<ul>
+<li>Updating the version to a new fully specified value</li>
+<li>Increasing the version base on a specific version part</li>
+<li>Optional Git integrations:<ul>
+<li>Commit changes</li>
+<li>Create a new branch or tag</li>
+<li>Push changes to a remote repository</li>
+</ul>
+</li>
+<li>Customizable search and replacement patterns</li>
+<li>Safe by default, but can be overridden:<ul>
+<li>Request confirmation before editing files</li>
+<li>Explicit configuration need to push changes</li>
+<li>Won't run if there are unstaged changes</li>
+</ul>
+</li>
+<li>TOML configuration file (can be part of <code>pyproject.toml</code>)</li>
+</ul>
 <h2 id="examples">Examples</h2>
-<p>This first example
-* Updates to an explicit new version
-* Updates multiple files that had lines matching the search pattern
-* Commits those changes to a newly created branch</p>
+<p>This first example</p>
+<ul>
+<li>Updates to an explicit new version</li>
+<li>Updates multiple files that had lines matching the search pattern</li>
+<li>Commits those changes to a newly created branch</li>
+</ul>
 <div class="highlight"><pre><span></span><code>$ hyper-bump-it to 2.3.4
 Create branch bump_version_to_2.3.4
 Switch to branch bump_version_to_2.3.4
 Updating version in configuration file
 Update files
-───────────────────────────────────────── example/foo.txt ─────────────────────────────────────────
+────────────────────────────── example/foo.txt ──────────────────────────────
 2: - --1.2.3--abc
 2: + --2.3.4--abc
 6: - --1.2.3--edf
 6: + --2.3.4--edf
-───────────────────────────────────────── example/bar.txt ─────────────────────────────────────────
+────────────────────────────── example/bar.txt ──────────────────────────────
 2: - more --1.2.3-- text
 2: + more --2.3.4-- text
 Commit changes: Bump version: 1.2.3 → 2.3.4
@@ -378,19 +477,21 @@ Updating example/bar.txt
 Committing changes: Bump version: 1.2.3 → 2.3.4
 Switching to branch main
 </code></pre></div>
-<p>This second example
-* Updates to the next minor version
-* Updates multiple files that had lines matching the search pattern
-* Commits those changes, tags the new commit, and pushes the changes to the remote repository</p>
+<p>This second example</p>
+<ul>
+<li>Updates to the next minor version</li>
+<li>Updates multiple files that had lines matching the search pattern</li>
+<li>Commits those changes, tags the new commit, and pushes the changes to the remote repository</li>
+</ul>
 <div class="highlight"><pre><span></span><code>$ hyper-bump-it by minor
 Updating version in configuration file
 Update files
-───────────────────────────────────────── example/foo.txt ─────────────────────────────────────────
+────────────────────────────── example/foo.txt ──────────────────────────────
 2: - --1.2.3--abc
 2: + --1.3.0--abc
 6: - --1.2.3--edf
 6: + --1.3.0--edf
-───────────────────────────────────────── example/bar.txt ─────────────────────────────────────────
+────────────────────────────── example/bar.txt ──────────────────────────────
 2: - more --1.2.3-- text
 2: + more --1.3.0-- text
 Commit changes: Bump version: 1.2.3 → 1.3.0
@@ -415,6 +516,8 @@ Pushing commit with tag v1.3.0
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
         </div>
         
       </main>
@@ -426,13 +529,13 @@ Pushing commit with tag v1.3.0
       
       
         
-        <a href="changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: Changelog" rel="next">
+        <a href="getting-started/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Changelog
+              Getting Started
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -463,7 +566,7 @@ Pushing commit with tag v1.3.0
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["content.tabs.link"], "search": "assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="assets/javascripts/bundle.5a2dcb6a.min.js"></script>

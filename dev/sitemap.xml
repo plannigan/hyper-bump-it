@@ -10,4 +10,24 @@
          <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
+    <url>
+         <loc>https://plannigan.github.io/hyper-bump-it/dev/getting-started/</loc>
+         <lastmod>2022-12-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://plannigan.github.io/hyper-bump-it/dev/usage-guide/configuration/</loc>
+         <lastmod>2022-12-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://plannigan.github.io/hyper-bump-it/dev/usage-guide/format-patterns/</loc>
+         <lastmod>2022-12-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://plannigan.github.io/hyper-bump-it/dev/usage-guide/git-integration/</loc>
+         <lastmod>2022-12-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
 </urlset>
