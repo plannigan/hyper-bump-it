@@ -1,4 +1,4 @@
-# Hyper Bump It - 0.0.1
+# Hyper Bump It - 0.1.0
 
 [![CI pipeline status](https://github.com/plannigan/hyper-bump-it/actions/workflows/main.yml/badge.svg?branch=main)][ci]
 [![codecov](https://codecov.io/gh/plannigan/hyper-bump-it/branch/main/graph/badge.svg?token=V4DADJU0BI)][codecov]
