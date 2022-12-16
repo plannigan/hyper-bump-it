@@ -1,6 +1,8 @@
 # Hyper Bump It - 0.1.0
 
 [![CI pipeline status](https://github.com/plannigan/hyper-bump-it/actions/workflows/main.yml/badge.svg?branch=main)][ci]
+[![PyPI](https://img.shields.io/pypi/v/hyper-bump-it)][pypi]
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/hyper-bump-it)][pypi]
 [![codecov](https://codecov.io/gh/plannigan/hyper-bump-it/branch/main/graph/badge.svg?token=V4DADJU0BI)][codecov]
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue)][mypy-home]
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black.svg)][black-home]
@@ -89,6 +91,7 @@ Pushing commit with tag v1.3.0
 ```
 
 [ci]: https://github.com/plannigan/hyper-bump-it/actions
+[pypi]: https://pypi.org/project/hyper-bump-it/
 [codecov]: https://codecov.io/gh/plannigan/hyper-bump-it
 [mypy-home]: http://mypy-lang.org/
 [black-home]: https://github.com/psf/black
