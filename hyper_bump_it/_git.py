@@ -12,6 +12,7 @@ from hyper_bump_it._error import (
     AlreadyExistsError,
     DetachedRepositoryError,
     DirtyRepositoryError,
+    EmptyRepositoryError,
     MissingRemoteError,
     NoRepositoryError,
 )
@@ -59,12 +60,23 @@ def get_vetted_repo(project_root: Path, operation_info: GitOperationsInfo) -> Re
     except InvalidGitRepositoryError:
         raise NoRepositoryError(project_root)
 
+    if len(repo.heads) == 0:
+        raise EmptyRepositoryError(project_root)
+
     if repo.is_dirty():
         raise DirtyRepositoryError(project_root)
 
     if repo.head.is_detached:
         raise DetachedRepositoryError(project_root)
 
+    _validate_repo_for_operations(repo, operation_info, project_root)
+
+    return repo
+
+
+def _validate_repo_for_operations(
+    repo: Repo, operation_info: GitOperationsInfo, project_root: Path
+) -> None:
     if operation_info.actions.any_push and operation_info.remote not in repo.remotes:
         raise MissingRemoteError(operation_info.remote, project_root)
 
@@ -73,13 +85,12 @@ def get_vetted_repo(project_root: Path, operation_info: GitOperationsInfo) -> Re
         and operation_info.branch_name in repo.heads
     ):
         raise AlreadyExistsError("branch", operation_info.branch_name, project_root)
+
     if (
         operation_info.actions.tag.should_create
         and operation_info.tag_name in repo.tags
     ):
         raise AlreadyExistsError("tag", operation_info.tag_name, project_root)
-
-    return repo
 
 
 def create_branch(repo: Repo, branch_name: str) -> None:

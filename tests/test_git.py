@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from git import Repo
 
 from hyper_bump_it import _git as git
 from hyper_bump_it._config import GitAction, GitActions
@@ -8,6 +9,7 @@ from hyper_bump_it._error import (
     AlreadyExistsError,
     DetachedRepositoryError,
     DirtyRepositoryError,
+    EmptyRepositoryError,
     MissingRemoteError,
     NoRepositoryError,
 )
@@ -72,6 +74,21 @@ def test_get_vetted_repo__existing_branch__error(tmp_path: Path):
     with pytest.raises(AlreadyExistsError, match="branch"):
         git.get_vetted_repo(
             repo.path,
+            sd.some_git_operations_info(
+                actions=sd.some_git_actions(
+                    commit=GitAction.Create, branch=GitAction.Create
+                )
+            ),
+        )
+
+
+def test_get_vetted_repo__no_commits_create_branch_plan__error(tmp_path: Path):
+    repo = Repo.init(tmp_path)
+    print(repo.heads)
+
+    with pytest.raises(EmptyRepositoryError):
+        git.get_vetted_repo(
+            tmp_path,
             sd.some_git_operations_info(
                 actions=sd.some_git_actions(
                     commit=GitAction.Create, branch=GitAction.Create

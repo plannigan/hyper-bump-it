@@ -194,6 +194,15 @@ class NoRepositoryError(GitError):
         return f"The project root '{_rich_path(self.project_root)}' is not a git repository"
 
 
+class EmptyRepositoryError(GitError):
+    def __init__(self, project_root: Path) -> None:
+        self.project_root = project_root
+        super().__init__(f"The repository at '{self.project_root}' has no commits")
+
+    def __rich__(self) -> str:
+        return f"The repository at '{_rich_path(self.project_root)}' has no commits"
+
+
 class DirtyRepositoryError(GitError):
     def __init__(self, project_root: Path) -> None:
         self.project_root = project_root

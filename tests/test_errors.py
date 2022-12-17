@@ -35,6 +35,7 @@ SOME_SUB_TABLES = ("some-name", "some-sub-name")
             Path(sd.SOME_DIRECTORY_NAME), sd.SOME_SEARCH_FORMAT_PATTERN
         ),
         error.NoRepositoryError(Path(sd.SOME_DIRECTORY_NAME)),
+        error.EmptyRepositoryError(Path(sd.SOME_DIRECTORY_NAME)),
         error.DirtyRepositoryError(Path(sd.SOME_DIRECTORY_NAME)),
         error.DetachedRepositoryError(Path(sd.SOME_DIRECTORY_NAME)),
         error.MissingRemoteError(sd.SOME_REMOTE, Path(sd.SOME_DIRECTORY_NAME)),
