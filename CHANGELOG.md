@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+
+* Crash when executing against a repository without any commits. A clear error message is displayed
+    instead.
+
 ## [0.1.0] - 2022-12-16
 
 First functional release
