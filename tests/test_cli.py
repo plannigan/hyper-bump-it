@@ -1,10 +1,12 @@
 import re
+from io import StringIO
 from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner, Result
 
 from hyper_bump_it import _cli as cli
+from hyper_bump_it._error import BumpItError
 from tests import sample_data as sd
 
 runner = CliRunner()
@@ -35,6 +37,8 @@ CLI_OVERRIDE_ARGS_WITHOUT_DRY_RUN: list[str] = [
 CLI_OVERRIDE_ARGS: list[str] = CLI_OVERRIDE_ARGS_WITHOUT_DRY_RUN + [
     "--dry-run",
 ]
+
+SOME_ERROR_MESSAGE = "it went bang"
 
 
 @pytest.mark.parametrize(
@@ -320,6 +324,68 @@ def test_to__valid__app_config_passed_by_do_bump(mocker):
 
     _assert_success(result)
     mock_do_bump.assert_called_once_with(app_config)
+
+
+def test_to__hyper_bump_it_error__rich_message(mocker, capture_rich: StringIO):
+    mocker.patch("hyper_bump_it._cli.config_for_bump_to")
+    mocker.patch(
+        "hyper_bump_it._core.do_bump", side_effect=BumpItError(SOME_ERROR_MESSAGE)
+    )
+
+    result = runner.invoke(
+        cli.app,
+        ["to", sd.SOME_OTHER_VERSION_STRING],
+    )
+
+    _assert_failure(result)
+    assert SOME_ERROR_MESSAGE in capture_rich.getvalue()
+
+
+def test_to__other_error__no_special_handling(mocker, capture_rich: StringIO):
+    mocker.patch("hyper_bump_it._cli.config_for_bump_to")
+    mocker.patch(
+        "hyper_bump_it._core.do_bump", side_effect=Exception(SOME_ERROR_MESSAGE)
+    )
+
+    result = runner.invoke(
+        cli.app,
+        ["to", sd.SOME_OTHER_VERSION_STRING],
+    )
+
+    _assert_failure(result)
+    assert SOME_ERROR_MESSAGE not in capture_rich.getvalue()
+    assert SOME_ERROR_MESSAGE in str(result.exception)
+
+
+def test_by__hyper_bump_it_error__rich_message(mocker, capture_rich: StringIO):
+    mocker.patch("hyper_bump_it._cli.config_for_bump_by")
+    mocker.patch(
+        "hyper_bump_it._core.do_bump", side_effect=BumpItError(SOME_ERROR_MESSAGE)
+    )
+
+    result = runner.invoke(
+        cli.app,
+        ["by", sd.SOME_BUMP_PART.value],
+    )
+
+    _assert_failure(result)
+    assert SOME_ERROR_MESSAGE in capture_rich.getvalue()
+
+
+def test_by__other_error__no_special_handling(mocker, capture_rich: StringIO):
+    mocker.patch("hyper_bump_it._cli.config_for_bump_by")
+    mocker.patch(
+        "hyper_bump_it._core.do_bump", side_effect=Exception(SOME_ERROR_MESSAGE)
+    )
+
+    result = runner.invoke(
+        cli.app,
+        ["by", sd.SOME_BUMP_PART.value],
+    )
+
+    _assert_failure(result)
+    assert SOME_ERROR_MESSAGE not in capture_rich.getvalue()
+    assert SOME_ERROR_MESSAGE in str(result.exception)
 
 
 def _assert_success(result: Result) -> None:
