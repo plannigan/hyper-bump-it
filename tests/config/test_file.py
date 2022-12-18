@@ -271,7 +271,19 @@ def test_config_file__current_version_already_parsed__valid():
         ),
         (
             "git is an object with invalid fields",
-            {"git": SOME_INVALID_OBJECT},
+            {
+                "git": SOME_INVALID_OBJECT,
+                "current_version": sd.SOME_VERSION_STRING,
+                "files": [{"file_glob": sd.SOME_FILE_GLOB}],
+            },
+        ),
+        (
+            "show_confirm_prompt not bool",
+            {
+                "current_version": sd.SOME_VERSION_STRING,
+                "files": [{"file_glob": sd.SOME_FILE_GLOB}],
+                "show_confirm_prompt": SOME_NON_BOOL,
+            },
         ),
     ],
 )

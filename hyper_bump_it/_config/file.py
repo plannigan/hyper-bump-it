@@ -108,6 +108,7 @@ class ValidVersion(Version):  # type: ignore[misc]
 class ConfigFile(HyperBaseMode):
     files: list[File] = Field(..., min_items=1)
     current_version: Optional[ValidVersion] = None
+    show_confirm_prompt: StrictBool = True
     git: Git = Git()
 
     @root_validator(skip_on_failure=True)

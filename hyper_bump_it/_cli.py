@@ -40,7 +40,18 @@ PROJECT_ROOT = typer.Option(
 )
 DRY_RUN = typer.Option(
     False,
-    help="Only display the operations that would be performed",
+    "--no",
+    "-n",
+    "--dry-run/--no-dry-run",
+    help="Answer no to the confirmation prompt. "
+    "Only displaying the operations that would be performed",
+    show_default=False,
+)
+SKIP_CONFIRM_PROMPT = typer.Option(
+    None,
+    "--yes/--interactive",
+    "-y",
+    help="Answer yes to the confirmation prompt and run non-interactively",
     show_default=False,
 )
 CURRENT_VERSION = typer.Option(
@@ -101,6 +112,7 @@ def to(
     config_file: Optional[Path] = CONFIG_FILE,
     project_root: Path = PROJECT_ROOT,
     dry_run: bool = DRY_RUN,
+    skip_confirm_prompt: Optional[bool] = SKIP_CONFIRM_PROMPT,
     current_version: Optional[str] = CURRENT_VERSION,
     commit: Optional[GitAction] = COMMIT,
     branch: Optional[GitAction] = BRANCH,
@@ -123,6 +135,7 @@ def to(
                 config_file=config_file,
                 project_root=project_root,
                 dry_run=dry_run,
+                skip_confirm_prompt=skip_confirm_prompt,
                 current_version=current_version_parsed,
                 commit=commit,
                 branch=branch,
@@ -145,6 +158,7 @@ def by(
     config_file: Optional[Path] = CONFIG_FILE,
     project_root: Path = PROJECT_ROOT,
     dry_run: bool = DRY_RUN,
+    skip_confirm_prompt: Optional[bool] = SKIP_CONFIRM_PROMPT,
     current_version: Optional[str] = CURRENT_VERSION,
     commit: Optional[GitAction] = COMMIT,
     branch: Optional[GitAction] = BRANCH,
@@ -166,6 +180,7 @@ def by(
                 config_file=config_file,
                 project_root=project_root,
                 dry_run=dry_run,
+                skip_confirm_prompt=skip_confirm_prompt,
                 current_version=current_version_parsed,
                 commit=commit,
                 branch=branch,
