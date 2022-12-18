@@ -154,17 +154,25 @@ def some_git_operations_info(
     )
 
 
-def some_minimal_config_text(table_root: str, version: Optional[str]) -> str:
+def some_minimal_config_text(
+    table_root: str, version: Optional[str], show_confirm_prompt: Optional[bool] = None
+) -> str:
     if version is None:
         current_version = ""
         keystone = "keystone = true"
     else:
         current_version = f'current_version = "{version}"'
         keystone = ""
+    show_confirm_prompt_text = (
+        ""
+        if show_confirm_prompt is None
+        else f"show_confirm_prompt = {str(show_confirm_prompt).lower()}"
+    )
     return dedent(
         f"""\
         [{table_root}]
         {current_version}
+        {show_confirm_prompt_text}
         [[{table_root}.files]]
         file_glob = "{SOME_FILE_GLOB}"
         {keystone}
@@ -177,12 +185,14 @@ def no_config_override_bump_to_args(
     new_version: Version = SOME_OTHER_VERSION,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    skip_confirm_prompt: Optional[bool] = None,
 ) -> BumpToArgs:
     return BumpToArgs(
         new_version=new_version,
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        skip_confirm_prompt=skip_confirm_prompt,
         current_version=None,
         commit=None,
         branch=None,
@@ -199,6 +209,7 @@ def some_bump_to_args(
     new_version: Version = SOME_OTHER_VERSION,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    skip_confirm_prompt: Optional[bool] = None,
     current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
     commit: Optional[GitAction] = SOME_COMMIT_ACTION,
     branch: Optional[GitAction] = SOME_BRANCH_ACTION,
@@ -213,6 +224,7 @@ def some_bump_to_args(
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        skip_confirm_prompt=skip_confirm_prompt,
         current_version=current_version,
         commit=commit,
         branch=branch,
@@ -229,12 +241,14 @@ def no_config_override_bump_by_args(
     part_to_bump: BumpPart = SOME_BUMP_PART,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    skip_confirm_prompt: Optional[bool] = None,
 ) -> BumpByArgs:
     return BumpByArgs(
         part_to_bump=part_to_bump,
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        skip_confirm_prompt=skip_confirm_prompt,
         current_version=None,
         commit=None,
         branch=None,
@@ -251,6 +265,7 @@ def some_bump_by_args(
     part_to_bump: BumpPart = SOME_BUMP_PART,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    skip_confirm_prompt: Optional[bool] = None,
     current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
     commit: Optional[GitAction] = SOME_COMMIT_ACTION,
     branch: Optional[GitAction] = SOME_BRANCH_ACTION,
@@ -265,6 +280,7 @@ def some_bump_by_args(
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        skip_confirm_prompt=skip_confirm_prompt,
         current_version=current_version,
         commit=commit,
         branch=branch,
@@ -299,6 +315,7 @@ def some_application_config(
     files: Optional[list[File]] = None,
     git: Git = some_git(),
     dry_run: bool = False,
+    show_confirm_prompt: bool = True,
     config_version_updater: Optional[ConfigVersionUpdater] = AnyConfigVersionUpdater(),
 ) -> Config:
     if files is None:
@@ -310,6 +327,7 @@ def some_application_config(
         files=files,
         git=git,
         dry_run=dry_run,
+        show_confirm_prompt=show_confirm_prompt,
         config_version_updater=config_version_updater,
     )
 
