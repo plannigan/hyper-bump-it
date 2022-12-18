@@ -57,6 +57,7 @@ class Config:
     files: list[File]
     git: Git
     dry_run: bool
+    show_confirm_prompt: bool
     config_version_updater: Optional[file.ConfigVersionUpdater]
 
 
@@ -88,6 +89,9 @@ def config_for_bump_to(args: BumpToArgs) -> Config:
         files=_convert_files(file_config.files),
         git=_convert_git(args, file_config.git),
         dry_run=args.dry_run,
+        show_confirm_prompt=_show_confirm_prompt(
+            file_config.show_confirm_prompt, args.skip_confirm_prompt
+        ),
         config_version_updater=version_updater,
     )
 
@@ -114,6 +118,9 @@ def config_for_bump_by(args: BumpByArgs) -> Config:
         files=_convert_files(file_config.files),
         git=_convert_git(args, file_config.git),
         dry_run=args.dry_run,
+        show_confirm_prompt=_show_confirm_prompt(
+            file_config.show_confirm_prompt, args.skip_confirm_prompt
+        ),
         config_version_updater=version_updater,
     )
 
@@ -161,4 +168,14 @@ def _convert_git(args: Union[BumpToArgs, BumpByArgs], git: file.Git) -> Git:
             branch=args.branch or git.actions.branch,
             tag=args.tag or git.actions.tag,
         ),
+    )
+
+
+def _show_confirm_prompt(
+    file_show_confirm: bool, cli_skip_confirm_prompt: Optional[bool]
+) -> bool:
+    return (
+        file_show_confirm
+        if cli_skip_confirm_prompt is None
+        else not cli_skip_confirm_prompt
     )

@@ -39,6 +39,40 @@ reasonable defaults, so the following is a functional configuration.
     file_glob = "*.txt"
     ```
 
+### Top Level Table
+
+There are a few fields that can be specified as part of the top level table.
+
+The most common is the `current_version` field, which contains the current version. How this is
+used and the alternative option are discussed in a [latter section][current-version-keystone].
+
+The other optional field is `show_confirm_prompt`. If this field is not specified (default) or set
+to `true`, `hyper-bump-it` will prompt the user to confirm the changes described in the execution
+plan before performing the actions. When set to `false`, the prompt will **not** be displayed.
+Instead, the actions will be immediately performed.
+
+The following is an example configuration which disables the confirmation prompt.
+
+=== "hyper-bump-it.toml"
+    ```toml
+    [hyper-bump-it]
+    current_version = "1.2.3"
+    show_confirm_prompt = false
+
+    [[hyper-bump-it.files]]
+    file_glob = "*.txt"
+    ```
+
+=== "pyproject.toml"
+    ```toml
+    [tool.hyper-bump-it]
+    current_version = "1.2.3"
+    show_confirm_prompt = false
+
+    [[tool.hyper-bump-it.files]]
+    file_glob = "*.txt"
+    ```
+
 ### Files
 
 The most important part of the configuration is the list of file definitions. This is how
@@ -61,7 +95,7 @@ If `search_format_pattern` is not specified, the default value of `"{version}"` 
 `replace_format_pattern` is not specified, the value of `search_format_pattern` is used.
 
 There is an additional optional field named `keystone`, this is discussed in a
-[latter section][keystone].
+[latter section][current-version-keystone].
 
 The following is an example configuration which has two file definitions that both customize the
 `search_format_pattern`.
@@ -210,7 +244,7 @@ With this functionality enabled, there are a few restrictions:
 [toml]: https://toml.io/
 [glob]: https://docs.python.org/3/library/glob.html
 [format-patterns]: format-patterns.md
-[keystone]: #current-version
+[current-version-keystone]: #current-version
 [git-integration]: git-integration.md
 [git-actions]: git-integration.md#actions
 [supported-keys]: format-patterns.md#supported-keys

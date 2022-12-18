@@ -35,12 +35,13 @@ def do_bump(config: Config) -> None:
     if config.dry_run:
         return
 
-    response = prompt.Confirm.ask(
-        "Do you want to perform these actions?", default=False
-    )
+    if config.show_confirm_prompt:
+        response = prompt.Confirm.ask(
+            "Do you want to perform these actions?", default=False
+        )
 
-    if not response:
-        return
+        if not response:
+            return
 
     plan.execute_plan()
 

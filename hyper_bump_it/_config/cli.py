@@ -20,6 +20,7 @@ class BumpToArgs:
     config_file: Optional[Path]
     project_root: Path
     dry_run: bool
+    skip_confirm_prompt: Optional[bool]
     current_version: Optional[Version]
     commit: Optional[GitAction]
     branch: Optional[GitAction]
@@ -36,6 +37,7 @@ class BumpByArgs:
     config_file: Optional[Path]
     project_root: Path
     dry_run: bool
+    skip_confirm_prompt: Optional[bool]
     current_version: Optional[Version]
     commit: Optional[GitAction]
     branch: Optional[GitAction]
