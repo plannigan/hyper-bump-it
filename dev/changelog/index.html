@@ -369,12 +369,25 @@
     [Unreleased]
   </a>
   
+    <nav class="md-nav" aria-label="[Unreleased]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    Added
+  </a>
+  
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
     Fixed
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -431,12 +444,25 @@
     [Unreleased]
   </a>
   
+    <nav class="md-nav" aria-label="[Unreleased]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    Added
+  </a>
+  
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
     Fixed
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -479,7 +505,18 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="unreleased">[Unreleased]</h2>
-<h2 id="fixed">Fixed</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Controls related to the interactive confirmation prompt<ul>
+<li><code>show_confirm_prompt</code> in configuration file can explicitly enable (default) or disable the
+    prompt.</li>
+<li><code>-y</code> &amp; <code>--yes</code> as command line options to disable the prompt.</li>
+<li><code>--interactive</code> as command line options to explicitly enable the prompt.</li>
+<li><code>-n</code> &amp; <code>--no</code> command line options as aliases for <code>--dry-run</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
 <ul>
 <li>Crash when executing against a repository without any commits. A clear error message is displayed
     instead.</li>
