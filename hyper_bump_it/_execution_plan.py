@@ -187,7 +187,7 @@ class PushChangesAction:
 
     def _description(self, intent: bool) -> str:
         action = "Push" if intent else "Pushing"
-        message = f"{action} commit"
+        message = f"{action} commit to {self._operation_info.remote}"
         if self._operation_info.actions.branch == GitAction.CreateAndPush:
             message = f"{message} on branch {self._operation_info.branch_name}"
         if self._operation_info.actions.tag == GitAction.CreateAndPush:
