@@ -410,7 +410,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.Skip,
                 tag=GitAction.Skip,
             ),
-            "Push commit",
+            f"Push commit to {sd.SOME_REMOTE}",
         ),
         (
             # create tag, but only push commit
@@ -419,7 +419,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.Skip,
                 tag=GitAction.Create,
             ),
-            "Push commit",
+            f"Push commit to {sd.SOME_REMOTE}",
         ),
         (
             sd.some_git_actions(
@@ -427,7 +427,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.CreateAndPush,
                 tag=GitAction.Skip,
             ),
-            f"Push commit on branch {sd.SOME_BRANCH}",
+            f"Push commit to {sd.SOME_REMOTE} on branch {sd.SOME_BRANCH}",
         ),
         (
             sd.some_git_actions(
@@ -435,7 +435,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.Skip,
                 tag=GitAction.CreateAndPush,
             ),
-            f"Push commit with tag {sd.SOME_TAG}",
+            f"Push commit to {sd.SOME_REMOTE} with tag {sd.SOME_TAG}",
         ),
         (
             sd.some_git_actions(
@@ -443,7 +443,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.CreateAndPush,
                 tag=GitAction.CreateAndPush,
             ),
-            f"Push commit on branch {sd.SOME_BRANCH} with tag {sd.SOME_TAG}",
+            f"Push commit to {sd.SOME_REMOTE} on branch {sd.SOME_BRANCH} with tag {sd.SOME_TAG}",
         ),
     ],
 )
