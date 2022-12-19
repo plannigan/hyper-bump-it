@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Crash when executing against a repository without any commits. A clear error message is displayed
     instead.
+* Unclear text displayed for proposed execution plan description when compared to text displayed
+    when executing the plan.
 
 ## [0.1.0] - 2022-12-16
 
