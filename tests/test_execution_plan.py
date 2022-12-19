@@ -10,14 +10,17 @@ from hyper_bump_it import _execution_plan as execution_plan
 from hyper_bump_it._config import GitAction
 from tests import sample_data as sd
 
-SOME_DESCRIPTION = "test description"
+SOME_EXECUTION_DESCRIPTION = "test description"
+SOME_INTENT_DESCRIPTION = "test intent description"
 
 
 def test_action_group_call__call_sub_actions(mocker):
     some_action = mocker.Mock()
     some_other_action = mocker.Mock()
     action_group = execution_plan.ActionGroup(
-        SOME_DESCRIPTION, [some_action, some_other_action]
+        intent_description=SOME_INTENT_DESCRIPTION,
+        execution_description=SOME_EXECUTION_DESCRIPTION,
+        actions=[some_action, some_other_action],
     )
 
     action_group()
@@ -43,7 +46,9 @@ def test_action_group_call__call_sub_actions_in_order(mocker):
     some_other_action = mocker.Mock(side_effect=_some_other_action)
 
     action_group = execution_plan.ActionGroup(
-        SOME_DESCRIPTION, [some_action, some_other_action]
+        intent_description=SOME_INTENT_DESCRIPTION,
+        execution_description=SOME_EXECUTION_DESCRIPTION,
+        actions=[some_action, some_other_action],
     )
 
     action_group()
@@ -53,24 +58,30 @@ def test_action_group_call__call_sub_actions_in_order(mocker):
 
 def test_action_group_call__description_displayed(capture_rich: StringIO, mocker):
     some_action = mocker.Mock()
-    action_group = execution_plan.ActionGroup(SOME_DESCRIPTION, [some_action])
+    action_group = execution_plan.ActionGroup(
+        intent_description=SOME_INTENT_DESCRIPTION,
+        execution_description=SOME_EXECUTION_DESCRIPTION,
+        actions=[some_action],
+    )
 
     action_group()
 
-    assert SOME_DESCRIPTION in capture_rich.getvalue()
+    assert SOME_EXECUTION_DESCRIPTION in capture_rich.getvalue()
 
 
 def test_action_group_display__call_sub_actions(mocker):
     some_action = mocker.Mock()
     some_other_action = mocker.Mock()
     action_group = execution_plan.ActionGroup(
-        SOME_DESCRIPTION, [some_action, some_other_action]
+        intent_description=SOME_INTENT_DESCRIPTION,
+        execution_description=SOME_EXECUTION_DESCRIPTION,
+        actions=[some_action, some_other_action],
     )
 
-    action_group.display()
+    action_group.display_intent()
 
-    some_action.display.assert_called_once_with()
-    some_other_action.display.assert_called_once_with()
+    some_action.display_intent.assert_called_once_with()
+    some_other_action.display_intent.assert_called_once_with()
 
 
 def test_action_group_display__call_sub_actions_in_order(mocker):
@@ -82,31 +93,37 @@ def test_action_group_display__call_sub_actions_in_order(mocker):
         some_action_call_time = datetime.now()
 
     some_action = mocker.Mock()
-    some_action.display.side_effect = _some_action
+    some_action.display_intent.side_effect = _some_action
 
     def _some_other_action():
         nonlocal some_other_action_call_time
         some_other_action_call_time = datetime.now()
 
     some_other_action = mocker.Mock()
-    some_other_action.display.side_effect = _some_other_action
+    some_other_action.display_intent.side_effect = _some_other_action
 
     action_group = execution_plan.ActionGroup(
-        SOME_DESCRIPTION, [some_action, some_other_action]
+        intent_description=SOME_INTENT_DESCRIPTION,
+        execution_description=SOME_EXECUTION_DESCRIPTION,
+        actions=[some_action, some_other_action],
     )
 
-    action_group.display()
+    action_group.display_intent()
 
     assert some_other_action_call_time > some_action_call_time
 
 
 def test_action_group_display__description_displayed(capture_rich: StringIO, mocker):
     some_action = mocker.Mock()
-    action_group = execution_plan.ActionGroup(SOME_DESCRIPTION, [some_action])
+    action_group = execution_plan.ActionGroup(
+        intent_description=SOME_INTENT_DESCRIPTION,
+        execution_description=SOME_EXECUTION_DESCRIPTION,
+        actions=[some_action],
+    )
 
-    action_group.display()
+    action_group.display_intent()
 
-    assert SOME_DESCRIPTION in capture_rich.getvalue()
+    assert SOME_INTENT_DESCRIPTION in capture_rich.getvalue()
 
 
 def test_execution_plan__add_action__execute_calls_action(mocker):
@@ -162,7 +179,7 @@ def test_execution_plan__add_action__display_calls_action(mocker):
 
     plan.display_plan()
 
-    some_action.display.assert_called_once_with()
+    some_action.display_intent.assert_called_once_with()
 
 
 def test_execution_plan__add_actions__display_calls_actions(mocker):
@@ -173,8 +190,8 @@ def test_execution_plan__add_actions__display_calls_actions(mocker):
 
     plan.display_plan()
 
-    some_action.display.assert_called_once_with()
-    some_other_action.display.assert_called_once_with()
+    some_action.display_intent.assert_called_once_with()
+    some_other_action.display_intent.assert_called_once_with()
 
 
 def test_execution_plan__add_actions__display_actions_in_order(mocker):
@@ -186,14 +203,14 @@ def test_execution_plan__add_actions__display_actions_in_order(mocker):
         some_action_call_time = datetime.now()
 
     some_action = mocker.Mock()
-    some_action.display.side_effect = _some_action
+    some_action.display_intent.side_effect = _some_action
 
     def _some_other_action():
         nonlocal some_other_action_call_time
         some_other_action_call_time = datetime.now()
 
     some_other_action = mocker.Mock()
-    some_other_action.display.side_effect = _some_other_action
+    some_other_action.display_intent.side_effect = _some_other_action
 
     plan = execution_plan.ExecutionPlan()
     plan.add_actions([some_action, some_other_action])
@@ -218,9 +235,9 @@ def test_update_config_action__display__message_displayed(
     mock_updater = mocker.Mock()
     action = execution_plan.update_config_action(mock_updater, sd.SOME_VERSION)
 
-    action.display()
+    action.display_intent()
 
-    assert "Updating version" in capture_rich.getvalue()
+    assert "Update version" in capture_rich.getvalue()
 
 
 def test_update_file_actions__call__updater_called_with_version(mocker):
@@ -236,7 +253,7 @@ def test_update_file_actions__call__updater_called_with_version(mocker):
 def test_update_file_actions__display__message_displayed(capture_rich: StringIO):
     action = execution_plan.update_file_actions([sd.some_planned_change()])
 
-    action.display()
+    action.display_intent()
 
     output = capture_rich.getvalue()
     assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
@@ -264,7 +281,7 @@ def test_update_file_actions__display_multi_line_change__both_displayed(
         ]
     )
 
-    action.display()
+    action.display_intent()
 
     output = capture_rich.getvalue()
     assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
@@ -284,7 +301,7 @@ def test_update_file_actions__multi_display__each_name_appears(capture_rich: Str
         ]
     )
 
-    action.display()
+    action.display_intent()
 
     output = capture_rich.getvalue()
     assert sd.SOME_GLOB_MATCHED_FILE_NAME in output
@@ -307,7 +324,7 @@ def test_create_branch_action__display__show_branch_name(
     mock_repo = mocker.Mock()
     action = execution_plan.CreateBranchAction(mock_repo, sd.SOME_BRANCH)
 
-    action.display()
+    action.display_intent()
 
     assert sd.SOME_BRANCH in capture_rich.getvalue()
 
@@ -328,7 +345,7 @@ def test_switch_branch_action__display__show_branch_name(
     mock_repo = mocker.Mock()
     action = execution_plan.SwitchBranchAction(mock_repo, sd.SOME_BRANCH)
 
-    action.display()
+    action.display_intent()
 
     assert sd.SOME_BRANCH in capture_rich.getvalue()
 
@@ -349,7 +366,7 @@ def test_commit_changes_action__display__show_commit_message(
     mock_repo = mocker.Mock()
     action = execution_plan.CommitChangesAction(mock_repo, sd.SOME_COMMIT_MESSAGE)
 
-    action.display()
+    action.display_intent()
 
     assert sd.SOME_COMMIT_MESSAGE in capture_rich.getvalue()
 
@@ -368,7 +385,7 @@ def test_create_tag_action__display__show_tag_name(capture_rich: StringIO, mocke
     mock_repo = mocker.Mock()
     action = execution_plan.CreateTagAction(mock_repo, sd.SOME_TAG)
 
-    action.display()
+    action.display_intent()
 
     assert sd.SOME_TAG in capture_rich.getvalue()
 
@@ -393,7 +410,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.Skip,
                 tag=GitAction.Skip,
             ),
-            "Pushing commit",
+            "Push commit",
         ),
         (
             # create tag, but only push commit
@@ -402,7 +419,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.Skip,
                 tag=GitAction.Create,
             ),
-            "Pushing commit",
+            "Push commit",
         ),
         (
             sd.some_git_actions(
@@ -410,7 +427,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.CreateAndPush,
                 tag=GitAction.Skip,
             ),
-            f"Pushing commit on branch {sd.SOME_BRANCH}",
+            f"Push commit on branch {sd.SOME_BRANCH}",
         ),
         (
             sd.some_git_actions(
@@ -418,7 +435,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.Skip,
                 tag=GitAction.CreateAndPush,
             ),
-            f"Pushing commit with tag {sd.SOME_TAG}",
+            f"Push commit with tag {sd.SOME_TAG}",
         ),
         (
             sd.some_git_actions(
@@ -426,7 +443,7 @@ def test_push_changes_action__call__switch_to_called(mocker):
                 branch=GitAction.CreateAndPush,
                 tag=GitAction.CreateAndPush,
             ),
-            f"Pushing commit on branch {sd.SOME_BRANCH} with tag {sd.SOME_TAG}",
+            f"Push commit on branch {sd.SOME_BRANCH} with tag {sd.SOME_TAG}",
         ),
     ],
 )
@@ -438,7 +455,7 @@ def test_push_changes__display__show_description(
         mock_repo, sd.some_git_operations_info(actions=actions)
     )
 
-    action.display()
+    action.display_intent()
 
     assert expected_description in capture_rich.getvalue()
 

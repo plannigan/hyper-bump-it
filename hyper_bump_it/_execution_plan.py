@@ -4,7 +4,6 @@ Structured plan of what operations will be performed.
 The plan is created before performing any operations so that the user can confirm the changes
 to be made before files are edited.
 """
-from functools import cached_property
 from typing import Optional, Protocol, TypeVar
 
 from rich import print
@@ -22,9 +21,9 @@ class Action(Protocol):
         Perform the operation represented by this action.
         """
 
-    def display(self) -> None:
+    def display_intent(self) -> None:
         """
-        Display a description the operation represented by this action.
+        Display a description of the operation that would occur when this action is executed.
         """
 
 
@@ -32,8 +31,21 @@ TAction = TypeVar("TAction", bound=Action)
 
 
 class ActionGroup:
-    def __init__(self, description: str, actions: list[TAction]) -> None:
-        self._description = description
+    def __init__(
+        self,
+        intent_description: str,
+        execution_description: str,
+        actions: list[TAction],
+    ) -> None:
+        """
+        Initialize an instance.
+
+        :param intent_description: Text displayed when displaying the intended plan.
+        :param execution_description: Text displayed before executing the actions.
+        :param actions: Sub-actions contained by this group.
+        """
+        self._intent_description = intent_description
+        self._description = execution_description
         self._actions = actions
 
     def __call__(self) -> None:
@@ -41,10 +53,10 @@ class ActionGroup:
         for action in self._actions:
             action()
 
-    def display(self) -> None:
-        print(self._description)
+    def display_intent(self) -> None:
+        print(self._intent_description)
         for action in self._actions:
-            action.display()
+            action.display_intent()
 
 
 class ExecutionPlan:
@@ -62,8 +74,9 @@ class ExecutionPlan:
             action()
 
     def display_plan(self) -> None:
+        print("[bold]Execution Plan[/]:")
         for action in self._actions:
-            action.display()
+            action.display_intent()
 
 
 class UpdateConfiAction:
@@ -75,8 +88,8 @@ class UpdateConfiAction:
         print("Updating version in configuration file")
         self._updater(self._new_version)
 
-    def display(self) -> None:
-        print("Updating version in configuration file")
+    def display_intent(self) -> None:
+        print("Update version in configuration file")
 
 
 def update_config_action(updater: ConfigVersionUpdater, new_version: Version) -> Action:
@@ -91,7 +104,7 @@ class ChangeFileAction:
         print(f"Updating {self._change.file}")
         files.perform_change(self._change)
 
-    def display(self) -> None:
+    def display_intent(self) -> None:
         print(Rule(title=str(self._change.file)))
         for line_change in self._change.line_changes:
             print(f"{line_change.line_index + 1}: [red]- {line_change.old_line}")
@@ -102,7 +115,9 @@ class ChangeFileAction:
 
 def update_file_actions(planned_changes: list[files.PlannedChange]) -> Action:
     return ActionGroup(
-        "Update files", [ChangeFileAction(change) for change in planned_changes]
+        intent_description="Update files",
+        execution_description="Updating files",
+        actions=[ChangeFileAction(change) for change in planned_changes],
     )
 
 
@@ -115,7 +130,7 @@ class CreateBranchAction:
         print(f"Creating branch {self._branch_name}")
         git.create_branch(self._repo, self._branch_name)
 
-    def display(self) -> None:
+    def display_intent(self) -> None:
         print(f"Create branch {self._branch_name}")
 
 
@@ -128,7 +143,7 @@ class SwitchBranchAction:
         print(f"Switching to branch {self._branch_name}")
         git.switch_to(self._repo, self._branch_name)
 
-    def display(self) -> None:
+    def display_intent(self) -> None:
         print(f"Switch to branch {self._branch_name}")
 
 
@@ -141,7 +156,7 @@ class CommitChangesAction:
         print(f"Committing changes: {self._commit_message}")
         git.commit_changes(self._repo, self._commit_message)
 
-    def display(self) -> None:
+    def display_intent(self) -> None:
         print(f"Commit changes: {self._commit_message}")
 
 
@@ -154,7 +169,7 @@ class CreateTagAction:
         print(f"Tagging commit: {self._tag_name}")
         git.create_tag(self._repo, self._tag_name)
 
-    def display(self) -> None:
+    def display_intent(self) -> None:
         print(f"Tag commit: {self._tag_name}")
 
 
@@ -164,15 +179,15 @@ class PushChangesAction:
         self._operation_info = operation_info
 
     def __call__(self) -> None:
-        print(self._description)
+        print(self._description(intent=False))
         git.push_changes(self._repo, self._operation_info)
 
-    def display(self) -> None:
-        print(self._description)
+    def display_intent(self) -> None:
+        print(self._description(intent=True))
 
-    @cached_property
-    def _description(self) -> str:
-        message = "Pushing commit"
+    def _description(self, intent: bool) -> str:
+        action = "Push" if intent else "Pushing"
+        message = f"{action} commit"
         if self._operation_info.actions.branch == GitAction.CreateAndPush:
             message = f"{message} on branch {self._operation_info.branch_name}"
         if self._operation_info.actions.tag == GitAction.CreateAndPush:

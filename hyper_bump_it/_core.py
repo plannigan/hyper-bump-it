@@ -1,6 +1,6 @@
 from typing import Optional
 
-from rich import prompt
+from rich import print, prompt
 from semantic_version import Version
 
 from hyper_bump_it import _execution_plan as execution_plan
@@ -35,6 +35,7 @@ def do_bump(config: Config) -> None:
     if config.dry_run:
         return
 
+    print()  # blank line before prompt
     if config.show_confirm_prompt:
         response = prompt.Confirm.ask(
             "Do you want to perform these actions?", default=False
