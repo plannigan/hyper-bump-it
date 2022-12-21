@@ -64,6 +64,7 @@ SOME_OTHER_PARTIAL_VERSION_STRING = str(SOME_OTHER_PARTIAL_VERSION)
 SOME_BUMP_PART = BumpPart.Minor
 SOME_CONFIG_FILE_NAME = "config.toml"
 SOME_DIRECTORY_NAME = "test-dir"
+SOME_ERROR_MESSAGE = "it went bang"
 
 
 def some_text_formatter(
