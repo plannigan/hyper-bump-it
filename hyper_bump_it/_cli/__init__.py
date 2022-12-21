@@ -1,8 +1,10 @@
 import typer
 
-from hyper_bump_it._cli.by import by
-from hyper_bump_it._cli.to import to
+from hyper_bump_it._cli.by import by_command
+from hyper_bump_it._cli.to import to_command
 
 app = typer.Typer()
-app.command(help="Bump the project to a specific version")(to)
-app.command(help="Bump the project version by a specific version part.")(by)
+app.command(name="by", help="Bump the project version by a specific version part.")(
+    by_command
+)
+app.command(name="to", help="Bump the project to a specific version")(to_command)

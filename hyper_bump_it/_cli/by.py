@@ -11,7 +11,7 @@ from hyper_bump_it._cli import common
 from hyper_bump_it._config import BumpByArgs, BumpPart, GitAction, config_for_bump_by
 
 
-def by(
+def by_command(
     part_to_bump: BumpPart = typer.Argument(
         ..., help="Part of version to increment", show_default=False
     ),

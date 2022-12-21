@@ -11,7 +11,7 @@ from hyper_bump_it._cli import common
 from hyper_bump_it._config import BumpToArgs, GitAction, config_for_bump_to
 
 
-def to(
+def to_command(
     new_version: str = typer.Argument(
         ..., help="The new version to bump to", show_default=False
     ),
