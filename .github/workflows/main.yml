@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-      - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install dependencies
@@ -32,7 +32,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
       - name: Set up Python
-        uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+        uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install dependencies
@@ -48,7 +48,7 @@ jobs:
     steps:
         - name: Check out code
           uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-        - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+        - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
           with:
             python-version: ${{ env.PYTHON_VERSION }}
         - name: Install dependencies
@@ -64,7 +64,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-      - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install dependencies
@@ -81,7 +81,7 @@ jobs:
     steps:
         - name: Check out code
           uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-        - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+        - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
           with:
             python-version: ${{ env.PYTHON_VERSION }}
         - name: Install dependencies
@@ -110,7 +110,7 @@ jobs:
     steps:
         - name: Check out code
           uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-        - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+        - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
           with:
             python-version: ${{ matrix.python-version }}
         - name: Install dependencies
@@ -152,7 +152,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-      - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Build wheel
@@ -169,7 +169,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
-      - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -195,7 +195,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
-      - uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # v4.3.1
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
