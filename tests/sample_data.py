@@ -156,8 +156,14 @@ def some_git_operations_info(
 
 
 def some_minimal_config_text(
-    table_root: str, version: Optional[str], show_confirm_prompt: Optional[bool] = None
+    table_root: str,
+    version: Optional[str],
+    file_glob: Optional[str] = SOME_FILE_GLOB,
+    show_confirm_prompt: Optional[bool] = None,
+    trim_empty_lines: bool = False,
+    include_empty_tables: bool = True,
 ) -> str:
+    root_table_header = f"[{table_root}]"
     if version is None:
         current_version = ""
         keystone = "keystone = true"
@@ -169,16 +175,21 @@ def some_minimal_config_text(
         if show_confirm_prompt is None
         else f"show_confirm_prompt = {str(show_confirm_prompt).lower()}"
     )
-    return dedent(
+    if not include_empty_tables and version is None and show_confirm_prompt is None:
+        root_table_header = ""
+    content = dedent(
         f"""\
-        [{table_root}]
+        {root_table_header}
         {current_version}
         {show_confirm_prompt_text}
         [[{table_root}.files]]
-        file_glob = "{SOME_FILE_GLOB}"
+        file_glob = "{file_glob}"
         {keystone}
 """
     )
+    if trim_empty_lines:
+        content = "\n".join(line for line in content.splitlines() if line != "") + "\n"
+    return content
 
 
 def no_config_override_bump_to_args(
