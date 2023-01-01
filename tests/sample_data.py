@@ -16,10 +16,14 @@ from hyper_bump_it._config import (
     BumpPart,
     BumpToArgs,
     Config,
+    ConfigFile,
     File,
+    FileDefinition,
     Git,
     GitAction,
     GitActions,
+    GitActionsConfigFile,
+    GitConfigFile,
 )
 from hyper_bump_it._config.file import ConfigVersionUpdater
 from hyper_bump_it._files import LineChange, PlannedChange
@@ -61,6 +65,7 @@ SOME_OTHER_PARTIAL_VERSION = Version(
     patch=SOME_OTHER_PATCH,
 )
 SOME_OTHER_PARTIAL_VERSION_STRING = str(SOME_OTHER_PARTIAL_VERSION)
+SOME_NON_VERSION_STRING = "abc-123"
 SOME_BUMP_PART = BumpPart.Minor
 SOME_CONFIG_FILE_NAME = "config.toml"
 SOME_DIRECTORY_NAME = "test-dir"
@@ -76,12 +81,19 @@ def some_text_formatter(
 
 
 SOME_REMOTE = "test-remote"
+SOME_OTHER_REMOTE = "other-test-remote"
 SOME_COMMIT_MESSAGE = "test commit message"
+SOME_OTHER_COMMIT_MESSAGE = "other test commit message"
 SOME_BRANCH = "test-branch"
+SOME_OTHER_BRANCH = "other-test-branch"
 SOME_TAG = "test-tag"
+SOME_OTHER_TAG = "other-test-tag"
 SOME_COMMIT_PATTERN = f"test commit {{{keys.NEW_VERSION}}}"
+SOME_OTHER_COMMIT_PATTERN = f"other test commit {{{keys.NEW_VERSION}}}"
 SOME_BRANCH_PATTERN = f"test-branch-{{{keys.NEW_VERSION}}}"
+SOME_OTHER_BRANCH_PATTERN = f"other test-branch-{{{keys.NEW_VERSION}}}"
 SOME_TAG_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
+SOME_OTHER_TAG_PATTERN = f"other-test-tag-{{{keys.NEW_VERSION}}}"
 
 SOME_COMMIT_ACTION = GitAction.CreateAndPush
 SOME_BRANCH_ACTION = GitAction.Skip
@@ -120,7 +132,32 @@ def some_git(
     )
 
 
+def some_git_actions_config_file(
+    commit=SOME_COMMIT_ACTION,
+    branch=SOME_BRANCH_ACTION,
+    tag=SOME_TAG_ACTION,
+) -> GitActionsConfigFile:
+    return GitActionsConfigFile(commit=commit, branch=branch, tag=tag)
+
+
+def some_git_config_file(
+    remote=SOME_REMOTE,
+    commit_format_pattern=SOME_COMMIT_PATTERN,
+    branch_format_pattern=SOME_BRANCH_PATTERN,
+    tag_format_pattern=SOME_TAG_PATTERN,
+    actions=some_git_actions_config_file(),
+) -> GitConfigFile:
+    return GitConfigFile(
+        remote=remote,
+        commit_format_pattern=commit_format_pattern,
+        branch_format_pattern=branch_format_pattern,
+        tag_format_pattern=tag_format_pattern,
+        actions=actions,
+    )
+
+
 SOME_FILE_GLOB = "foo*.txt"
+SOME_OTHER_FILE_GLOB = "bar*.txt"
 SOME_GLOB_MATCHED_FILE_NAME = "foo-1.txt"
 SOME_OTHER_GLOB_MATCHED_FILE_NAME = "foo-2.txt"
 SOME_SEARCH_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
@@ -139,6 +176,20 @@ def some_file(
     )
 
 
+def some_file_definition(
+    file_glob=SOME_FILE_GLOB,
+    keystone: bool = False,
+    search_format_pattern=SOME_SEARCH_FORMAT_PATTERN,
+    replace_format_pattern=SOME_REPLACE_FORMAT_PATTERN,
+) -> FileDefinition:
+    return FileDefinition(
+        file_glob=file_glob,
+        keystone=keystone,
+        search_format_pattern=search_format_pattern,
+        replace_format_pattern=replace_format_pattern,
+    )
+
+
 def some_git_operations_info(
     remote=SOME_REMOTE,
     commit_message=SOME_COMMIT_MESSAGE,
@@ -152,6 +203,26 @@ def some_git_operations_info(
         branch_name=branch_name,
         tag_name=tag_name,
         actions=actions,
+    )
+
+
+SOME_SHOW_CONFIRM_PROMPT = True
+
+
+def some_config_file(
+    current_version: Version = SOME_VERSION,
+    show_confirm_prompt: bool = SOME_SHOW_CONFIRM_PROMPT,
+    files: Union[list[FileDefinition], FileDefinition] = some_file_definition(),
+    git: GitConfigFile = some_git_config_file(),
+) -> ConfigFile:
+    if isinstance(files, FileDefinition):
+        files = [files]
+
+    return ConfigFile(
+        current_version=current_version,
+        show_confirm_prompt=show_confirm_prompt,
+        files=files,
+        git=git,
     )
 
 

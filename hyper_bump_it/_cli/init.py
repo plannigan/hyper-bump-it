@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from rich import print
 from tomlkit.exceptions import TOMLKitError
 
-from hyper_bump_it._cli import _init_interactive, common
+from hyper_bump_it._cli import common, interactive
 from hyper_bump_it._config import (
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
@@ -94,7 +94,7 @@ def init_command(
                 "A sample configuration will be written that will need manual edits"
             )
         else:
-            config = _init_interactive.config_update(config)
+            config, pyproject = interactive.config_update(version, config, pyproject)
 
         if pyproject:
             _write_pyproject_config(config, project_root)
