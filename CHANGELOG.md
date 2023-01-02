@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * `-y` & `--yes` as command line options to disable the prompt.
     * `--interactive` as command line options to explicitly enable the prompt.
     * `-n` & `--no` command line options as aliases for `--dry-run`.
+* Command line command to initialize a project.
 * Name of remote repository to displayed description for push action.
 
 ### Fixed
