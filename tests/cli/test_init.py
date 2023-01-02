@@ -155,10 +155,13 @@ def test_init__non_interactive_pyproject_invalid__error(
 
 def test_init__interactive__defer_to_interactive(tmp_path: Path, mocker):
     interactive_config_update = mocker.patch(
-        "hyper_bump_it._cli._init_interactive.config_update",
-        return_value=ConfigFile(
-            current_version=sd.SOME_VERSION,
-            files=[FileDefinition(file_glob=init.EXAMPLE_FILE_GLOB)],
+        "hyper_bump_it._cli.interactive.config_update",
+        return_value=(
+            ConfigFile(
+                current_version=sd.SOME_VERSION,
+                files=[FileDefinition(file_glob=init.EXAMPLE_FILE_GLOB)],
+            ),
+            False,
         ),
     )
 
@@ -176,6 +179,47 @@ def test_init__interactive__defer_to_interactive(tmp_path: Path, mocker):
 
     assert_success(result)
     interactive_config_update.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    ["cli_option", "pyproject_result", "expected_file_name"],
+    [
+        ("--pyproject", True, PYPROJECT_FILE_NAME),
+        ("--pyproject", False, HYPER_CONFIG_FILE_NAME),
+        ("--no-pyproject", True, PYPROJECT_FILE_NAME),
+        ("--no-pyproject", False, HYPER_CONFIG_FILE_NAME),
+    ],
+)
+def test_init__interactive__overrides_cli(
+    cli_option, pyproject_result, expected_file_name, tmp_path: Path, mocker
+):
+    mocker.patch(
+        "hyper_bump_it._cli.interactive.config_update",
+        return_value=(
+            ConfigFile(
+                current_version=sd.SOME_VERSION,
+                files=[FileDefinition(file_glob=init.EXAMPLE_FILE_GLOB)],
+            ),
+            pyproject_result,
+        ),
+    )
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "init",
+            "--interactive",
+            cli_option,
+            "--project-root",
+            str(tmp_path),
+            sd.SOME_VERSION_STRING,
+        ],
+        catch_exceptions=False,
+    )
+
+    assert_success(result)
+    expected_file = tmp_path / expected_file_name
+    assert expected_file.is_file()
 
 
 @pytest.mark.parametrize(
@@ -212,8 +256,8 @@ def test_init__interactive__write_out_result(
     config, expected_text, tmp_path: Path, mocker
 ):
     mocker.patch(
-        "hyper_bump_it._cli._init_interactive.config_update",
-        return_value=config,
+        "hyper_bump_it._cli.interactive.config_update",
+        return_value=(config, False),
     )
     config_file = tmp_path / HYPER_CONFIG_FILE_NAME
 

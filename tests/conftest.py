@@ -1,8 +1,9 @@
 from io import StringIO
-from typing import Callable
+from typing import Final, Literal
 
 import pytest
 import rich
+from pytest_mock import MockerFixture
 from typer import rich_utils as typer_rich_utils
 
 # rich's line wrapping makes test cases that check output text tricky. By making the width very large, wrapping can be
@@ -29,9 +30,16 @@ def wide_terminal(mocker) -> None:
     mocker.patch.object(typer_rich_utils, "FORCE_TERMINAL", False)
 
 
-@pytest.fixture
-def force_input(mocker) -> Callable[[str], None]:
-    def _force_input(text: str) -> None:
-        mocker.patch("builtins.input", return_value=text)
+class ForceInput:
+    NO_INPUT: Final[Literal[""]] = ""
 
-    yield _force_input
+    def __init__(self, mocker: MockerFixture) -> None:
+        self._mocker = mocker
+
+    def __call__(self, text: str, *more: str) -> None:
+        self._mocker.patch("builtins.input", side_effect=[text, *more])
+
+
+@pytest.fixture
+def force_input(mocker) -> ForceInput:
+    yield ForceInput(mocker)
