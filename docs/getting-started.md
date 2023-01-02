@@ -78,7 +78,7 @@ this mode. `hyper-bump-it init --help` will show the options not covered here.
 Using the configuration shown above, lets see how `hyper-bump-it` runs.
 
 ```commandline
-hyper-bump-it to 2.3.4
+$ hyper-bump-it to 2.3.4
 Updating version in configuration file
 Update files
 ────────────────────────────── version.txt ──────────────────────────────
@@ -104,7 +104,7 @@ increments. The following example show `hyper-bump-it` updating the version, fro
 state, to the next minor version.
 
 ```commandline
-hyper-bump-it by minor
+$ hyper-bump-it by minor
 Updating version in configuration file
 Update files
 ────────────────────────────── version.txt ──────────────────────────────
