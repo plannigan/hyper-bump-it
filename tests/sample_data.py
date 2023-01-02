@@ -207,6 +207,7 @@ def some_git_operations_info(
 
 
 SOME_SHOW_CONFIRM_PROMPT = True
+SOME_PYPROJECT = False
 
 
 def some_config_file(

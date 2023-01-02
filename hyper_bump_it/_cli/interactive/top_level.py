@@ -26,11 +26,11 @@ class TopMenu(Enum):
 
 class InteractiveConfigEditor:
     def __init__(
-        self, initial_version: Version, pyproject: bool, initial_config: ConfigFile
+        self, initial_version: Version, initial_config: ConfigFile, pyproject: bool
     ) -> None:
         self._current_version = initial_version
-        self._pyproject = pyproject
         self._config: ConfigFile = initial_config.copy(deep=True)
+        self._pyproject = pyproject
         self._was_configured: Set[TopMenu] = set()
         self._config_funcs = {
             TopMenu.General: self._configure_general,

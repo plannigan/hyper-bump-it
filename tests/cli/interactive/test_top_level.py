@@ -8,19 +8,16 @@ from hyper_bump_it._cli.interactive.top_level import TopMenu
 from tests import sample_data as sd
 from tests.conftest import ForceInput
 
-SOME_PYPROJECT = False
-SOME_SHOW_CONFIRM = True
-
 
 def test_configure__no_changes__same_config(force_input: ForceInput):
     force_input(force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, SOME_PYPROJECT, sd.some_config_file()
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
     )
 
     result = editor.configure()
 
-    assert result == (sd.some_config_file(), SOME_PYPROJECT)
+    assert result == (sd.some_config_file(), sd.SOME_PYPROJECT)
 
 
 def test_configure__git_edits__updated_git(force_input: ForceInput, mocker):
@@ -33,7 +30,7 @@ def test_configure__git_edits__updated_git(force_input: ForceInput, mocker):
     )
     force_input(TopMenu.Git.value, force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, SOME_PYPROJECT, sd.some_config_file()
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
     )
 
     result = editor.configure()[0]
@@ -49,7 +46,7 @@ def test_configure__files_edits__updated_git(force_input: ForceInput, mocker):
     )
     force_input(TopMenu.Files.value, force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, SOME_PYPROJECT, sd.some_config_file()
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
     )
 
     result = editor.configure()[0]
@@ -122,7 +119,7 @@ def test_configure__general_edits__updated_general(
         force_input.NO_INPUT,
     )
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, SOME_PYPROJECT, sd.some_config_file()
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
     )
 
     result = editor.configure()
@@ -142,14 +139,14 @@ def test_configure__general_invalid_version__asks_again(
     )
     editor = top_level.InteractiveConfigEditor(
         sd.SOME_VERSION,
-        SOME_PYPROJECT,
         sd.some_config_file(current_version=sd.SOME_VERSION),
+        sd.SOME_PYPROJECT,
     )
 
     result = editor.configure()
     assert result == (
         sd.some_config_file(current_version=sd.SOME_OTHER_VERSION),
-        SOME_PYPROJECT,
+        sd.SOME_PYPROJECT,
     )
 
 
@@ -165,14 +162,14 @@ def test_configure__general_no_version__version_unchanged(
     )
     editor = top_level.InteractiveConfigEditor(
         sd.SOME_VERSION,
-        SOME_PYPROJECT,
         sd.some_config_file(current_version=sd.SOME_VERSION),
+        sd.SOME_PYPROJECT,
     )
 
     result = editor.configure()
     assert result == (
         sd.some_config_file(current_version=sd.SOME_VERSION),
-        SOME_PYPROJECT,
+        sd.SOME_PYPROJECT,
     )
 
 
@@ -188,16 +185,17 @@ def test_configure__general_no_show_confirm__show_confirm_unchanged(
     )
     editor = top_level.InteractiveConfigEditor(
         sd.SOME_VERSION,
-        SOME_PYPROJECT,
-        sd.some_config_file(show_confirm_prompt=SOME_SHOW_CONFIRM),
+        sd.some_config_file(show_confirm_prompt=sd.SOME_SHOW_CONFIRM_PROMPT),
+        sd.SOME_PYPROJECT,
     )
 
     result = editor.configure()
     assert result == (
         sd.some_config_file(
-            current_version=sd.SOME_OTHER_VERSION, show_confirm_prompt=SOME_SHOW_CONFIRM
+            current_version=sd.SOME_OTHER_VERSION,
+            show_confirm_prompt=sd.SOME_SHOW_CONFIRM_PROMPT,
         ),
-        SOME_PYPROJECT,
+        sd.SOME_PYPROJECT,
     )
 
 
@@ -213,12 +211,12 @@ def test_configure__general_no_pyproject__pyproject_unchanged(
     )
     editor = top_level.InteractiveConfigEditor(
         sd.SOME_VERSION,
-        SOME_PYPROJECT,
         sd.some_config_file(current_version=sd.SOME_VERSION),
+        sd.SOME_PYPROJECT,
     )
 
     result = editor.configure()
     assert result == (
         sd.some_config_file(current_version=sd.SOME_OTHER_VERSION),
-        SOME_PYPROJECT,
+        sd.SOME_PYPROJECT,
     )

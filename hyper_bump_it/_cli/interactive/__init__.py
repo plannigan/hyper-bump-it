@@ -8,5 +8,5 @@ def config_update(
     initial_version: Version, initial_config: ConfigFile, pyproject: bool
 ) -> tuple[ConfigFile, bool]:
     return InteractiveConfigEditor(
-        initial_version, pyproject, initial_config
+        initial_version, initial_config, pyproject
     ).configure()
