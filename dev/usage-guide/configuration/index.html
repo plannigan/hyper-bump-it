@@ -524,19 +524,19 @@ table instead of simply <code>hyper-bump-it</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">hyper-bump-it.toml</label><label for="__tabbed_1_2">pyproject.toml</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[[tool.hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
 </code></pre></div>
 </div>
 </div>
@@ -553,21 +553,21 @@ Instead, the actions will be immediately performed.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">hyper-bump-it.toml</label><label for="__tabbed_2_2">pyproject.toml</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
-<span class="n">show_confirm_prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+<span class="n">show_confirm_prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
 
-<span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
-<span class="n">show_confirm_prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+<span class="n">show_confirm_prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
 
-<span class="k">[[tool.hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
 </code></pre></div>
 </div>
 </div>
@@ -595,29 +595,29 @@ in place of the text that was searched for. There is a dedicated page that discu
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">hyper-bump-it.toml</label><label for="__tabbed_3_2">pyproject.toml</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
-<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version={version}&quot;</span><span class="w"></span>
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version={version}&quot;</span>
 
-<span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;index.md&quot;</span><span class="w"></span>
-<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My Project - {major}.{minor}&quot;</span><span class="w"></span>
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;index.md&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My Project - {major}.{minor}&quot;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[[tool.hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
-<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version={version}&quot;</span><span class="w"></span>
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version={version}&quot;</span>
 
-<span class="k">[[tool.hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;index.md&quot;</span><span class="w"></span>
-<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My Project - {major}.{minor}&quot;</span><span class="w"></span>
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;index.md&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My Project - {major}.{minor}&quot;</span>
 </code></pre></div>
 </div>
 </div>
@@ -651,37 +651,37 @@ are customized.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">hyper-bump-it.toml</label><label for="__tabbed_4_2">pyproject.toml</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[hyper-bump-it.git]</span><span class="w"></span>
-<span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;upstream&quot;</span><span class="w"></span>
-<span class="n">commit_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bump version to {new_version}&quot;</span><span class="w"></span>
-<span class="n">branch_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bump_to_{new_version}&quot;</span><span class="w"></span>
+<span class="k">[hyper-bump-it.git]</span>
+<span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;upstream&quot;</span>
+<span class="n">commit_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bump version to {new_version}&quot;</span>
+<span class="n">branch_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bump_to_{new_version}&quot;</span>
 
-<span class="k">[hyper-bump-it.git.actions]</span><span class="w"></span>
-<span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span><span class="w"></span>
-<span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span><span class="w"></span>
+<span class="k">[hyper-bump-it.git.actions]</span>
+<span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
+<span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
 
-<span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[tool.hyper-bump-it.git]</span><span class="w"></span>
-<span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;upstream&quot;</span><span class="w"></span>
-<span class="n">commit_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bump version to {new_version}&quot;</span><span class="w"></span>
-<span class="n">branch_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bump_to_{new_version}&quot;</span><span class="w"></span>
+<span class="k">[tool.hyper-bump-it.git]</span>
+<span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;upstream&quot;</span>
+<span class="n">commit_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bump version to {new_version}&quot;</span>
+<span class="n">branch_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bump_to_{new_version}&quot;</span>
 
-<span class="k">[tool.hyper-bump-it.git.actions]</span><span class="w"></span>
-<span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span><span class="w"></span>
-<span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span><span class="w"></span>
+<span class="k">[tool.hyper-bump-it.git.actions]</span>
+<span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
+<span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
 
-<span class="k">[[tool.hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span><span class="w"></span>
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
 </code></pre></div>
 </div>
 </div>
@@ -699,15 +699,15 @@ Default values are used for all other fields.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">hyper-bump-it.toml</label><label for="__tabbed_5_2">pyproject.toml</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span><span class="w"></span>
-<span class="n">keystone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span>
+<span class="n">keystone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="k">[[tool.hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span><span class="w"></span>
-<span class="n">keystone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span>
+<span class="n">keystone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
 </code></pre></div>
 </div>
 </div>

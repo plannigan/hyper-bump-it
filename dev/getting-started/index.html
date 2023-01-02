@@ -285,6 +285,19 @@
     Initial Setup
   </a>
   
+    <nav class="md-nav" aria-label="Initial Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-initialization" class="md-nav__link">
+    Automated Initialization
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -438,6 +451,19 @@
     Initial Setup
   </a>
   
+    <nav class="md-nav" aria-label="Initial Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-initialization" class="md-nav__link">
+    Automated Initialization
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -477,7 +503,7 @@
 <h1 id="getting-started">Getting Started</h1>
 <h2 id="installation">Installation</h2>
 <p>To install <code>columbo</code>, simply run this simple command in your terminal of choice:</p>
-<div class="highlight"><pre><span></span><code>python -m pip install hyper-bump-it
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>hyper-bump-it
 </code></pre></div>
 <h2 id="initial-setup">Initial Setup</h2>
 <p>Before <code>hyper-bump-it</code> can do any work, it needs to be configured. This configuration allows it to
@@ -488,12 +514,12 @@ be seen below:</p>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">[hyper-bump-it]</span><span class="w"></span>
-<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"></span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 
-<span class="k">[[hyper-bump-it.files]]</span><span class="w"></span>
-<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span><span class="w"></span>
-<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version=\&quot;{version}\&quot;&quot;</span><span class="w"></span>
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version=\&quot;{version}\&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
 <ul>
 <li>Line 2: Specifies the current version of the project being configured. Edit this value to match
@@ -502,11 +528,44 @@ be seen below:</p>
 <li>Line 5: Specifies the name of a file to be updated.</li>
 <li>Line 6: Specifies the text to look for in that file and replace with the new version.</li>
 </ul>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>A future release will provide an <code>init</code> command that can be used to create and initial
-configuration.</p>
+<h3 id="automated-initialization">Automated Initialization</h3>
+<p>To help users start using <code>hyper-bump-it</code> for the first time, the <code>init</code> command is provided to
+help initialize the configuration file. The default mode of operation for this command is to show a
+series of interactive prompts that will allow for fully customizing the configuration.</p>
+<p>There is an alternate mode accessed by providing the <code>--non-interactive</code> option. This will write
+out the configuration based only on values specified with command line options. The following shows
+the most basic form of this mode.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">hyper-bump-it.toml</label><label for="__tabbed_1_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>By default, <code>hyper-bump-it</code> will write out the dedicated configuration file.
+<div class="highlight"><pre><span></span><code>$ hyper-bump-it init --non-interactive 1.2.3
+Non-interactive mode: A sample configuration will be written that will need manual edits.
+$ cat hyper-bump-it.toml
+[hyper-bump-it]
+current_version = &quot;1.2.3&quot;
+[[hyper-bump-it.files]]
+file_glob = &quot;version.txt&quot;
+</code></pre></div></p>
 </div>
+<div class="tabbed-block">
+<p>With the <code>--pyproject</code> argument <code>hyper-bump-it</code> will the configuration to <code>pyproject.toml</code>.
+If the file contains other configurations, those will be retained.
+<div class="highlight"><pre><span></span><code>$ hyper-bump-it init --non-interactive --pyproject 1.2.3
+Non-interactive mode: A sample configuration will be written that will need manual edits.
+$ cat hyper-bump-it.toml
+[tool.other]
+foo = &quot;hello world&quot;
+[tool.hyper-bump-it]
+current_version = &quot;1.2.3&quot;
+[[tool.hyper-bump-it.files]]
+file_glob = &quot;version.txt&quot;
+</code></pre></div></p>
+</div>
+</div>
+</div>
+<p>There are many more options that can be used to further customize the configuration, when using
+this mode. <code>hyper-bump-it init --help</code> will show the options not covered here.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>See the <a href="../usage-guide/configuration/">configuration page</a> for how to utilize <code>pyproject.toml</code> instead of a
