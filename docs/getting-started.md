@@ -2,7 +2,7 @@
 
 ## Installation
 
-To install `columbo`, simply run this simple command in your terminal of choice:
+To install `hyper-bump-it`, simply run this simple command in your terminal of choice:
 
 ```bash
 python -m pip install hyper-bump-it
