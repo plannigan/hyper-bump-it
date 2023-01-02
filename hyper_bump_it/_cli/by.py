@@ -20,13 +20,13 @@ def by_command(
     dry_run: bool = common.DRY_RUN,
     skip_confirm_prompt: Optional[bool] = common.SKIP_CONFIRM_PROMPT,
     current_version: Optional[str] = common.CURRENT_VERSION,
-    commit: Optional[GitAction] = common.COMMIT,
-    branch: Optional[GitAction] = common.BRANCH,
-    tag: Optional[GitAction] = common.TAG,
-    remote: Optional[str] = common.REMOTE,
-    commit_format_pattern: Optional[str] = common.COMMIT_FORMAT_PATTERN,
-    branch_format_pattern: Optional[str] = common.BRANCH_FORMAT_PATTERN,
-    tag_format_pattern: Optional[str] = common.TAG_FORMAT_PATTERN,
+    commit: Optional[GitAction] = common.commit(),
+    branch: Optional[GitAction] = common.branch(),
+    tag: Optional[GitAction] = common.tag(),
+    remote: Optional[str] = common.remote(),
+    commit_format_pattern: Optional[str] = common.commit_format_pattern(),
+    branch_format_pattern: Optional[str] = common.branch_format_pattern(),
+    tag_format_pattern: Optional[str] = common.tag_format_pattern(),
 ) -> None:
     """
     Bump the version to the next value by a specific version part.

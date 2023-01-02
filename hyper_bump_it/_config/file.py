@@ -60,7 +60,7 @@ class GitActions(HyperBaseMode):
     tag: GitAction = DEFAULT_TAG_ACTION
 
     @root_validator(skip_on_failure=True)
-    def check_keystone_files(
+    def _check_git_actions(
         cls,
         values: dict[str, GitAction],
     ) -> dict[str, GitAction]:
@@ -92,10 +92,10 @@ HyperConfigFileValues: TypeAlias = dict[
 class ValidVersion(Version):  # type: ignore[misc]
     @classmethod
     def __get_validators__(cls) -> Iterator[Callable[[object], "ValidVersion"]]:
-        yield cls.validate
+        yield cls._validate
 
     @classmethod
-    def validate(cls, value: object) -> "ValidVersion":
+    def _validate(cls, value: object) -> "ValidVersion":
         if isinstance(value, Version):
             return cls(str(value))
         if isinstance(value, str):
@@ -112,7 +112,7 @@ class ConfigFile(HyperBaseMode):
     git: Git = Git()
 
     @root_validator(skip_on_failure=True)
-    def check_keystone_files(
+    def _check_keystone_files(
         cls,
         values: HyperConfigFileValues,
     ) -> HyperConfigFileValues:
