@@ -29,9 +29,45 @@ search_format_pattern = "version=\"{version}\""
 * Line 5: Specifies the name of a file to be updated.
 * Line 6: Specifies the text to look for in that file and replace with the new version.
 
-!!! info 
-    A future release will provide an `init` command that can be used to create and initial
-    configuration.
+### Automated Initialization
+
+To help users start using `hyper-bump-it` for the first time, the `init` command is provided to
+help initialize the configuration file. The default mode of operation for this command is to show a
+series of interactive prompts that will allow for fully customizing the configuration.
+
+There is an alternate mode accessed by providing the `--non-interactive` option. This will write
+out the configuration based only on values specified with command line options. The following shows
+the most basic form of this mode.
+
+=== "hyper-bump-it.toml"
+    By default, `hyper-bump-it` will write out the dedicated configuration file.
+    ```commandline
+    $ hyper-bump-it init --non-interactive 1.2.3
+    Non-interactive mode: A sample configuration will be written that will need manual edits.
+    $ cat hyper-bump-it.toml
+    [hyper-bump-it]
+    current_version = "1.2.3"
+    [[hyper-bump-it.files]]
+    file_glob = "version.txt"
+    ```
+
+=== "pyproject.toml"
+    With the `--pyproject` argument `hyper-bump-it` will the configuration to `pyproject.toml`.
+    If the file contains other configurations, those will be retained.
+    ```commandline
+    $ hyper-bump-it init --non-interactive --pyproject 1.2.3
+    Non-interactive mode: A sample configuration will be written that will need manual edits.
+    $ cat hyper-bump-it.toml
+    [tool.other]
+    foo = "hello world"
+    [tool.hyper-bump-it]
+    current_version = "1.2.3"
+    [[tool.hyper-bump-it.files]]
+    file_glob = "version.txt"
+    ```
+
+There are many more options that can be used to further customize the configuration, when using
+this mode. `hyper-bump-it init --help` will show the options not covered here.
 
 !!! tip
     See the [configuration page][configuration] for how to utilize `pyproject.toml` instead of a
