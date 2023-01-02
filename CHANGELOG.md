@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * `-n` & `--no` command line options as aliases for `--dry-run`.
 * Command line command to initialize a project.
 * Name of remote repository to displayed description for push action.
+* Support for `rich` v13.x.
 
 ### Fixed
 
