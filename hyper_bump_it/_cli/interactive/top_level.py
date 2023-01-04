@@ -90,7 +90,7 @@ def _prompt_top_level_menu() -> TopMenu:
     )
 
 
-def _prompt_current_version(current_version: Version) -> Version:
+def _prompt_current_version(current_version: Version) -> Optional[Version]:
     result_value = VersionPrompt.ask(
         f"The current version is {current_version}.\n"
         "Enter a new version or leave it blank to keep the current version",
