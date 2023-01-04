@@ -29,7 +29,7 @@ from hyper_bump_it._config import (
     GitActionsConfigFile,
     GitConfigFile,
 )
-from hyper_bump_it._error import ConfigurationFileReadError
+from hyper_bump_it._error import ConfigurationFileReadError, first_error_message
 
 GIT_PANEL_NAME = "Git Configuration Options"
 
@@ -74,7 +74,7 @@ def init_command(
     try:
         actions = GitActionsConfigFile(commit=commit, branch=branch, tag=tag)
     except ValidationError as ex:
-        common.display_and_exit(_first_error_message(ex), exit_code=2)
+        common.display_and_exit(first_error_message(ex), exit_code=2)
 
     config = ConfigFile(
         current_version=version,
@@ -129,7 +129,3 @@ def _config_to_dict(config: ConfigFile) -> dict:  # type: ignore[type-arg]
     if config.current_version is not None:
         config_dict["current_version"] = str(config.current_version)
     return {ROOT_TABLE_KEY: config_dict}
-
-
-def _first_error_message(ex: ValidationError) -> str:
-    return ex.errors()[0]["msg"]

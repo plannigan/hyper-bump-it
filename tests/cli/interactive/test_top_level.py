@@ -1,6 +1,3 @@
-"""
-
-"""
 import pytest
 
 from hyper_bump_it._cli.interactive import top_level

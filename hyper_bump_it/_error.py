@@ -358,6 +358,10 @@ class InvalidConfigurationError(ConfigurationError):
         )
 
 
+def first_error_message(ex: ValidationError) -> str:
+    return ex.errors()[0]["msg"]
+
+
 # rich specific functionality
 _RICH_STYLE_VALID = "green"
 _RICH_STYLE_INVALID = "bold red"
