@@ -33,8 +33,6 @@ from hyper_bump_it._error import ConfigurationFileReadError, first_error_message
 
 GIT_PANEL_NAME = "Git Configuration Options"
 
-EXAMPLE_FILE_GLOB = "version.txt"
-
 
 def init_command(
     current_version: str = typer.Argument(
@@ -78,7 +76,7 @@ def init_command(
 
     config = ConfigFile(
         current_version=version,
-        files=[FileDefinition(file_glob=EXAMPLE_FILE_GLOB)],
+        files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
         git=GitConfigFile(
             remote=remote,
             commit_format_pattern=commit_format_pattern,

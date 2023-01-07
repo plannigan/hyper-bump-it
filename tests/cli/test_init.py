@@ -7,7 +7,7 @@ import tomlkit
 from typer.testing import Result
 
 from hyper_bump_it import _cli as cli
-from hyper_bump_it._cli import init
+from hyper_bump_it._cli import common
 from hyper_bump_it._config import (
     HYPER_CONFIG_FILE_NAME,
     PYPROJECT_FILE_NAME,
@@ -74,7 +74,7 @@ def test_init__non_interactive_dedicated__writes_file(tmp_path: Path):
     assert config_file.read_text() == sd.some_minimal_config_text(
         ROOT_TABLE_KEY,
         sd.SOME_VERSION_STRING,
-        file_glob=init.EXAMPLE_FILE_GLOB,
+        file_glob=common.EXAMPLE_FILE_GLOB,
         trim_empty_lines=True,
     )
 
@@ -89,7 +89,7 @@ def test_init__non_interactive_pyproject__writes_file(tmp_path: Path):
     assert config_file.read_text() == sd.some_minimal_config_text(
         PYPROJECT_ROOT_TABLE,
         sd.SOME_VERSION_STRING,
-        file_glob=init.EXAMPLE_FILE_GLOB,
+        file_glob=common.EXAMPLE_FILE_GLOB,
         trim_empty_lines=True,
     )
 
@@ -108,7 +108,7 @@ def test_init__non_interactive_pyproject_already_exists__content_in_file(
         sd.some_minimal_config_text(
             PYPROJECT_ROOT_TABLE,
             sd.SOME_VERSION_STRING,
-            file_glob=init.EXAMPLE_FILE_GLOB,
+            file_glob=common.EXAMPLE_FILE_GLOB,
             trim_empty_lines=True,
         )
         in file_content
@@ -159,7 +159,7 @@ def test_init__interactive__defer_to_interactive(tmp_path: Path, mocker):
         return_value=(
             ConfigFile(
                 current_version=sd.SOME_VERSION,
-                files=[FileDefinition(file_glob=init.EXAMPLE_FILE_GLOB)],
+                files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
             ),
             False,
         ),
@@ -198,7 +198,7 @@ def test_init__interactive__overrides_cli(
         return_value=(
             ConfigFile(
                 current_version=sd.SOME_VERSION,
-                files=[FileDefinition(file_glob=init.EXAMPLE_FILE_GLOB)],
+                files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
             ),
             pyproject_result,
         ),
@@ -228,23 +228,25 @@ def test_init__interactive__overrides_cli(
         (
             ConfigFile(
                 current_version=sd.SOME_VERSION,
-                files=[FileDefinition(file_glob=init.EXAMPLE_FILE_GLOB)],
+                files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
             ),
             sd.some_minimal_config_text(
                 ROOT_TABLE_KEY,
                 sd.SOME_VERSION_STRING,
-                file_glob=init.EXAMPLE_FILE_GLOB,
+                file_glob=common.EXAMPLE_FILE_GLOB,
                 trim_empty_lines=True,
             ),
         ),
         (
             ConfigFile(
-                files=[FileDefinition(keystone=True, file_glob=init.EXAMPLE_FILE_GLOB)],
+                files=[
+                    FileDefinition(keystone=True, file_glob=common.EXAMPLE_FILE_GLOB)
+                ],
             ),
             sd.some_minimal_config_text(
                 ROOT_TABLE_KEY,
                 version=None,
-                file_glob=init.EXAMPLE_FILE_GLOB,
+                file_glob=common.EXAMPLE_FILE_GLOB,
                 trim_empty_lines=True,
                 show_confirm_prompt=None,
                 include_empty_tables=False,

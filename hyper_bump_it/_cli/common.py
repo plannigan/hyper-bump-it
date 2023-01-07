@@ -19,6 +19,7 @@ OVERRIDE_PANEL_NAME = "Configuration File Override"
 ERROR_PANEL_NAME = "Error"
 ERROR_PANEL_BORDER_STYLE = "red"
 ERROR_PANEL_TILE_ALIGN_: AlignMethod = "left"
+EXAMPLE_FILE_GLOB = "version.txt"
 
 
 class OptionFactory(Protocol):
