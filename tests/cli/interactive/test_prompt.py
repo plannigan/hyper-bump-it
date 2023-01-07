@@ -2,6 +2,7 @@ from enum import Enum
 from io import StringIO
 
 import pytest
+from rich.text import Text
 
 from hyper_bump_it._cli.interactive import prompt
 from tests.conftest import ForceInput
@@ -78,3 +79,38 @@ def test_enum_prompt__expected_output(force_input: ForceInput, capture_rich: Str
         f"{Options.Bar.value} - {SOME_OTHER_DESCRIPTION} (default)\n"
         f"Enter the option name: "
     )
+
+
+@pytest.mark.parametrize(
+    ["options", "default", "expected_text"],
+    [
+        (
+            {
+                Options.Foo.value: SOME_DESCRIPTION,
+                Options.Bar.value: SOME_OTHER_DESCRIPTION,
+            },
+            SOME_OPTION.value,
+            f"{Options.Foo.value} - {SOME_DESCRIPTION}\n"
+            f"{Options.Bar.value} - {SOME_OTHER_DESCRIPTION} (default)\n",
+        ),
+        (
+            {
+                Options.Foo.value: SOME_DESCRIPTION,
+                Options.Bar.value: SOME_OTHER_DESCRIPTION,
+            },
+            None,
+            f"{Options.Foo.value} - {SOME_DESCRIPTION}\n"
+            f"{Options.Bar.value} - {SOME_OTHER_DESCRIPTION}\n",
+        ),
+    ],
+)
+def test_list_options__expected_output(options, default, expected_text):
+    text = Text()
+
+    prompt.list_options(
+        text,
+        options,
+        default,
+    )
+
+    assert text.plain == expected_text
