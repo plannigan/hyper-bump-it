@@ -2,11 +2,13 @@
 Go through a series of prompts to construct a custom configuration.
 """
 from enum import Enum
+from pathlib import Path
 from typing import Optional, Set
 
 from rich import prompt
 from semantic_version import Version
 
+from hyper_bump_it._cli.interactive.file_validation import DefinitionValidator
 from hyper_bump_it._cli.interactive.files import FilesConfigEditor
 from hyper_bump_it._cli.interactive.git import GitConfigEditor
 from hyper_bump_it._cli.interactive.prompt import VersionPrompt, enum_prompt
@@ -26,11 +28,16 @@ class TopMenu(Enum):
 
 class InteractiveConfigEditor:
     def __init__(
-        self, initial_version: Version, initial_config: ConfigFile, pyproject: bool
+        self,
+        initial_version: Version,
+        initial_config: ConfigFile,
+        pyproject: bool,
+        project_root: Path,
     ) -> None:
         self._current_version = initial_version
         self._config: ConfigFile = initial_config.copy(deep=True)
         self._pyproject = pyproject
+        self._project_root = project_root
         self._was_configured: Set[TopMenu] = set()
         self._config_funcs = {
             TopMenu.General: self._configure_general,
@@ -69,7 +76,10 @@ class InteractiveConfigEditor:
         self._config = self._config.copy(update=updates)
 
     def _configure_files(self) -> None:
-        editor = FilesConfigEditor(self._config.files)
+        editor = FilesConfigEditor(
+            self._config.files,
+            DefinitionValidator(self._current_version, self._project_root),
+        )
         self._config = self._config.copy(update={"files": editor.configure()})
 
     def _configure_git(self) -> None:

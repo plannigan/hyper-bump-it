@@ -92,7 +92,9 @@ def init_command(
                 "A sample configuration will be written that will need manual edits"
             )
         else:
-            config, pyproject = interactive.config_update(version, config, pyproject)
+            config, pyproject = interactive.config_update(
+                version, config, pyproject, project_root
+            )
 
         if pyproject:
             _write_pyproject_config(config, project_root)

@@ -8,6 +8,7 @@ from rich import print, prompt
 from rich.text import Text
 
 from hyper_bump_it._cli.common import EXAMPLE_FILE_GLOB
+from hyper_bump_it._cli.interactive.file_validation import DefinitionValidator
 from hyper_bump_it._cli.interactive.prompt import enum_prompt, list_options
 from hyper_bump_it._config import DEFAULT_SEARCH_PATTERN, FileDefinition
 
@@ -23,8 +24,11 @@ class FilesMenu(Enum):
 
 
 class FilesConfigEditor:
-    def __init__(self, initial_config: list[FileDefinition]) -> None:
+    def __init__(
+        self, initial_config: list[FileDefinition], validator: DefinitionValidator
+    ) -> None:
         self._config = [file.copy() for file in initial_config]
+        self._validator = validator
         self._config_funcs = {
             FilesMenu.Add: self._add_definition,
             FilesMenu.Remove: self._remove_definition,
@@ -47,7 +51,9 @@ class FilesConfigEditor:
         return any(definition.keystone for definition in self._config)
 
     def _add_definition(self) -> None:
-        self._config.append(_prompt_definition(has_keystone=self._has_keystone))
+        self._config.append(
+            _prompt_definition(None, self._has_keystone, self._validator)
+        )
 
     def _remove_definition(self) -> None:
         if len(self._config) == 1:
@@ -68,7 +74,7 @@ class FilesConfigEditor:
         else:
             index, definition = _prompt_select_definition("edit", self._config)
         self._config[index] = _prompt_definition(
-            current=definition, has_keystone=self._has_keystone
+            definition, self._has_keystone, self._validator
         )
 
     def _list_definitions(self) -> None:
@@ -108,38 +114,49 @@ def _prompt_file_glob(default: Optional[str]) -> str:
 
 
 def _prompt_definition(
-    has_keystone: bool, current: Optional[FileDefinition] = None
+    current: Optional[FileDefinition],
+    has_keystone: bool,
+    validator: DefinitionValidator,
 ) -> FileDefinition:
     print("Enter details for the file definition.")
-    file_glob = _prompt_file_glob(
-        default=None if current is None else current.file_glob
-    )
-    if current is None:
-        new = True
-        current_search_pattern = DEFAULT_SEARCH_PATTERN
-        current_replace_pattern = None
-    else:
-        new = False
-        current_search_pattern = current.search_format_pattern
-        current_replace_pattern = current.replace_format_pattern
+    while True:
+        file_glob = _prompt_file_glob(
+            default=None if current is None else current.file_glob
+        )
+        if current is None:
+            new = True
+            current_search_pattern = DEFAULT_SEARCH_PATTERN
+            current_replace_pattern = None
+        else:
+            new = False
+            current_search_pattern = current.search_format_pattern
+            current_replace_pattern = current.replace_format_pattern
 
-    search_format_pattern = _prompt_format_pattern(
-        "search", current_search_pattern, new=new
-    )
-    replace_format_pattern = _prompt_replace_format_pattern(
-        current_replace_pattern, current_search_pattern, new
-    )
-    keystone = _keystone_selection(
-        has_keystone, False if current is None else current.keystone
-    )
-    definition = FileDefinition(
-        file_glob=file_glob,
-        keystone=keystone,
-        search_format_pattern=search_format_pattern,
-        replace_format_pattern=replace_format_pattern,
-    )
-    # TODO: check if definition matches any files with the search pattern
-    return definition
+        search_format_pattern = _prompt_format_pattern(
+            "search", current_search_pattern, new=new
+        )
+        replace_format_pattern = _prompt_replace_format_pattern(
+            current_replace_pattern, current_search_pattern, new
+        )
+        keystone = _keystone_selection(
+            has_keystone, False if current is None else current.keystone
+        )
+        definition = FileDefinition(
+            file_glob=file_glob,
+            keystone=keystone,
+            search_format_pattern=search_format_pattern,
+            replace_format_pattern=replace_format_pattern,
+        )
+        result = validator(definition)
+        if result is None:
+            return definition
+
+        print("The configured file definition was not valid:")
+        print(result.description)
+        print("Update the definition to address the issue.")
+        # Replace current with the new definition so the prompt defaults match what the user
+        # entered. This allows the user to quickly get to the prompt that needs to be addressed.
+        current = definition
 
 
 def _keystone_selection(has_keystone: bool, current_keystone: Optional[bool]) -> bool:
