@@ -156,6 +156,7 @@ def some_git_config_file(
     )
 
 
+SOME_PROJECT_ROOT = Path("fake-project-root-dir")
 SOME_FILE_GLOB = "foo*.txt"
 SOME_OTHER_FILE_GLOB = "bar*.txt"
 SOME_GLOB_MATCHED_FILE_NAME = "foo-1.txt"
@@ -164,6 +165,8 @@ SOME_SEARCH_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
 SOME_OTHER_SEARCH_FORMAT_PATTERN = f"other {{{keys.VERSION}}}"
 SOME_REPLACE_FORMAT_PATTERN = f"{{{keys.NEW_VERSION}}}"
 SOME_OTHER_REPLACE_FORMAT_PATTERN = f"other {{{keys.NEW_VERSION}}}"
+SOME_OTHER_REPLACE_FORMAT_PATTERN = f"other {{{keys.NEW_VERSION}}}"
+SOME_INVALID_FORMAT_PATTERN = "invalid  --{-- pattern"
 
 
 def some_file(

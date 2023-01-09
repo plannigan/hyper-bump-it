@@ -8,7 +8,7 @@ def test_config_update__no_changes__same_config(force_input: ForceInput):
     force_input(TopMenu.Done.value)
 
     result = interactive.config_update(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     assert result == (sd.some_config_file(), sd.SOME_PYPROJECT)

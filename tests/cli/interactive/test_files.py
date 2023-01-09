@@ -1,14 +1,34 @@
 from io import StringIO
+from typing import Optional, cast
 
 import pytest
 
 from hyper_bump_it._cli.interactive import files
+from hyper_bump_it._cli.interactive.file_validation import (
+    DefinitionValidator,
+    FailureType,
+    ValidationFailure,
+)
 from hyper_bump_it._cli.interactive.files import FilesMenu
 from hyper_bump_it._config import FileDefinition
 from tests import sample_data as sd
 from tests.conftest import ForceInput
 
 EXAMPLE_CONFIG = [files._EXAMPLE_DEFINITION]
+ALWAYS_VALID = cast(DefinitionValidator, lambda _: None)
+
+
+def create_invalid_first() -> DefinitionValidator:
+    was_called = False
+
+    def _validator(_) -> Optional[ValidationFailure]:
+        nonlocal was_called
+        if was_called:
+            return None
+        was_called = True
+        return ValidationFailure(FailureType.NoFiles, "")
+
+    return cast(DefinitionValidator, _validator)
 
 
 def test_configure__no_changes__same_config(force_input: ForceInput):
@@ -19,7 +39,7 @@ def test_configure__no_changes__same_config(force_input: ForceInput):
             replace_format_pattern=sd.SOME_REPLACE_FORMAT_PATTERN,
         )
     ]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -30,7 +50,7 @@ def test_configure__example_definition_accept__unchanged_config(
     force_input: ForceInput,
 ):
     force_input("n", force_input.NO_INPUT)
-    editor = files.FilesConfigEditor(EXAMPLE_CONFIG)
+    editor = files.FilesConfigEditor(EXAMPLE_CONFIG, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -48,7 +68,7 @@ def test_configure__example_definition_change__prompt_replacement_definition(
         "n",  # no, keystone
         force_input.NO_INPUT,
     )
-    editor = files.FilesConfigEditor(EXAMPLE_CONFIG)
+    editor = files.FilesConfigEditor(EXAMPLE_CONFIG, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -65,7 +85,7 @@ def test_configure__example_definition_change__prompt_replacement_definition(
 def test_configure__no_edit__unchanged_config(force_input: ForceInput):
     force_input(force_input.NO_INPUT)
     initial_config = [sd.some_file_definition()]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -83,7 +103,7 @@ def test_configure__add__addition_definition(force_input: ForceInput):
         force_input.NO_INPUT,
     )
     initial_config = [sd.some_file_definition()]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -109,11 +129,36 @@ def test_configure__add_keystone_exists__new_definition_cant_be_keystone(
         force_input.NO_INPUT,
     )
     initial_config = [sd.some_file_definition(keystone=True)]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     editor.configure()
 
     assert "A file definition is already the keystone." in capture_rich.getvalue()
+
+
+def test_configure__add_invalid__prompted_again(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.Add.value,
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_INVALID_FORMAT_PATTERN,
+        "y",  # yes, omit replace format pattern
+        "n",  # no, keystone
+        # start again
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "y",  # yes, omit replace format pattern
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(
+        [sd.some_file_definition()], create_invalid_first()
+    )
+
+    editor.configure()
+
+    assert "The configured file definition was not valid:" in capture_rich.getvalue()
 
 
 def test_configure__remove_from_single__remove_require_addition(
@@ -130,7 +175,7 @@ def test_configure__remove_from_single__remove_require_addition(
         force_input.NO_INPUT,
     )
     initial_config = [sd.some_file_definition()]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -151,7 +196,9 @@ def test_configure__remove_from_multiple__remove_definition(force_input: ForceIn
     )
     some_definition = sd.some_file_definition()
     some_other_definition = sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB)
-    editor = files.FilesConfigEditor([some_definition, some_other_definition])
+    editor = files.FilesConfigEditor(
+        [some_definition, some_other_definition], ALWAYS_VALID
+    )
 
     result = editor.configure()
 
@@ -172,7 +219,7 @@ def test_configure__edit_from_single__edited_definition(
         force_input.NO_INPUT,
     )
     initial_config = [sd.some_file_definition()]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -199,7 +246,7 @@ def test_configure__edit_default__unchanged_config(
         force_input.NO_INPUT,
     )
     initial_config = [sd.some_file_definition()]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -220,7 +267,7 @@ def test_configure__edit_from_single_keystone__edited_definition(
         force_input.NO_INPUT,
     )
     initial_config = [sd.some_file_definition(keystone=True)]
-    editor = files.FilesConfigEditor(initial_config)
+    editor = files.FilesConfigEditor(initial_config, ALWAYS_VALID)
 
     result = editor.configure()
 
@@ -249,7 +296,9 @@ def test_configure__edit_from_multiple__edited_selected_definition(
     )
     some_definition = sd.some_file_definition()
     some_other_definition = sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB)
-    editor = files.FilesConfigEditor([some_definition, some_other_definition])
+    editor = files.FilesConfigEditor(
+        [some_definition, some_other_definition], ALWAYS_VALID
+    )
 
     result = editor.configure()
 
@@ -272,7 +321,9 @@ def test_configure__list__display_definitions(
     )
     some_definition = sd.some_file_definition()
     some_other_definition = sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB)
-    editor = files.FilesConfigEditor([some_definition, some_other_definition])
+    editor = files.FilesConfigEditor(
+        [some_definition, some_other_definition], ALWAYS_VALID
+    )
 
     editor.configure()
     assert (

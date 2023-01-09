@@ -9,7 +9,7 @@ from tests.conftest import ForceInput
 def test_configure__no_changes__same_config(force_input: ForceInput):
     force_input(force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()
@@ -27,7 +27,7 @@ def test_configure__git_edits__updated_git(force_input: ForceInput, mocker):
     )
     force_input(TopMenu.Git.value, force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()[0]
@@ -43,7 +43,7 @@ def test_configure__files_edits__updated_git(force_input: ForceInput, mocker):
     )
     force_input(TopMenu.Files.value, force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()[0]
@@ -116,7 +116,7 @@ def test_configure__general_edits__updated_general(
         force_input.NO_INPUT,
     )
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT
+        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()
@@ -138,6 +138,7 @@ def test_configure__general_invalid_version__asks_again(
         sd.SOME_VERSION,
         sd.some_config_file(current_version=sd.SOME_VERSION),
         sd.SOME_PYPROJECT,
+        sd.SOME_PROJECT_ROOT,
     )
 
     result = editor.configure()
@@ -161,6 +162,7 @@ def test_configure__general_no_version__version_unchanged(
         sd.SOME_VERSION,
         sd.some_config_file(current_version=sd.SOME_VERSION),
         sd.SOME_PYPROJECT,
+        sd.SOME_PROJECT_ROOT,
     )
 
     result = editor.configure()
@@ -184,6 +186,7 @@ def test_configure__general_no_show_confirm__show_confirm_unchanged(
         sd.SOME_VERSION,
         sd.some_config_file(show_confirm_prompt=sd.SOME_SHOW_CONFIRM_PROMPT),
         sd.SOME_PYPROJECT,
+        sd.SOME_PROJECT_ROOT,
     )
 
     result = editor.configure()
@@ -210,6 +213,7 @@ def test_configure__general_no_pyproject__pyproject_unchanged(
         sd.SOME_VERSION,
         sd.some_config_file(current_version=sd.SOME_VERSION),
         sd.SOME_PYPROJECT,
+        sd.SOME_PROJECT_ROOT,
     )
 
     result = editor.configure()
