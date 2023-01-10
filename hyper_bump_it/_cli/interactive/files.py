@@ -36,7 +36,7 @@ class FilesConfigEditor:
             FilesMenu.List: self._list_definitions,
         }
 
-    def configure(self) -> list[FileDefinition]:
+    def configure(self) -> tuple[list[FileDefinition], bool]:
         if self._config == [_EXAMPLE_DEFINITION]:
             if _prompt_replace_example():
                 self._config = []
@@ -44,7 +44,7 @@ class FilesConfigEditor:
         while (selection := _prompt_file_menu()) is not FilesMenu.Done:
             self._config_funcs[selection]()
 
-        return self._config
+        return self._config, self._has_keystone
 
     @property
     def _has_keystone(self) -> bool:

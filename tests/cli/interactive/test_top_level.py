@@ -6,10 +6,22 @@ from tests import sample_data as sd
 from tests.conftest import ForceInput
 
 
+def test_configure__no_initial_version__error():
+    initial_config = sd.some_config_file(
+        current_version=None, files=[sd.some_file_definition(keystone=True)]
+    )
+    with pytest.raises(ValueError):
+        top_level.InteractiveConfigEditor(
+            initial_config,
+            sd.SOME_PYPROJECT,
+            sd.SOME_PROJECT_ROOT,
+        )
+
+
 def test_configure__no_changes__same_config(force_input: ForceInput):
     force_input(force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
+        sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()
@@ -27,7 +39,7 @@ def test_configure__git_edits__updated_git(force_input: ForceInput, mocker):
     )
     force_input(TopMenu.Git.value, force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
+        sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()[0]
@@ -35,117 +47,107 @@ def test_configure__git_edits__updated_git(force_input: ForceInput, mocker):
     assert result == sd.some_config_file(git=other_git)
 
 
-def test_configure__files_edits__updated_git(force_input: ForceInput, mocker):
-    other_files = [sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB)]
+@pytest.mark.parametrize(
+    ["returned_files", "expected_config"],
+    [
+        (
+            [sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB)],
+            sd.some_config_file(
+                files=[sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB)]
+            ),
+        ),
+        (
+            [sd.some_file_definition(file_glob=sd.SOME_OTHER_FILE_GLOB, keystone=True)],
+            sd.some_config_file(
+                files=[
+                    sd.some_file_definition(
+                        file_glob=sd.SOME_OTHER_FILE_GLOB, keystone=True
+                    )
+                ],
+                current_version=None,
+            ),
+        ),
+    ],
+)
+def test_configure__files_edits__updated_config(
+    returned_files, expected_config, force_input: ForceInput, mocker
+):
     mocker.patch(
         "hyper_bump_it._cli.interactive.files.FilesConfigEditor.configure",
-        return_value=other_files,
+        return_value=(
+            returned_files,
+            any(definition.keystone for definition in returned_files),
+        ),
     )
     force_input(TopMenu.Files.value, force_input.NO_INPUT)
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
+        sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()[0]
 
-    assert result == sd.some_config_file(files=other_files)
+    assert result == expected_config
 
 
 @pytest.mark.parametrize(
     [
-        "version_response",
         "confirm_prompt_response",
         "pyproject_response",
         "expected_result",
     ],
     [
         (
-            sd.SOME_OTHER_VERSION_STRING,
             "n",
             "n",
             (
-                sd.some_config_file(
-                    current_version=sd.SOME_OTHER_VERSION, show_confirm_prompt=True
-                ),
+                sd.some_config_file(show_confirm_prompt=True),
                 False,
             ),
         ),
         (
-            sd.SOME_OTHER_VERSION_STRING,
             "y",
             "n",
             (
-                sd.some_config_file(
-                    current_version=sd.SOME_OTHER_VERSION, show_confirm_prompt=False
-                ),
+                sd.some_config_file(show_confirm_prompt=False),
                 False,
             ),
         ),
         (
-            sd.SOME_OTHER_VERSION_STRING,
             "n",
             "y",
             (
-                sd.some_config_file(current_version=sd.SOME_OTHER_VERSION),
+                sd.some_config_file(show_confirm_prompt=True),
                 True,
             ),
         ),
         (
-            sd.SOME_OTHER_VERSION_STRING,
-            "n",
-            "n",
+            "y",
+            "y",
             (
-                sd.some_config_file(current_version=sd.SOME_OTHER_VERSION),
-                False,
+                sd.some_config_file(show_confirm_prompt=False),
+                True,
             ),
         ),
     ],
 )
 def test_configure__general_edits__updated_general(
-    version_response,
     confirm_prompt_response,
     pyproject_response,
     expected_result,
     force_input: ForceInput,
 ):
     force_input(
-        "general",
-        version_response,
+        TopMenu.General.value,
         confirm_prompt_response,
         pyproject_response,
         force_input.NO_INPUT,
     )
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION, sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
+        sd.some_config_file(), sd.SOME_PYPROJECT, sd.SOME_PROJECT_ROOT
     )
 
     result = editor.configure()
     assert result == expected_result
-
-
-def test_configure__general_invalid_version__asks_again(
-    force_input: ForceInput,
-):
-    force_input(
-        "general",
-        sd.SOME_NON_VERSION_STRING,
-        sd.SOME_OTHER_VERSION_STRING,
-        "n",
-        "n",
-        force_input.NO_INPUT,
-    )
-    editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION,
-        sd.some_config_file(current_version=sd.SOME_VERSION),
-        sd.SOME_PYPROJECT,
-        sd.SOME_PROJECT_ROOT,
-    )
-
-    result = editor.configure()
-    assert result == (
-        sd.some_config_file(current_version=sd.SOME_OTHER_VERSION),
-        sd.SOME_PYPROJECT,
-    )
 
 
 def test_configure__general_no_version__version_unchanged(
@@ -159,7 +161,6 @@ def test_configure__general_no_version__version_unchanged(
         force_input.NO_INPUT,
     )
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION,
         sd.some_config_file(current_version=sd.SOME_VERSION),
         sd.SOME_PYPROJECT,
         sd.SOME_PROJECT_ROOT,
@@ -177,13 +178,11 @@ def test_configure__general_no_show_confirm__show_confirm_unchanged(
 ):
     force_input(
         "general",
-        sd.SOME_OTHER_VERSION_STRING,
         force_input.NO_INPUT,
         "n",
         force_input.NO_INPUT,
     )
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION,
         sd.some_config_file(show_confirm_prompt=sd.SOME_SHOW_CONFIRM_PROMPT),
         sd.SOME_PYPROJECT,
         sd.SOME_PROJECT_ROOT,
@@ -192,7 +191,6 @@ def test_configure__general_no_show_confirm__show_confirm_unchanged(
     result = editor.configure()
     assert result == (
         sd.some_config_file(
-            current_version=sd.SOME_OTHER_VERSION,
             show_confirm_prompt=sd.SOME_SHOW_CONFIRM_PROMPT,
         ),
         sd.SOME_PYPROJECT,
@@ -204,20 +202,18 @@ def test_configure__general_no_pyproject__pyproject_unchanged(
 ):
     force_input(
         "general",
-        sd.SOME_OTHER_VERSION_STRING,
         "n",
         force_input.NO_INPUT,
         force_input.NO_INPUT,
     )
     editor = top_level.InteractiveConfigEditor(
-        sd.SOME_VERSION,
-        sd.some_config_file(current_version=sd.SOME_VERSION),
+        sd.some_config_file(),
         sd.SOME_PYPROJECT,
         sd.SOME_PROJECT_ROOT,
     )
 
     result = editor.configure()
     assert result == (
-        sd.some_config_file(current_version=sd.SOME_OTHER_VERSION),
+        sd.some_config_file(),
         sd.SOME_PYPROJECT,
     )

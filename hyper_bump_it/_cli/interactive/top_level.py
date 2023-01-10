@@ -3,7 +3,7 @@ Go through a series of prompts to construct a custom configuration.
 """
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Set
+from typing import Set
 
 from rich import prompt
 from semantic_version import Version
@@ -11,7 +11,7 @@ from semantic_version import Version
 from hyper_bump_it._cli.interactive.file_validation import DefinitionValidator
 from hyper_bump_it._cli.interactive.files import FilesConfigEditor
 from hyper_bump_it._cli.interactive.git import GitConfigEditor
-from hyper_bump_it._cli.interactive.prompt import VersionPrompt, enum_prompt
+from hyper_bump_it._cli.interactive.prompt import enum_prompt
 from hyper_bump_it._config import (
     HYPER_CONFIG_FILE_NAME,
     PYPROJECT_FILE_NAME,
@@ -29,12 +29,15 @@ class TopMenu(Enum):
 class InteractiveConfigEditor:
     def __init__(
         self,
-        initial_version: Version,
         initial_config: ConfigFile,
         pyproject: bool,
         project_root: Path,
     ) -> None:
-        self._current_version = initial_version
+        if initial_config.current_version is None:
+            raise ValueError(
+                "The current version of the initial config must not be None."
+            )
+        self._current_version: Version = initial_config.current_version
         self._config: ConfigFile = initial_config.copy(deep=True)
         self._pyproject = pyproject
         self._project_root = project_root
@@ -60,27 +63,22 @@ class InteractiveConfigEditor:
         return self._config, self._pyproject
 
     def _configure_general(self) -> None:
-        updated_version = _prompt_current_version(self._current_version)
-        updates: dict[str, Optional[object]] = {}
-        if updated_version is not None:
-            self._current_version = updated_version
-            if self._config.current_version is None:
-                # TODO: replace keystone file? Confirm still matches keystone file?
-                updates["current_version"] = None
-            else:
-                updates["current_version"] = updated_version
-        updates["show_confirm_prompt"] = _prompt_show_confirm(
-            self._config.show_confirm_prompt
-        )
+        show_confirm_prompt = _prompt_show_confirm(self._config.show_confirm_prompt)
         self._pyproject = _prompt_pyproject(self._pyproject)
-        self._config = self._config.copy(update=updates)
+        self._config = self._config.copy(
+            update={"show_confirm_prompt": show_confirm_prompt}
+        )
 
     def _configure_files(self) -> None:
         editor = FilesConfigEditor(
             self._config.files,
             DefinitionValidator(self._current_version, self._project_root),
         )
-        self._config = self._config.copy(update={"files": editor.configure()})
+        file_config, has_keystone = editor.configure()
+        current_version = None if has_keystone else self._current_version
+        self._config = self._config.copy(
+            update={"files": file_config, "current_version": current_version}
+        )
 
     def _configure_git(self) -> None:
         editor = GitConfigEditor(self._config.git)
@@ -98,16 +96,6 @@ def _prompt_top_level_menu() -> TopMenu:
         },
         default=TopMenu.Done,
     )
-
-
-def _prompt_current_version(current_version: Version) -> Optional[Version]:
-    result_value = VersionPrompt.ask(
-        f"The current version is {current_version}.\n"
-        "Enter a new version or leave it blank to keep the current version",
-        show_default=False,
-        default=None,
-    )
-    return result_value
 
 
 def _prompt_show_confirm(show_confirm_prompt: bool) -> bool:

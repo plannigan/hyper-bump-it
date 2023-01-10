@@ -216,7 +216,7 @@ SOME_PYPROJECT = False
 
 
 def some_config_file(
-    current_version: Version = SOME_VERSION,
+    current_version: Optional[Version] = SOME_VERSION,
     show_confirm_prompt: bool = SOME_SHOW_CONFIRM_PROMPT,
     files: Union[list[FileDefinition], FileDefinition] = some_file_definition(),
     git: GitConfigFile = some_git_config_file(),
