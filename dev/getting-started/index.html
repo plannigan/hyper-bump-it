@@ -536,14 +536,106 @@ be seen below:</p>
 <h3 id="automated-initialization">Automated Initialization</h3>
 <p>To help users start using <code>hyper-bump-it</code> for the first time, the <code>init</code> command is provided to
 help initialize the configuration file. The default mode of operation for this command is to show a
-series of interactive prompts that will allow for fully customizing the configuration.</p>
-<p>There is an alternate mode accessed by providing the <code>--non-interactive</code> option. This will write
-out the configuration based only on values specified with command line options. The following shows
-the most basic form of this mode.</p>
+series of interactive prompts that will allow for fully customizing the configuration. The
+following shows an example that changes format pattern used to create the commit message.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">hyper-bump-it.toml</label><label for="__tabbed_1_2">pyproject.toml</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>By default, <code>hyper-bump-it</code> will write out the dedicated configuration file.
+<div class="highlight"><pre><span></span><code>$ hyper-bump-it init 1.2.3
+What part of configuration would you like to edit?
+general - Top level settings that don&#39;t fit in a specific category
+files - File matching settings
+git - Git integration settings
+done - Stop editing and write out the configuration (default)
+Enter the option name: git
+What part of configuration would you like to edit?
+remote - Name of remote to use when pushing changes
+commit - Format pattern to use for commit message
+branch - Format pattern to use for branch name
+tag - Format pattern to use for tag name
+actions - Configure what Git actions should be performed
+done - Stop editing the Git integration settings (default)
+Enter the option name: commit
+Format patterns are used to generate text. The format pattern for commit message is currently set to: Bump version: {current_version} → {new_version} (the default)
+Enter a new format pattern or leave it blank to keep the value: Bump to version: {current_version}
+What part of configuration would you like to edit?
+remote - Name of remote to use when pushing changes
+commit - Format pattern to use for commit message
+branch - Format pattern to use for branch name
+tag - Format pattern to use for tag name
+actions - Configure what Git actions should be performed
+done - Stop editing the Git integration settings (default)
+Enter the option name: done
+What part of configuration would you like to edit?
+general - Top level settings that don&#39;t fit in a specific category
+files - File matching settings
+git - Git integration settings
+done - Stop editing and write out the configuration (default)
+Enter the option name: done
+
+$ cat hyper-bump-it.toml 
+[hyper-bump-it]
+current_version = &quot;1.2.3&quot;
+[[hyper-bump-it.files]]
+file_glob = &quot;version.txt&quot;
+
+[hyper-bump-it.git]
+commit_format_pattern = &quot;Bump to version: {current_version}&quot;
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>$ hyper-bump-it init --pyproject 1.2.3
+What part of configuration would you like to edit?
+general - Top level settings that don&#39;t fit in a specific category
+files - File matching settings
+git - Git integration settings
+done - Stop editing and write out the configuration (default)
+Enter the option name: git
+What part of configuration would you like to edit?
+remote - Name of remote to use when pushing changes
+commit - Format pattern to use for commit message
+branch - Format pattern to use for branch name
+tag - Format pattern to use for tag name
+actions - Configure what Git actions should be performed
+done - Stop editing the Git integration settings (default)
+Enter the option name: commit
+Format patterns are used to generate text. The format pattern for commit message is currently set to: Bump version: {current_version} → {new_version} (the default)
+Enter a new format pattern or leave it blank to keep the value: Bump to version: {current_version}
+What part of configuration would you like to edit?
+remote - Name of remote to use when pushing changes
+commit - Format pattern to use for commit message
+branch - Format pattern to use for branch name
+tag - Format pattern to use for tag name
+actions - Configure what Git actions should be performed
+done - Stop editing the Git integration settings (default)
+Enter the option name: done
+What part of configuration would you like to edit?
+general - Top level settings that don&#39;t fit in a specific category
+files - File matching settings
+git - Git integration settings
+done - Stop editing and write out the configuration (default)
+Enter the option name: done
+
+$ cat pyproject.toml
+[tool.other]
+foo = &quot;hello world&quot;
+[tool.hyper-bump-it]
+current_version = &quot;1.2.3&quot;
+[[tool.hyper-bump-it.files]]
+file_glob = &quot;version.txt&quot;
+
+[tool.hyper-bump-it.git]
+commit_format_pattern = &quot;Bump to version: {current_version}&quot;
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>There is an alternate mode accessed by providing the <code>--non-interactive</code> option. This will write
+out the configuration based only on values specified with command line options. The following shows
+the most basic form of this mode.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">hyper-bump-it.toml</label><label for="__tabbed_2_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code>$ hyper-bump-it init --non-interactive 1.2.3
 Non-interactive mode: A sample configuration will be written that will need manual edits.
 $ cat hyper-bump-it.toml
@@ -551,21 +643,19 @@ $ cat hyper-bump-it.toml
 current_version = &quot;1.2.3&quot;
 [[hyper-bump-it.files]]
 file_glob = &quot;version.txt&quot;
-</code></pre></div></p>
+</code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>With the <code>--pyproject</code> argument <code>hyper-bump-it</code> will the configuration to <code>pyproject.toml</code>.
-If the file contains other configurations, those will be retained.
 <div class="highlight"><pre><span></span><code>$ hyper-bump-it init --non-interactive --pyproject 1.2.3
 Non-interactive mode: A sample configuration will be written that will need manual edits.
-$ cat hyper-bump-it.toml
+$ cat pyproject.toml
 [tool.other]
 foo = &quot;hello world&quot;
 [tool.hyper-bump-it]
 current_version = &quot;1.2.3&quot;
 [[tool.hyper-bump-it.files]]
 file_glob = &quot;version.txt&quot;
-</code></pre></div></p>
+</code></pre></div>
 </div>
 </div>
 </div>
