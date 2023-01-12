@@ -93,7 +93,7 @@ def init_command(
             )
         else:
             config, pyproject = interactive.config_update(
-                version, config, pyproject, project_root
+                config, pyproject, project_root
             )
 
         if pyproject:

@@ -5,9 +5,8 @@ from collections.abc import Mapping
 from enum import Enum
 from typing import Optional, TypeVar, cast
 
-from rich.prompt import Prompt, PromptBase
+from rich.prompt import Prompt
 from rich.text import Text
-from semantic_version import Version
 
 EnumT = TypeVar("EnumT", bound=Enum)
 
@@ -61,7 +60,3 @@ def list_options(
             text.append(" ")
             text.append("(default)", style="prompt.default")
         text.append("\n")
-
-
-class VersionPrompt(PromptBase[Version]):
-    response_type = Version
