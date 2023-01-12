@@ -33,14 +33,104 @@ search_format_pattern = "version=\"{version}\""
 
 To help users start using `hyper-bump-it` for the first time, the `init` command is provided to
 help initialize the configuration file. The default mode of operation for this command is to show a
-series of interactive prompts that will allow for fully customizing the configuration.
+series of interactive prompts that will allow for fully customizing the configuration. The
+following shows an example that changes format pattern used to create the commit message.
+
+=== "hyper-bump-it.toml"
+    ```commandline
+    $ hyper-bump-it init 1.2.3
+    What part of configuration would you like to edit?
+    general - Top level settings that don't fit in a specific category
+    files - File matching settings
+    git - Git integration settings
+    done - Stop editing and write out the configuration (default)
+    Enter the option name: git
+    What part of configuration would you like to edit?
+    remote - Name of remote to use when pushing changes
+    commit - Format pattern to use for commit message
+    branch - Format pattern to use for branch name
+    tag - Format pattern to use for tag name
+    actions - Configure what Git actions should be performed
+    done - Stop editing the Git integration settings (default)
+    Enter the option name: commit
+    Format patterns are used to generate text. The format pattern for commit message is currently set to: Bump version: {current_version} → {new_version} (the default)
+    Enter a new format pattern or leave it blank to keep the value: Bump to version: {current_version}
+    What part of configuration would you like to edit?
+    remote - Name of remote to use when pushing changes
+    commit - Format pattern to use for commit message
+    branch - Format pattern to use for branch name
+    tag - Format pattern to use for tag name
+    actions - Configure what Git actions should be performed
+    done - Stop editing the Git integration settings (default)
+    Enter the option name: done
+    What part of configuration would you like to edit?
+    general - Top level settings that don't fit in a specific category
+    files - File matching settings
+    git - Git integration settings
+    done - Stop editing and write out the configuration (default)
+    Enter the option name: done
+
+    $ cat hyper-bump-it.toml 
+    [hyper-bump-it]
+    current_version = "1.2.3"
+    [[hyper-bump-it.files]]
+    file_glob = "version.txt"
+
+    [hyper-bump-it.git]
+    commit_format_pattern = "Bump to version: {current_version}"
+    ```
+
+=== "pyproject.toml"
+    ```commandline
+    $ hyper-bump-it init --pyproject 1.2.3
+    What part of configuration would you like to edit?
+    general - Top level settings that don't fit in a specific category
+    files - File matching settings
+    git - Git integration settings
+    done - Stop editing and write out the configuration (default)
+    Enter the option name: git
+    What part of configuration would you like to edit?
+    remote - Name of remote to use when pushing changes
+    commit - Format pattern to use for commit message
+    branch - Format pattern to use for branch name
+    tag - Format pattern to use for tag name
+    actions - Configure what Git actions should be performed
+    done - Stop editing the Git integration settings (default)
+    Enter the option name: commit
+    Format patterns are used to generate text. The format pattern for commit message is currently set to: Bump version: {current_version} → {new_version} (the default)
+    Enter a new format pattern or leave it blank to keep the value: Bump to version: {current_version}
+    What part of configuration would you like to edit?
+    remote - Name of remote to use when pushing changes
+    commit - Format pattern to use for commit message
+    branch - Format pattern to use for branch name
+    tag - Format pattern to use for tag name
+    actions - Configure what Git actions should be performed
+    done - Stop editing the Git integration settings (default)
+    Enter the option name: done
+    What part of configuration would you like to edit?
+    general - Top level settings that don't fit in a specific category
+    files - File matching settings
+    git - Git integration settings
+    done - Stop editing and write out the configuration (default)
+    Enter the option name: done
+
+    $ cat pyproject.toml
+    [tool.other]
+    foo = "hello world"
+    [tool.hyper-bump-it]
+    current_version = "1.2.3"
+    [[tool.hyper-bump-it.files]]
+    file_glob = "version.txt"
+
+    [tool.hyper-bump-it.git]
+    commit_format_pattern = "Bump to version: {current_version}"
+    ```
 
 There is an alternate mode accessed by providing the `--non-interactive` option. This will write
 out the configuration based only on values specified with command line options. The following shows
 the most basic form of this mode.
 
 === "hyper-bump-it.toml"
-    By default, `hyper-bump-it` will write out the dedicated configuration file.
     ```commandline
     $ hyper-bump-it init --non-interactive 1.2.3
     Non-interactive mode: A sample configuration will be written that will need manual edits.
@@ -52,12 +142,10 @@ the most basic form of this mode.
     ```
 
 === "pyproject.toml"
-    With the `--pyproject` argument `hyper-bump-it` will the configuration to `pyproject.toml`.
-    If the file contains other configurations, those will be retained.
     ```commandline
     $ hyper-bump-it init --non-interactive --pyproject 1.2.3
     Non-interactive mode: A sample configuration will be written that will need manual edits.
-    $ cat hyper-bump-it.toml
+    $ cat pyproject.toml
     [tool.other]
     foo = "hello world"
     [tool.hyper-bump-it]
