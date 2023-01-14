@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Internal
+
+* Reorganize internal modules under a single internal sub-module.
+
 ## [0.2.0] - 2023-01-11
 
 ### Added
