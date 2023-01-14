@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import Set
 
 from rich import prompt
-from semantic_version import Version
 
 from ...config import HYPER_CONFIG_FILE_NAME, PYPROJECT_FILE_NAME, ConfigFile
+from ...version import Version
 from .file_validation import DefinitionValidator
 from .files import FilesConfigEditor
 from .git import GitConfigEditor

@@ -8,8 +8,6 @@ from re import Match, Pattern
 from string import Formatter, Template
 from typing import Optional
 
-from semantic_version import Version
-
 from ..error import (
     FormatKeyError,
     FormatPatternError,
@@ -18,6 +16,7 @@ from ..error import (
     VersionNotFound,
 )
 from ..text_formatter import keys
+from ..version import Version
 
 
 def _version_regex(group_name: str) -> str:
@@ -97,7 +96,7 @@ def find_current_version(
             version_string = _version_string_from_match(match)
             if version_string is None:
                 raise IncompleteKeystoneVersionError(file, search_pattern)
-            return Version(version_string)
+            return Version.parse(version_string)
 
     raise VersionNotFound(file, search_pattern)
 

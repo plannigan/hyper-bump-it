@@ -3,8 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from semantic_version import Version
-
+from ..version import Version
 from .core import GitAction
 
 

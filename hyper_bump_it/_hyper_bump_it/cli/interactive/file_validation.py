@@ -6,13 +6,12 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Optional
 
-from semantic_version import Version
-
 from ...config import FileDefinition
 from ...error import FormatError
 from ...text_formatter import FormatContext, TextFormatter
+from ...version import Version
 
-_FAKE_NEXT_VERSION = Version("1.2.3")
+_FAKE_NEXT_VERSION = Version(1, 2, 3)
 
 
 class FailureType(Enum):

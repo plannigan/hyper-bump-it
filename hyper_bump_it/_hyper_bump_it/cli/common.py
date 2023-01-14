@@ -10,9 +10,9 @@ from rich import print
 from rich.align import AlignMethod
 from rich.console import RenderableType
 from rich.panel import Panel
-from semantic_version import Version
 
 from ..error import BumpItError
+from ..version import Version
 
 OVERRIDE_PANEL_NAME = "Configuration File Override"
 # These values match what typer uses
@@ -102,7 +102,7 @@ def parse_version(version: Optional[str], parameter_name: str) -> Optional[Versi
         return None
     else:
         try:
-            return Version(version)
+            return Version.parse(version)
         except ValueError:
             raise typer.BadParameter(
                 f"'{version}' is not a valid version", param_hint=parameter_name

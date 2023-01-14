@@ -5,9 +5,8 @@ from dataclasses import astuple, dataclass
 from pathlib import Path
 from typing import Callable, Optional, Union, cast
 
-from semantic_version import Version
-
 from ..error import KeystoneFileGlobError
+from ..version import Version
 from . import file, keystone_parser
 from .cli import BumpByArgs, BumpPart, BumpToArgs
 from .core import GitAction, validate_git_action_combination
@@ -126,7 +125,7 @@ def config_for_bump_by(args: BumpByArgs) -> Config:
 
 
 def _current_version(
-    args_version: Version, file_config: file.ConfigFile, project_root: Path
+    args_version: Optional[Version], file_config: file.ConfigFile, project_root: Path
 ) -> Version:
     if args_version is not None:
         return args_version

@@ -9,10 +9,10 @@ from typing import Optional, Protocol, TypeVar
 from git import Repo
 from rich import print
 from rich.rule import Rule
-from semantic_version import Version
 
 from . import files, vcs
 from .config import ConfigVersionUpdater, GitAction
+from .version import Version
 
 
 class Action(Protocol):

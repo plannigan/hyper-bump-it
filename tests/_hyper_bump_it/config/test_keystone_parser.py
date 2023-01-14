@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-from semantic_version import Version
 
 from hyper_bump_it._hyper_bump_it.config import keystone_parser
 from hyper_bump_it._hyper_bump_it.error import (
@@ -12,6 +11,7 @@ from hyper_bump_it._hyper_bump_it.error import (
     VersionNotFound,
 )
 from hyper_bump_it._hyper_bump_it.text_formatter import keys
+from hyper_bump_it._hyper_bump_it.version import Version
 from tests._hyper_bump_it import sample_data as sd
 
 SOME_FILE = "foo.txt"
@@ -246,68 +246,68 @@ def test_format__invalid_key__error():
         (
             "explicit version",
             f"{{{keys.MAJOR}}}.{{{keys.MINOR}}}.{{{keys.PATCH}}}",
-            Version("1.2.3"),
+            Version.parse("1.2.3"),
             "1.2.3",
         ),
         (
             "explicit version, odd ordering",
             f"{{{keys.PATCH}}} - {{{keys.MINOR}}} {{{keys.MAJOR}}}",
-            Version("1.2.3"),
+            Version.parse("1.2.3"),
             "3 - 2 1",
         ),
         (
             "with prerelease",
             f"{{{keys.MAJOR}}}.{{{keys.MINOR}}}.{{{keys.PATCH}}}-{{{keys.PRERELEASE}}}",
-            Version("1.2.3-a"),
+            Version.parse("1.2.3-a"),
             "1.2.3-a",
         ),
         (
             "with build",
             f"{{{keys.MAJOR}}}.{{{keys.MINOR}}}.{{{keys.PATCH}}}+{{{keys.BUILD}}}",
-            Version("1.2.3+a"),
+            Version.parse("1.2.3+a"),
             "1.2.3+a",
         ),
         (
             "with prerelease and build",
             f"{{{keys.MAJOR}}}.{{{keys.MINOR}}}.{{{keys.PATCH}}}-{{{keys.PRERELEASE}}}+{{{keys.BUILD}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "1.2.3-p+a",
         ),
         (
             "current keys with prerelease and build",
             f"{{{keys.CURRENT_MAJOR}}}.{{{keys.CURRENT_MINOR}}}.{{{keys.CURRENT_PATCH}}}-{{{keys.CURRENT_PRERELEASE}}}+{{{keys.CURRENT_BUILD}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "1.2.3-p+a",
         ),
         (
             "fast path version",
             f"{{{keys.VERSION}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "1.2.3-p+a",
         ),
         (
             "fast path current version",
             f"{{{keys.CURRENT_VERSION}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "1.2.3-p+a",
         ),
         (
             "not first line of file",
             f"{{{keys.VERSION}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "foo bar\n1.2.3-p+a\nbazz",
         ),
         (
             "current general takes precedence",
             f"{{{keys.CURRENT_MAJOR}}}.{{{keys.CURRENT_MINOR}}}.{{{keys.CURRENT_PATCH}}}-{{{keys.CURRENT_PRERELEASE}}}+{{{keys.CURRENT_BUILD}}}"
             f" {{{keys.MAJOR}}}.{{{keys.MINOR}}}.{{{keys.PATCH}}}-{{{keys.PRERELEASE}}}+{{{keys.BUILD}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "11.22.33-pp+aa 1.2.3-p+a",
         ),
         (
             "fast path current general takes precedence",
             f"{{{keys.CURRENT_VERSION}}} {{{keys.VERSION}}}",
-            Version("1.2.3-p+a"),
+            Version.parse("1.2.3-p+a"),
             "11.22.33-pp+aa 1.2.3-p+a",
         ),
     ],

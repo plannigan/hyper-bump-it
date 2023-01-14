@@ -8,7 +8,6 @@ from textwrap import dedent
 from typing import Optional, Union
 
 from git import Repo
-from semantic_version import Version
 from tomlkit import TOMLDocument
 
 from hyper_bump_it._hyper_bump_it.config import (
@@ -29,6 +28,7 @@ from hyper_bump_it._hyper_bump_it.config.file import ConfigVersionUpdater
 from hyper_bump_it._hyper_bump_it.files import LineChange, PlannedChange
 from hyper_bump_it._hyper_bump_it.text_formatter import TextFormatter, keys
 from hyper_bump_it._hyper_bump_it.vcs import GitOperationsInfo
+from hyper_bump_it._hyper_bump_it.version import Version
 
 ALL_KEYS = tuple(getattr(keys, name) for name in dir(keys) if not name.startswith("__"))
 
@@ -37,26 +37,30 @@ SOME_MAJOR = 1
 SOME_MINOR = 2
 SOME_PATCH = 3
 SOME_PRERELEASE = "11.22"
+SOME_PRERELEASE_PARTS = tuple(SOME_PRERELEASE.split("."))
 SOME_BUILD = "b123.321"
+SOME_BUILD_PARTS = tuple(SOME_BUILD.split("."))
 SOME_VERSION = Version(
     major=SOME_MAJOR,
     minor=SOME_MINOR,
     patch=SOME_PATCH,
-    prerelease=SOME_PRERELEASE.split("."),
-    build=SOME_BUILD.split("."),
+    prerelease=SOME_PRERELEASE_PARTS,
+    build=SOME_BUILD_PARTS,
 )
 SOME_VERSION_STRING = str(SOME_VERSION)
 SOME_OTHER_MAJOR = 4
 SOME_OTHER_MINOR = 5
 SOME_OTHER_PATCH = 6
 SOME_OTHER_PRERELEASE = "33.44"
+SOME_OTHER_PRERELEASE_PARTS = tuple(SOME_OTHER_PRERELEASE.split("."))
 SOME_OTHER_BUILD = "b456.654"
+SOME_OTHER_BUILD_PARTS = tuple(SOME_OTHER_BUILD.split("."))
 SOME_OTHER_VERSION = Version(
     major=SOME_OTHER_MAJOR,
     minor=SOME_OTHER_MINOR,
     patch=SOME_OTHER_PATCH,
-    prerelease=SOME_OTHER_PRERELEASE.split("."),
-    build=SOME_OTHER_BUILD.split("."),
+    prerelease=SOME_OTHER_PRERELEASE_PARTS,
+    build=SOME_OTHER_BUILD_PARTS,
 )
 SOME_OTHER_VERSION_STRING = str(SOME_OTHER_VERSION)
 SOME_OTHER_PARTIAL_VERSION = Version(
@@ -164,7 +168,6 @@ SOME_OTHER_GLOB_MATCHED_FILE_NAME = "foo-2.txt"
 SOME_SEARCH_FORMAT_PATTERN = f"{{{keys.VERSION}}}"
 SOME_OTHER_SEARCH_FORMAT_PATTERN = f"other {{{keys.VERSION}}}"
 SOME_REPLACE_FORMAT_PATTERN = f"{{{keys.NEW_VERSION}}}"
-SOME_OTHER_REPLACE_FORMAT_PATTERN = f"other {{{keys.NEW_VERSION}}}"
 SOME_OTHER_REPLACE_FORMAT_PATTERN = f"other {{{keys.NEW_VERSION}}}"
 SOME_INVALID_FORMAT_PATTERN = "invalid  --{-- pattern"
 

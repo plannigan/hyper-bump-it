@@ -2,13 +2,13 @@ from typing import Optional
 
 from git import Repo
 from rich import print, prompt
-from semantic_version import Version
 
 from . import execution_plan, files, vcs
 from .config import Config, ConfigVersionUpdater
 from .files import PlannedChange
 from .text_formatter import TextFormatter
 from .vcs import GitOperationsInfo
+from .version import Version
 
 
 def do_bump(config: Config) -> None:

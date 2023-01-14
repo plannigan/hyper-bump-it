@@ -5,9 +5,8 @@ from datetime import date
 from enum import Enum, auto
 from typing import Optional
 
-from semantic_version import Version
-
 from ..error import FormatKeyError, FormatPatternError
+from ..version import Version
 from . import keys
 
 
@@ -86,5 +85,5 @@ class TextFormatter:
             raise FormatPatternError(format_pattern, str(ex))
 
 
-def _merge_parts(parts: tuple[str]) -> str:
+def _merge_parts(parts: tuple[str, ...]) -> str:
     return ".".join(parts)
