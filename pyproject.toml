@@ -36,7 +36,7 @@ changelog = "https://github.com/plannigan/hyper-bump-it/blob/main/CHANGELOG.md"
 issues = "https://github.com/plannigan/hyper-bump-it/issues"
 
 [project.scripts]
-hyper-bump-it = "hyper_bump_it._cli:app"
+hyper-bump-it = "hyper_bump_it._hyper_bump_it.cli:app"
 
 
 

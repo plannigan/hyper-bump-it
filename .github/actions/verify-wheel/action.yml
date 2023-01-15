@@ -8,9 +8,13 @@ inputs:
     description: The target directory for distribution
     required: false
     default: dist
+  script-command:
+    description: Optional command to execute to check script is installed correctly.
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
     - name: "Verify wheel"
-      run: "$GITHUB_ACTION_PATH/action.sh ${{ inputs.package-import-name }} ${{ inputs.packages-dir }}"
+      run: "$GITHUB_ACTION_PATH/action.sh ${{ inputs.package-import-name }} ${{ inputs.packages-dir }} \"${{ inputs.script-command }}\""
       shell: "bash"
