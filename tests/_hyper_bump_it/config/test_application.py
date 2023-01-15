@@ -1,10 +1,14 @@
 from pathlib import Path
 from textwrap import dedent
+from typing import Optional
 
 import pytest
+import tomlkit
 
+from hyper_bump_it._hyper_bump_it.cli.init import _config_to_dict as config_to_dict
 from hyper_bump_it._hyper_bump_it.config import BumpPart, GitAction, application, file
 from hyper_bump_it._hyper_bump_it.config.core import (
+    DEFAULT_ALLOWED_INITIAL_BRANCHES,
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
     DEFAULT_COMMIT_ACTION,
@@ -508,6 +512,93 @@ def test_config_for_bump_by__keystone_glob_multi_match__error(tmp_path: Path):
         )
 
 
+@pytest.mark.parametrize(
+    [
+        "file_allowed_branches",
+        "file_extend_allowed_branches",
+        "cli_allowed_branches",
+        "expected_branches",
+    ],
+    [
+        (
+            DEFAULT_ALLOWED_INITIAL_BRANCHES,
+            set(),
+            None,
+            DEFAULT_ALLOWED_INITIAL_BRANCHES,
+        ),
+        (
+            DEFAULT_ALLOWED_INITIAL_BRANCHES,
+            {sd.SOME_ALLOWED_BRANCH},
+            None,
+            {*DEFAULT_ALLOWED_INITIAL_BRANCHES, sd.SOME_ALLOWED_BRANCH},
+        ),
+        ({sd.SOME_ALLOWED_BRANCH}, set(), None, {sd.SOME_ALLOWED_BRANCH}),
+        (
+            {sd.SOME_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+            None,
+            {sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        ),
+        (
+            DEFAULT_ALLOWED_INITIAL_BRANCHES,
+            set(),
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+        ),
+        (
+            DEFAULT_ALLOWED_INITIAL_BRANCHES,
+            {sd.SOME_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+        ),
+        (
+            {sd.SOME_ALLOWED_BRANCH},
+            set(),
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+        ),
+        (
+            {sd.SOME_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+            {sd.SOME_OTHER_ALLOWED_BRANCH},
+        ),
+    ],
+)
+def test_config_for_bump_by__allowed_initial_branches__expected_result(
+    file_allowed_branches: set[str],
+    file_extend_allowed_branches: set[str],
+    cli_allowed_branches: Optional[set[str]],
+    expected_branches: set[str],
+    tmp_path: Path,
+):
+    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
+    file_config = sd.some_config_file(
+        files=sd.some_file_definition(replace_format_pattern=None),
+        git=sd.some_git_config_file(
+            allowed_initial_branches=frozenset(file_allowed_branches),
+            extend_allowed_initial_branches=frozenset(file_extend_allowed_branches),
+        ),
+    )
+    config_file.write_text(tomlkit.dumps(config_to_dict(file_config)))
+
+    config = application.config_for_bump_by(
+        sd.some_bump_by_args(
+            current_version=sd.SOME_VERSION,
+            allowed_initial_branches=cli_allowed_branches,
+            config_file=config_file,
+            project_root=tmp_path,
+        )
+    )
+
+    assert config == sd.some_application_config(
+        new_version=sd.SOME_VERSION.next_minor(),
+        files=[_default_file(file_glob=sd.SOME_FILE_GLOB)],
+        git=sd.some_git(allowed_initial_branches=frozenset(expected_branches)),
+        project_root=tmp_path,
+    )
+
+
 def _default_file(file_glob: str) -> application.File:
     return application.File(
         file_glob=file_glob,
@@ -522,6 +613,7 @@ def _default_git() -> application.Git:
         commit_format_pattern=DEFAULT_COMMIT_FORMAT_PATTERN,
         branch_format_pattern=DEFAULT_BRANCH_FORMAT_PATTERN,
         tag_format_pattern=DEFAULT_TAG_FORMAT_PATTERN,
+        allowed_initial_branches=DEFAULT_ALLOWED_INITIAL_BRANCHES,
         actions=application.GitActions(
             commit=DEFAULT_COMMIT_ACTION,
             branch=DEFAULT_BRANCH_ACTION,

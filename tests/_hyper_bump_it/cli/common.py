@@ -25,6 +25,8 @@ CLI_OVERRIDE_ARGS_WITHOUT_DRY_RUN: list[str] = [
     sd.SOME_BRANCH_PATTERN,
     "--tag-format-pattern",
     sd.SOME_TAG_PATTERN,
+    "--allowed-init-branch",
+    sd.SOME_ALLOWED_BRANCH,
 ]
 
 CLI_OVERRIDE_ARGS: list[str] = CLI_OVERRIDE_ARGS_WITHOUT_DRY_RUN + [

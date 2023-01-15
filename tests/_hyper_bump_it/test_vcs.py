@@ -9,6 +9,7 @@ from hyper_bump_it._hyper_bump_it.error import (
     AlreadyExistsError,
     DetachedRepositoryError,
     DirtyRepositoryError,
+    DisallowedInitialBranchError,
     EmptyRepositoryError,
     MissingRemoteError,
     NoRepositoryError,
@@ -31,6 +32,7 @@ def test_from_config__names_formatted_from_pattern():
         commit_message=TEXT_FORMATTER.format(sd.SOME_COMMIT_PATTERN),
         branch_name=TEXT_FORMATTER.format(sd.SOME_BRANCH_PATTERN),
         tag_name=TEXT_FORMATTER.format(sd.SOME_TAG_PATTERN),
+        allowed_initial_branches=sd.SOME_ALLOWED_BRANCHES,
         actions=git_actions,
     )
 
@@ -56,6 +58,18 @@ def test_get_vetted_repo__detached_head__error(tmp_path: Path):
         vcs.get_vetted_repo(repo.path, sd.some_git_operations_info())
 
 
+def test_get_vetted_repo__disallowed_branch__error(tmp_path: Path):
+    repo = sd.some_git_repo(tmp_path, remote=None)
+
+    with pytest.raises(DisallowedInitialBranchError):
+        vcs.get_vetted_repo(
+            repo.path,
+            sd.some_git_operations_info(
+                allowed_initial_branches=sd.SOME_ALLOWED_BRANCHES
+            ),
+        )
+
+
 def test_get_vetted_repo__no_remote__error(tmp_path: Path):
     repo = sd.some_git_repo(tmp_path, remote=None)
 
@@ -63,7 +77,8 @@ def test_get_vetted_repo__no_remote__error(tmp_path: Path):
         vcs.get_vetted_repo(
             repo.path,
             sd.some_git_operations_info(
-                actions=sd.some_git_actions(commit=GitAction.CreateAndPush)
+                allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
+                actions=sd.some_git_actions(commit=GitAction.CreateAndPush),
             ),
         )
 
@@ -75,9 +90,11 @@ def test_get_vetted_repo__existing_branch__error(tmp_path: Path):
         vcs.get_vetted_repo(
             repo.path,
             sd.some_git_operations_info(
+                allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
                 actions=sd.some_git_actions(
-                    commit=GitAction.Create, branch=GitAction.Create
-                )
+                    commit=GitAction.Create,
+                    branch=GitAction.Create,
+                ),
             ),
         )
 
@@ -90,9 +107,10 @@ def test_get_vetted_repo__no_commits_create_branch_plan__error(tmp_path: Path):
         vcs.get_vetted_repo(
             tmp_path,
             sd.some_git_operations_info(
+                allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
                 actions=sd.some_git_actions(
                     commit=GitAction.Create, branch=GitAction.Create
-                )
+                ),
             ),
         )
 
@@ -103,7 +121,8 @@ def test_get_vetted_repo__existing_branch_no_branching__repo_returned(tmp_path: 
     result = vcs.get_vetted_repo(
         repo.path,
         sd.some_git_operations_info(
-            actions=sd.some_git_actions(commit=GitAction.Create, branch=GitAction.Skip)
+            allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
+            actions=sd.some_git_actions(commit=GitAction.Create, branch=GitAction.Skip),
         ),
     )
 
@@ -117,11 +136,12 @@ def test_get_vetted_repo__existing_tag__error(tmp_path: Path):
         vcs.get_vetted_repo(
             repo.path,
             sd.some_git_operations_info(
+                allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
                 actions=sd.some_git_actions(
                     commit=GitAction.Create,
                     branch=GitAction.Skip,
                     tag=GitAction.Create,
-                )
+                ),
             ),
         )
 
@@ -132,6 +152,7 @@ def test_get_vetted_repo__existing_tag_no_tagging__repo_returned(tmp_path: Path)
     result = vcs.get_vetted_repo(
         repo.path,
         sd.some_git_operations_info(
+            allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
             actions=GitActions(
                 commit=GitAction.Skip,
                 branch=GitAction.Skip,
@@ -262,6 +283,36 @@ def test_push_changes__tag_and_push__commit_and_tag_pushed(tmp_path: Path):
     assert repo.remote_repo.active_branch.commit == repo.repo.active_branch.commit
     assert sd.SOME_TAG in repo.remote_repo.tags
     assert repo.repo.tags[sd.SOME_TAG].commit == repo.repo.active_branch.commit
+
+
+def test_get_vetted_repo__on_allowed_branch__valid(tmp_path: Path):
+    repo = sd.some_git_repo(tmp_path)
+
+    result = vcs.get_vetted_repo(
+        repo.path,
+        sd.some_git_operations_info(
+            allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
+            actions=sd.some_git_actions(
+                commit=GitAction.Create, branch=GitAction.Skip, tag=GitAction.Skip
+            ),
+        ),
+    )
+    assert result == repo.repo
+
+
+def test_get_vetted_repo__no_disallowed_branches__valid(tmp_path: Path):
+    repo = sd.some_git_repo(tmp_path)
+
+    result = vcs.get_vetted_repo(
+        repo.path,
+        sd.some_git_operations_info(
+            allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES,
+            actions=sd.some_git_actions(
+                commit=GitAction.Create, branch=GitAction.Skip, tag=GitAction.Skip
+            ),
+        ),
+    )
+    assert result == repo.repo
 
 
 class FakeException(Exception):

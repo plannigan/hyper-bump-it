@@ -11,6 +11,7 @@ from rich import print
 from tomlkit.exceptions import TOMLKitError
 
 from ..config import (
+    DEFAULT_ALLOWED_INITIAL_BRANCHES,
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
     DEFAULT_COMMIT_ACTION,
@@ -67,12 +68,19 @@ def init_command(
     tag_format_pattern: str = common.tag_format_pattern(
         DEFAULT_TAG_FORMAT_PATTERN, GIT_PANEL_NAME
     ),
+    allowed_init_branch: list[str] = common.allowed_init_branch(
+        list(DEFAULT_ALLOWED_INITIAL_BRANCHES), GIT_PANEL_NAME
+    ),
+    allow_any_init_branch: bool = common.allow_any_init_branch(False, GIT_PANEL_NAME),
 ) -> None:
     version = common.parse_version(current_version, "CURRENT_VERSION")
     try:
         actions = GitActionsConfigFile(commit=commit, branch=branch, tag=tag)
     except ValidationError as ex:
         common.display_and_exit(first_error_message(ex), exit_code=2)
+
+    if allow_any_init_branch:
+        allowed_init_branch = []
 
     config = ConfigFile(
         current_version=version,
@@ -82,6 +90,7 @@ def init_command(
             commit_format_pattern=commit_format_pattern,
             branch_format_pattern=branch_format_pattern,
             tag_format_pattern=tag_format_pattern,
+            allowed_initial_branches=frozenset(allowed_init_branch),
             actions=actions,
         ),
     )
@@ -128,4 +137,15 @@ def _config_to_dict(config: ConfigFile) -> dict:  # type: ignore[type-arg]
     config_dict = config.dict(exclude_defaults=True)
     if config.current_version is not None:
         config_dict["current_version"] = str(config.current_version)
+    _git_branch_set_to_list(config_dict, "allowed_initial_branches")
+    _git_branch_set_to_list(config_dict, "extend_allowed_initial_branches")
     return {ROOT_TABLE_KEY: config_dict}
+
+
+def _git_branch_set_to_list(config_dict: dict, git_key: str) -> None:  # type: ignore[type-arg]
+    git_config = config_dict.get("git")
+    if git_config is None:
+        return
+    value = git_config.get(git_key)
+    if value is not None:
+        git_config[git_key] = list(value)

@@ -27,6 +27,8 @@ def by_command(
     commit_format_pattern: Optional[str] = common.commit_format_pattern(),
     branch_format_pattern: Optional[str] = common.branch_format_pattern(),
     tag_format_pattern: Optional[str] = common.tag_format_pattern(),
+    allowed_init_branch: list[str] = common.allowed_init_branch(),
+    allow_any_init_branch: Optional[bool] = common.allow_any_init_branch(),
 ) -> None:
     """
     Bump the version to the next value by a specific version part.
@@ -49,6 +51,9 @@ def by_command(
                 commit_format_pattern=commit_format_pattern,
                 branch_format_pattern=branch_format_pattern,
                 tag_format_pattern=tag_format_pattern,
+                allowed_initial_branches=common.allowed_init_branches(
+                    allowed_init_branch, allow_any_init_branch
+                ),
             )
         )
 

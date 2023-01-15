@@ -8,6 +8,7 @@ from .application import (
 )
 from .cli import BumpByArgs, BumpPart, BumpToArgs
 from .core import (
+    DEFAULT_ALLOWED_INITIAL_BRANCHES,
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
     DEFAULT_COMMIT_ACTION,
@@ -37,6 +38,7 @@ __all__ = [
     "Config",
     "ConfigFile",
     "ConfigVersionUpdater",
+    "DEFAULT_ALLOWED_INITIAL_BRANCHES",
     "DEFAULT_TAG_ACTION",
     "DEFAULT_TAG_FORMAT_PATTERN",
     "DEFAULT_REMOTE",

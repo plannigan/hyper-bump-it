@@ -188,3 +188,101 @@ def test_to__other_error__no_special_handling(mocker, capture_rich: StringIO):
     assert_failure(result)
     assert sd.SOME_ERROR_MESSAGE not in capture_rich.getvalue()
     assert sd.SOME_ERROR_MESSAGE in str(result.exception)
+
+
+def test_to__allowed_init_branch_not_given__not_included_in_args(mocker):
+    mock_config_for_bump_to = mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.to.config_for_bump_to"
+    )
+    mocker.patch("hyper_bump_it._hyper_bump_it.core.do_bump")
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "to",
+            "--dry-run",
+            sd.SOME_OTHER_VERSION_STRING,
+        ],
+    )
+
+    assert_success(result)
+    mock_config_for_bump_to.assert_called_once()
+    assert (
+        mock_config_for_bump_to.call_args.args[0].allowed_initial_branches is None
+    ), result.output
+
+
+def test_to__allow_any_branch__other_branches_cleared(mocker):
+    mock_config_for_bump_to = mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.to.config_for_bump_to"
+    )
+    mocker.patch("hyper_bump_it._hyper_bump_it.core.do_bump")
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "to",
+            sd.SOME_OTHER_VERSION_STRING,
+            *CLI_OVERRIDE_ARGS,
+            # SOME_ALLOWED_BRANCH is already listed in overrides
+            "--allowed-init-branch",
+            sd.SOME_OTHER_ALLOWED_BRANCH,
+            "--allow-any-init-branch",
+        ],
+    )
+
+    assert_success(result)
+    mock_config_for_bump_to.assert_called_once_with(
+        sd.some_bump_to_args(
+            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
+            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            dry_run=True,
+            allowed_initial_branches=frozenset(),
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    ["args", "names"],
+    [
+        (
+            [
+                "--allowed-init-branch",
+                sd.SOME_ALLOWED_BRANCH,
+                "--allowed-init-branch",
+                sd.SOME_ALLOWED_BRANCH,
+            ],
+            f"'{sd.SOME_ALLOWED_BRANCH}'",
+        ),
+        (
+            [
+                "--allowed-init-branch",
+                sd.SOME_ALLOWED_BRANCH,
+                "--allowed-init-branch",
+                sd.SOME_ALLOWED_BRANCH,
+                "--allowed-init-branch",
+                sd.SOME_OTHER_ALLOWED_BRANCH,
+                "--allowed-init-branch",
+                sd.SOME_OTHER_ALLOWED_BRANCH,
+            ],
+            f"'{sd.SOME_OTHER_ALLOWED_BRANCH}', '{sd.SOME_ALLOWED_BRANCH}'",
+        ),
+    ],
+)
+def test_to__multiple_duplicate_allowed_branches__error(
+    args, names, mocker, capture_rich: StringIO
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.cli.to.config_for_bump_to")
+    mocker.patch("hyper_bump_it._hyper_bump_it.core.do_bump")
+
+    result = runner.invoke(
+        cli.app,
+        ["to", sd.SOME_OTHER_VERSION_STRING, *args],
+        catch_exceptions=False,
+    )
+
+    assert_failure(result, exit_code=2)
+    assert (
+        f"'allowed-init-branch' should only be given unique values. Appeared more than once: {names}"
+        in str(result.output)
+    )

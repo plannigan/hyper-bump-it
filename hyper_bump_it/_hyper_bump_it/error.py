@@ -240,6 +240,45 @@ class MissingRemoteError(GitError):
         )
 
 
+class DisallowedInitialBranchError(GitError):
+    def __init__(
+        self,
+        allowed_initial_branches: frozenset[str],
+        active_branch: str,
+        project_root: Path,
+    ) -> None:
+        self.allowed_initial_branches = allowed_initial_branches
+        self.active_branch = active_branch
+        self.project_root = project_root
+        if len(self.allowed_initial_branches) == 1:
+            must_message = f"'{self._first_branch}'"
+        else:
+            branches = "', '".join(self.allowed_initial_branches)
+            must_message = f"one of: '{branches}'"
+        super().__init__(
+            f"The repository at '{self.project_root}' is current on branch '{self.active_branch}', "
+            f"which is not allowed. Must be {must_message}."
+        )
+
+    @property
+    def _first_branch(self) -> str:
+        return next(iter(self.allowed_initial_branches))
+
+    def __rich__(self) -> str:
+        if len(self.allowed_initial_branches) == 1:
+            must_message = f"'{_rich_valid_value(self._first_branch)}'"
+        else:
+            branches = "', '".join(
+                _rich_valid_value(x) for x in self.allowed_initial_branches
+            )
+            must_message = f"one of: '{branches}'"
+        return (
+            f"The repository at '{_rich_path(self.project_root)}' is current on branch "
+            f"'{_rich_invalid_value(self.active_branch)}', "
+            f"which is not allowed. Must be {must_message}."
+        )
+
+
 class AlreadyExistsError(GitError):
     def __init__(self, ref_type: str, name: str, project_root: Path) -> None:
         self.project_root = project_root

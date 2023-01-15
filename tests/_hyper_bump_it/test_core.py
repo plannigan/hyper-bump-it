@@ -88,6 +88,7 @@ def test_do_bump__keystone_git__file_updated(tmp_path: Path):
         project_root=project_root,
         show_confirm_prompt=False,
         config_version_updater=None,
+        git=sd.some_git(allowed_initial_branches=sd.ANY_ALLOWED_BRANCHES),
     )
 
     original_text = f"--{sd.SOME_VERSION}--"

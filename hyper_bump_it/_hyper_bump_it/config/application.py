@@ -38,6 +38,7 @@ class Git:
     commit_format_pattern: str
     branch_format_pattern: str
     tag_format_pattern: str
+    allowed_initial_branches: frozenset[str]
     actions: GitActions
 
 
@@ -162,12 +163,27 @@ def _convert_git(args: Union[BumpToArgs, BumpByArgs], git: file.Git) -> Git:
         commit_format_pattern=args.commit_format_pattern or git.commit_format_pattern,
         branch_format_pattern=args.branch_format_pattern or git.branch_format_pattern,
         tag_format_pattern=args.tag_format_pattern or git.tag_format_pattern,
+        allowed_initial_branches=_merge_allowed_branches(
+            args.allowed_initial_branches,
+            git.allowed_initial_branches,
+            git.extend_allowed_initial_branches,
+        ),
         actions=GitActions(
             commit=args.commit or git.actions.commit,
             branch=args.branch or git.actions.branch,
             tag=args.tag or git.actions.tag,
         ),
     )
+
+
+def _merge_allowed_branches(
+    arg_branches: Optional[frozenset[str]],
+    file_branches: frozenset[str],
+    file_extend_branches: frozenset[str],
+) -> frozenset[str]:
+    if arg_branches is not None:
+        return frozenset(arg_branches)
+    return file_branches | file_extend_branches
 
 
 def _show_confirm_prompt(

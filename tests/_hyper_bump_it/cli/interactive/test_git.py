@@ -1,8 +1,14 @@
 from io import StringIO
 
 from hyper_bump_it._hyper_bump_it.cli.interactive import git
-from hyper_bump_it._hyper_bump_it.cli.interactive.git import GitMenu
-from hyper_bump_it._hyper_bump_it.config import GitAction
+from hyper_bump_it._hyper_bump_it.cli.interactive.git import (
+    AllowedBranchesMenu,
+    GitMenu,
+)
+from hyper_bump_it._hyper_bump_it.config import (
+    DEFAULT_ALLOWED_INITIAL_BRANCHES,
+    GitAction,
+)
 from tests._hyper_bump_it import sample_data as sd
 from tests.conftest import ForceInput
 
@@ -202,4 +208,245 @@ def test_configure__actions_invalid_combination__ask_all_again(
     )
     assert (
         "Error: if commit is 'skip', tag must also be 'skip'" in capture_rich.getvalue()
+    )
+
+
+def test_configure_allowed_branches__no_input__unchanged_branches(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == initial_config
+
+
+def test_configure_allowed_branches__add_no_name__unchanged_branches(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Add.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == initial_config
+
+
+def test_configure_allowed_branches__add_duplicate__unchanged_branches(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Add.value,
+        sd.SOME_ALLOWED_BRANCH,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == initial_config
+
+
+def test_configure_allowed_branches__add_new_duplicate__new_branch_added(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Add.value,
+        sd.SOME_ALLOWED_BRANCH,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+
+
+def test_configure_allowed_branches__remove_empty__unchanged_branches(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches=set(), extend_allowed_initial_branches=set()
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Remove.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == initial_config
+
+
+def test_configure_allowed_branches__remove_single__no_branches(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Remove.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == sd.some_git_config_file(
+        allowed_initial_branches=set(), extend_allowed_initial_branches=set()
+    )
+
+
+def test_configure_allowed_branches__remove_multiple__given_branch_removed(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Remove.value,
+        sd.SOME_ALLOWED_BRANCH,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+
+
+def test_configure_allowed_branches__clear__no_branches(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches={sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH},
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Clear.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == sd.some_git_config_file(
+        allowed_initial_branches=set(), extend_allowed_initial_branches=set()
+    )
+
+
+def test_configure_allowed_branches__start_default_not_changes__same_values(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches=DEFAULT_ALLOWED_INITIAL_BRANCHES,
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Done.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == initial_config
+
+
+def test_configure_allowed_branches__start_default_add_one__new_value_in_extend(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches=DEFAULT_ALLOWED_INITIAL_BRANCHES,
+        extend_allowed_initial_branches=set(),
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Add.value,
+        sd.SOME_ALLOWED_BRANCH,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == sd.some_git_config_file(
+        allowed_initial_branches=DEFAULT_ALLOWED_INITIAL_BRANCHES,
+        extend_allowed_initial_branches={sd.SOME_ALLOWED_BRANCH},
+    )
+
+
+def test_configure_allowed_branches__start_default_remove_one__remaining_allowed(
+    force_input: ForceInput,
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches=DEFAULT_ALLOWED_INITIAL_BRANCHES,
+        extend_allowed_initial_branches=set(),
+    )
+    to_remove, to_remain = DEFAULT_ALLOWED_INITIAL_BRANCHES
+    force_input(
+        GitMenu.AllowedBranches.value,
+        AllowedBranchesMenu.Remove.value,
+        to_remove,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    result = editor.configure()
+
+    assert result == sd.some_git_config_file(
+        allowed_initial_branches={to_remain},
+        extend_allowed_initial_branches=set(),
     )
