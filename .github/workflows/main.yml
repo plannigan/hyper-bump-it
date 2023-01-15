@@ -161,6 +161,8 @@ jobs:
         uses: ./.github/actions/verify-wheel
         with:
           package-import-name: "hyper_bump_it"
+          script-command: "hyper-bump-it --help"
+
 
   build-docs:
     runs-on: ubuntu-latest
