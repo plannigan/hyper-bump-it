@@ -1,3 +1,4 @@
+import dataclasses
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -17,7 +18,6 @@ from pydantic import (
     ValidationError,
     root_validator,
 )
-from semantic_version import Version
 from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
@@ -28,6 +28,7 @@ from ..error import (
     InvalidConfigurationError,
     SubTableNotExistError,
 )
+from ..version import Version
 from .core import (
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
@@ -88,8 +89,7 @@ HyperConfigFileValues: TypeAlias = dict[
 ]
 
 
-# type ignore can be removed once type hints are added https://github.com/rbarrois/python-semanticversion/issues/138
-class ValidVersion(Version):  # type: ignore[misc]
+class ValidVersion(Version):
     @classmethod
     def __get_validators__(cls) -> Iterator[Callable[[object], "ValidVersion"]]:
         yield cls._validate
@@ -97,9 +97,9 @@ class ValidVersion(Version):  # type: ignore[misc]
     @classmethod
     def _validate(cls, value: object) -> "ValidVersion":
         if isinstance(value, Version):
-            return cls(str(value))
+            return cast(ValidVersion, dataclasses.replace(value))
         if isinstance(value, str):
-            return cls(value)
+            return cast(ValidVersion, Version.parse(value))
         raise TypeError(
             "Value must be a version or a string that can be parsed into a version"
         )

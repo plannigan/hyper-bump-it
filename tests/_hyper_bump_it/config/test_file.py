@@ -4,7 +4,6 @@ from textwrap import dedent
 import pytest
 import tomlkit
 from pydantic import ValidationError
-from semantic_version import Version
 
 from hyper_bump_it._hyper_bump_it.config import GitAction, file
 from hyper_bump_it._hyper_bump_it.config.core import DEFAULT_SEARCH_PATTERN
@@ -428,7 +427,7 @@ def test_read_pyproject_config__valid_current_version__returned_updater_updates_
     config, updater = file.read_pyproject_config(config_file)
 
     assert updater is not None
-    updater(Version(sd.SOME_OTHER_VERSION_STRING))
+    updater(sd.SOME_OTHER_VERSION)
 
     assert config_file.read_text() == sd.some_minimal_config_text(
         PYPROJECT_ROOT_TABLE, sd.SOME_OTHER_VERSION_STRING
@@ -529,7 +528,7 @@ def test_read_hyper_config__valid_current_version__returned_updater_updates_file
     config, updater = file.read_hyper_config(config_file)
 
     assert updater is not None
-    updater(Version(sd.SOME_OTHER_VERSION_STRING))
+    updater(sd.SOME_OTHER_VERSION)
 
     assert config_file.read_text() == sd.some_minimal_config_text(
         file.ROOT_TABLE_KEY, sd.SOME_OTHER_VERSION_STRING
@@ -569,5 +568,5 @@ def test_config_version_updater__write_fails__error(
     # attempt to write to a directory
     with pytest.raises(ConfigurationFileWriteError):
         file.ConfigVersionUpdater(tmp_path, tomlkit.document(), tomlkit.document())(
-            Version(sd.SOME_VERSION_STRING)
+            sd.SOME_VERSION
         )
