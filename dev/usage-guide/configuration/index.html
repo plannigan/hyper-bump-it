@@ -349,6 +349,40 @@
     Git
   </a>
   
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-initial-branches" class="md-nav__link">
+    Allowed Initial Branches
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-operations" class="md-nav__link">
+    Customize Operations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -473,6 +507,40 @@
   <a href="#git" class="md-nav__link">
     Git
   </a>
+  
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-initial-branches" class="md-nav__link">
+    Allowed Initial Branches
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-operations" class="md-nav__link">
+    Customize Operations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -630,6 +698,7 @@ in place of the text that was searched for. There is a dedicated page that discu
 <h3 id="git">Git</h3>
 <p>The <a href="../git-integration/"><code>git</code> integration</a> is configured within the dedicated sub-tables, but they
 are completely optional.</p>
+<h4 id="actions">Actions</h4>
 <p>There are three types of <code>git</code> actions that can be performed: <code>commit</code>, <code>branch</code>, and <code>tag</code>.
 Each of these fields can have one of three values: <code>"skip"</code>, <code>"create"</code>, or <code>"create-and-push"</code>.
 There is a dedicated section that discusses these <a href="../git-integration/#actions">git actions</a> in more detail.</p>
@@ -637,7 +706,14 @@ There is a dedicated section that discusses these <a href="../git-integration/#a
 <code>"create-and-push"</code>. If <code>commit</code> is not specified, the default value of <code>"create"</code> is used. If
 <code>brnach</code> is not specified, the default value of <code>"skip"</code> is used. If <code>tag</code> is not specified, the
 default value of <code>"skip"</code> is used.</p>
-<p>Additionally, there are a few fields that can be used to customize how these actions operate.</p>
+<h4 id="allowed-initial-branches">Allowed Initial Branches</h4>
+<p>Further safety concerns can be addressed by limiting which branches <code>hypber-bump-it</code> will
+execute on. By default, only <code>main</code> and <code>master</code> are allowed. <code>allowed_initial_branches</code>can be
+used to customize the set of allowed branches. Explicitly using an empty list will disable this
+functionality. If you want to allow additional branches in addition to the defaults,
+<code>extend_allowed_initial_branches</code> can be used without needing to explicitly re-list the defaults.</p>
+<h4 id="customize-operations">Customize Operations</h4>
+<p>There are a few fields that can be used to customize how these actions operate.</p>
 <ul>
 <li><code>remote</code> specifies the name of remote repository to use as the destination for push operations.
     If not specified, the default value of <code>"origin"</code> is used.</li>
@@ -650,6 +726,7 @@ default value of <code>"skip"</code> is used.</p>
 <li><code>tag_format_pattern</code> is a <a href="../format-patterns/">format pattern</a> used to produce the name of the tag.
     If not specified, the default value of, the default value of <code>"v{new_version}"</code> is used.</li>
 </ul>
+<h4 id="example">Example</h4>
 <p>The following is an example configuration which creates a commit on a new branch that is pushed to
 the "upstream" remote. Additionally, the format patterns for the commit message and branch names
 are customized.</p>

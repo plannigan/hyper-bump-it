@@ -371,6 +371,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#allowed-initial-branches" class="md-nav__link">
+    Allowed Initial Branches
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -448,6 +455,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#allowed-initial-branches" class="md-nav__link">
+    Allowed Initial Branches
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -506,6 +520,12 @@ result that is not possible.</p>
 <li>If a commit is being created &amp; pushed (commit action is set to <code>"create-and-push"</code>), branch
     <strong>must not</strong> be  set to <code>"create"</code>.</li>
 </ul>
+<h2 id="allowed-initial-branches">Allowed Initial Branches</h2>
+<p>Accidentally performing a version bump from a feature branch could result in code being released that
+was not ready for the public. To help prevent this from occurring, <code>hyper-bump-it</code> checks the current
+branch at startup to check that it is an allowed branch. By default, <code>main</code> and <code>master</code> are the only
+allowed initial branches. Additional branches can be added with <code>extend_allowed_initial_branches</code>.
+This functionality can be disabled by setting <code>allowed-initial-branches</code> to an empty list.</p>
 
 
 
