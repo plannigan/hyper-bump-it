@@ -45,4 +45,12 @@ There are a few basic rules:
 * If a commit is being created & pushed (commit action is set to `"create-and-push"`), branch
     **must not** be  set to `"create"`.
 
+## Allowed Initial Branches
+
+Accidentally performing a version bump from a feature branch could result in code being released that
+was not ready for the public. To help prevent this from occurring, `hyper-bump-it` checks the current
+branch at startup to check that it is an allowed branch. By default, `main` and `master` are the only
+allowed initial branches. Additional branches can be added with `extend_allowed_initial_branches`.
+This functionality can be disabled by setting `allowed-initial-branches` to an empty list.
+
 [git-python]: https://gitpython.readthedocs.io/

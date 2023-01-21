@@ -21,6 +21,7 @@ A version bumping tool.
 * Safe by default, but can be overridden:
     * Request confirmation before editing files
     * Explicit configuration need to push changes
+    * Won't run if the current branch is not the default
     * Won't run if there are unstaged changes
 * TOML configuration file (can be part of `pyproject.toml`)
 

@@ -39,6 +39,16 @@ SOME_SUB_TABLES = ("some-name", "some-sub-name")
         error.DirtyRepositoryError(Path(sd.SOME_DIRECTORY_NAME)),
         error.DetachedRepositoryError(Path(sd.SOME_DIRECTORY_NAME)),
         error.MissingRemoteError(sd.SOME_REMOTE, Path(sd.SOME_DIRECTORY_NAME)),
+        error.DisallowedInitialBranchError(
+            frozenset({sd.SOME_ALLOWED_BRANCH}),
+            sd.SOME_BRANCH,
+            Path(sd.SOME_DIRECTORY_NAME),
+        ),
+        error.DisallowedInitialBranchError(
+            frozenset({sd.SOME_ALLOWED_BRANCH, sd.SOME_OTHER_ALLOWED_BRANCH}),
+            sd.SOME_BRANCH,
+            Path(sd.SOME_DIRECTORY_NAME),
+        ),
         error.AlreadyExistsError(
             SOME_REF_TYPE, sd.SOME_BRANCH, Path(sd.SOME_DIRECTORY_NAME)
         ),

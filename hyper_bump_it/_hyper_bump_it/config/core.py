@@ -24,6 +24,7 @@ DEFAULT_COMMIT_FORMAT_PATTERN: str = (
 DEFAULT_BRANCH_FORMAT_PATTERN = f"bump_version_to_{{{keys.NEW_VERSION}}}"
 DEFAULT_TAG_FORMAT_PATTERN = f"v{{{keys.NEW_VERSION}}}"
 DEFAULT_SEARCH_PATTERN = f"{{{keys.VERSION}}}"
+DEFAULT_ALLOWED_INITIAL_BRANCHES = frozenset({"main", "master"})
 
 HYPER_CONFIG_FILE_NAME = "hyper-bump-it.toml"
 PYPROJECT_FILE_NAME = "pyproject.toml"

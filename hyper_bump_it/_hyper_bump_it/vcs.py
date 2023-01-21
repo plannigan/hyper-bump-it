@@ -11,6 +11,7 @@ from .error import (
     AlreadyExistsError,
     DetachedRepositoryError,
     DirtyRepositoryError,
+    DisallowedInitialBranchError,
     EmptyRepositoryError,
     MissingRemoteError,
     NoRepositoryError,
@@ -24,6 +25,7 @@ class GitOperationsInfo:
     commit_message: str
     branch_name: str
     tag_name: str
+    allowed_initial_branches: frozenset[str]
     actions: GitActions
 
     @classmethod
@@ -41,6 +43,7 @@ class GitOperationsInfo:
             commit_message=formatter.format(config.commit_format_pattern),
             branch_name=formatter.format(config.branch_format_pattern),
             tag_name=formatter.format(config.tag_format_pattern),
+            allowed_initial_branches=config.allowed_initial_branches,
             actions=config.actions,
         )
 
@@ -76,6 +79,16 @@ def get_vetted_repo(project_root: Path, operation_info: GitOperationsInfo) -> Re
 def _validate_repo_for_operations(
     repo: Repo, operation_info: GitOperationsInfo, project_root: Path
 ) -> None:
+    if operation_info.allowed_initial_branches and all(
+        allowed_branch != repo.active_branch.name
+        for allowed_branch in operation_info.allowed_initial_branches
+    ):
+        raise DisallowedInitialBranchError(
+            operation_info.allowed_initial_branches,
+            repo.active_branch.name,
+            project_root,
+        )
+
     if operation_info.actions.any_push and operation_info.remote not in repo.remotes:
         raise MissingRemoteError(operation_info.remote, project_root)
 

@@ -90,6 +90,10 @@ SOME_COMMIT_MESSAGE = "test commit message"
 SOME_OTHER_COMMIT_MESSAGE = "other test commit message"
 SOME_BRANCH = "test-branch"
 SOME_OTHER_BRANCH = "other-test-branch"
+SOME_ALLOWED_BRANCH = "test-allowed-branch"
+SOME_OTHER_ALLOWED_BRANCH = "other-test-allowed-branch"
+SOME_ALLOWED_BRANCHES = frozenset({SOME_ALLOWED_BRANCH})
+ANY_ALLOWED_BRANCHES = frozenset()
 SOME_TAG = "test-tag"
 SOME_OTHER_TAG = "other-test-tag"
 SOME_COMMIT_PATTERN = f"test commit {{{keys.NEW_VERSION}}}"
@@ -125,6 +129,7 @@ def some_git(
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
     tag_format_pattern=SOME_TAG_PATTERN,
+    allowed_initial_branches=SOME_ALLOWED_BRANCHES,
     actions=some_git_actions(),
 ) -> Git:
     return Git(
@@ -132,6 +137,7 @@ def some_git(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        allowed_initial_branches=allowed_initial_branches,
         actions=actions,
     )
 
@@ -149,6 +155,10 @@ def some_git_config_file(
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
     tag_format_pattern=SOME_TAG_PATTERN,
+    allowed_initial_branches: Union[frozenset[str], set[str]] = SOME_ALLOWED_BRANCHES,
+    extend_allowed_initial_branches: Union[
+        frozenset[str], set[str]
+    ] = SOME_ALLOWED_BRANCHES,
     actions=some_git_actions_config_file(),
 ) -> GitConfigFile:
     return GitConfigFile(
@@ -156,6 +166,8 @@ def some_git_config_file(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        allowed_initial_branches=frozenset(allowed_initial_branches),
+        extend_allowed_initial_branches=frozenset(extend_allowed_initial_branches),
         actions=actions,
     )
 
@@ -203,6 +215,7 @@ def some_git_operations_info(
     commit_message=SOME_COMMIT_MESSAGE,
     branch_name=SOME_BRANCH,
     tag_name=SOME_TAG,
+    allowed_initial_branches=SOME_ALLOWED_BRANCHES,
     actions=some_git_actions(),
 ) -> GitOperationsInfo:
     return GitOperationsInfo(
@@ -210,6 +223,7 @@ def some_git_operations_info(
         commit_message=commit_message,
         branch_name=branch_name,
         tag_name=tag_name,
+        allowed_initial_branches=allowed_initial_branches,
         actions=actions,
     )
 
@@ -293,6 +307,7 @@ def no_config_override_bump_to_args(
         commit_format_pattern=None,
         branch_format_pattern=None,
         tag_format_pattern=None,
+        allowed_initial_branches=None,
     )
 
 
@@ -310,6 +325,7 @@ def some_bump_to_args(
     commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
     branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
     tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+    allowed_initial_branches: frozenset[str] = SOME_ALLOWED_BRANCHES,
 ) -> BumpToArgs:
     return BumpToArgs(
         new_version=new_version,
@@ -325,6 +341,9 @@ def some_bump_to_args(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        allowed_initial_branches=None
+        if allowed_initial_branches is None
+        else frozenset(allowed_initial_branches),
     )
 
 
@@ -349,6 +368,7 @@ def no_config_override_bump_by_args(
         commit_format_pattern=None,
         branch_format_pattern=None,
         tag_format_pattern=None,
+        allowed_initial_branches=None,
     )
 
 
@@ -366,6 +386,9 @@ def some_bump_by_args(
     commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
     branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
     tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+    allowed_initial_branches: Union[
+        Optional[set[str]], frozenset[str]
+    ] = SOME_ALLOWED_BRANCHES,
 ) -> BumpByArgs:
     return BumpByArgs(
         part_to_bump=part_to_bump,
@@ -381,6 +404,9 @@ def some_bump_by_args(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        allowed_initial_branches=None
+        if allowed_initial_branches is None
+        else frozenset(allowed_initial_branches),
     )
 
 

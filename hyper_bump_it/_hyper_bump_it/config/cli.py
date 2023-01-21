@@ -28,6 +28,7 @@ class BumpToArgs:
     commit_format_pattern: Optional[str]
     branch_format_pattern: Optional[str]
     tag_format_pattern: Optional[str]
+    allowed_initial_branches: Optional[frozenset[str]]
 
 
 @dataclass
@@ -45,3 +46,4 @@ class BumpByArgs:
     commit_format_pattern: Optional[str]
     branch_format_pattern: Optional[str]
     tag_format_pattern: Optional[str]
+    allowed_initial_branches: Optional[frozenset[str]]

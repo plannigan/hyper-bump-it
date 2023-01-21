@@ -24,17 +24,18 @@ EXAMPLE_FILE_GLOB = "version.txt"
 
 class OptionFactory(Protocol):
     def __call__(  # type: ignore[misc]
-        self, default: Optional[str] = ..., panel_name: str = ...
+        self, default: object = ..., panel_name: str = ...
     ) -> Any:
         ...
 
 
-def _create_option_factory(description: str) -> OptionFactory:
+def _create_option_factory(description: str, *param_decls: str) -> OptionFactory:
     def _create_option(  # type: ignore[misc]
-        default: Optional[str] = None, panel_name: str = OVERRIDE_PANEL_NAME
+        default: object = None, panel_name: str = OVERRIDE_PANEL_NAME
     ) -> Any:
         return typer.Option(
             default,
+            *param_decls,
             help=description,
             show_default=default is not None,
             rich_help_panel=panel_name,
@@ -85,6 +86,15 @@ commit_format_pattern = _create_option_factory(
 )
 branch_format_pattern = _create_option_factory("Format pattern to use for branch name")
 tag_format_pattern = _create_option_factory("Format pattern to use for tag name")
+# Typer returns an empty tuple even when the default is None and the argument is annotated as Optional[list[str]]
+# https://github.com/tiangolo/typer/issues/170
+allowed_init_branch = _create_option_factory(
+    "Name of allowed initial branch (can be used multiple times)"
+)
+allow_any_init_branch = _create_option_factory(
+    "Disable any initial branch restrictions. (takes precedence over --allowed-init-branch)",
+    "--allow-any-init-branch",
+)
 
 
 @overload
@@ -107,6 +117,28 @@ def parse_version(version: Optional[str], parameter_name: str) -> Optional[Versi
             raise typer.BadParameter(
                 f"'{version}' is not a valid version", param_hint=parameter_name
             )
+
+
+def allowed_init_branches(
+    allowed_branches_arg: list[str],
+    allow_any_init_branch_arg: Optional[bool],
+) -> Optional[frozenset[str]]:
+    if allow_any_init_branch_arg is True:
+        return frozenset()
+    if len(allowed_branches_arg) == 0:
+        return None
+
+    unique_names = frozenset(allowed_branches_arg)
+    if len(unique_names) == len(allowed_branches_arg):
+        return unique_names
+
+    for value in unique_names:
+        allowed_branches_arg.remove(value)
+
+    remaining = "', '".join(sorted(set(allowed_branches_arg)))
+    raise typer.BadParameter(
+        f"'allowed-init-branch' should only be given unique values. Appeared more than once: '{remaining}'"
+    )
 
 
 @contextmanager

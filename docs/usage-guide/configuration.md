@@ -133,6 +133,8 @@ The following is an example configuration which has two file definitions that bo
 The [`git` integration][git-integration] is configured within the dedicated sub-tables, but they
 are completely optional.
 
+#### Actions
+
 There are three types of `git` actions that can be performed: `commit`, `branch`, and `tag`.
 Each of these fields can have one of three values: `"skip"`, `"create"`, or `"create-and-push"`.
 There is a dedicated section that discusses these [git actions][git-actions] in more detail.
@@ -142,7 +144,17 @@ To ensure changes are not accidentally published, none of the fields default to
 `brnach` is not specified, the default value of `"skip"` is used. If `tag` is not specified, the
 default value of `"skip"` is used.
 
-Additionally, there are a few fields that can be used to customize how these actions operate.
+#### Allowed Initial Branches
+
+Further safety concerns can be addressed by limiting which branches `hypber-bump-it` will
+execute on. By default, only `main` and `master` are allowed. `allowed_initial_branches`can be
+used to customize the set of allowed branches. Explicitly using an empty list will disable this
+functionality. If you want to allow additional branches in addition to the defaults,
+`extend_allowed_initial_branches` can be used without needing to explicitly re-list the defaults.
+
+#### Customize Operations
+
+There are a few fields that can be used to customize how these actions operate.
 
 * `remote` specifies the name of remote repository to use as the destination for push operations.
     If not specified, the default value of `"origin"` is used.
@@ -155,6 +167,8 @@ Additionally, there are a few fields that can be used to customize how these act
 * `tag_format_pattern` is a [format pattern][format-patterns] used to produce the name of the tag.
     If not specified, the default value of, the default value of `"v{new_version}"` is used.
 
+
+#### Example
 
 The following is an example configuration which creates a commit on a new branch that is pushed to
 the "upstream" remote. Additionally, the format patterns for the commit message and branch names

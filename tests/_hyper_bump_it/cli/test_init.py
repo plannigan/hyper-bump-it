@@ -64,6 +64,27 @@ def test_init__invalid__error(cli_args: list[str], expected_output_regex):
     assert re.search(expected_output_regex, result.output) is not None
 
 
+@pytest.mark.parametrize(
+    "args",
+    [
+        tuple(),
+        ("--allowed-init-branch", sd.SOME_ALLOWED_BRANCH),
+    ],
+)
+def test_init___allow_any_init_branch__cancels_any_allowed_init_branch(
+    args, tmp_path: Path
+):
+    config_file = tmp_path / HYPER_CONFIG_FILE_NAME
+
+    result = _run_non_interactive(tmp_path, *args, "--allow-any-init-branch")
+
+    assert_success(result)
+    assert config_file.is_file()
+    content = tomlkit.parse(config_file.read_text())
+    assert len(content[ROOT_TABLE_KEY]["git"]["allowed_initial_branches"]) == 0
+    assert "extend_allowed_initial_branches" not in content[ROOT_TABLE_KEY]["git"]
+
+
 def test_init__non_interactive_dedicated__writes_file(tmp_path: Path):
     config_file = tmp_path / HYPER_CONFIG_FILE_NAME
 
