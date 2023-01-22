@@ -38,7 +38,9 @@ issues = "https://github.com/plannigan/hyper-bump-it/issues"
 [project.scripts]
 hyper-bump-it = "hyper_bump_it._hyper_bump_it.cli:app"
 
-
+[build-system]
+requires = ["setuptools >= 61.0.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
@@ -46,11 +48,7 @@ exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
 [tool.setuptools.package-data]
 hyper_bump_it = ["py.typed"]
 
-
-[tool.black]
-line-length = 88
-target-version = ["py39", "py310", "py311"]
-
+# type checking
 [tool.mypy]
 files = "hyper_bump_it"
 show_error_codes = true
@@ -75,8 +73,10 @@ module = [
 ]
 implicit_reexport = true
 
-[tool.isort]
-profile = "black"
+# testing
+[tool.pytest.ini_options]
+addopts = "--verbose --cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
+testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
@@ -89,10 +89,10 @@ exclude_lines = [
     "pragma: no cover"
 ]
 
-[tool.pytest.ini_options]
-addopts = "--verbose --cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
-testpaths = ["tests"]
+# code formatting
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311"]
 
-[build-system]
-requires = ["setuptools >= 61.0.0"]
-build-backend = "setuptools.build_meta"
+[tool.isort]
+profile = "black"
