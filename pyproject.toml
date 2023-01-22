@@ -87,3 +87,31 @@ target-version = ["py39", "py310", "py311"]
 
 [tool.isort]
 profile = "black"
+
+# version bumping
+[tool.hyper-bump-it.git.actions]
+commit = "create-and-push"
+branch = "create-and-push"
+
+[[tool.hyper-bump-it.files]]
+file_glob = "pyproject.toml"
+keystone = true
+search_format_pattern = "version = \"{version}\""
+
+[[tool.hyper-bump-it.files]]
+file_glob = "hyper_bump_it/__init__.py"
+
+[[tool.hyper-bump-it.files]]
+file_glob = "docs/index.md"
+search_format_pattern = "# Hyper Bump It - {version}"
+
+[[tool.hyper-bump-it.files]]
+file_glob = "CHANGELOG.md"
+search_format_pattern = "## [Unreleased]"
+replace_format_pattern = """## [Unreleased]
+
+## [{version}] - {today}"""
+
+[[tool.hyper-bump-it.files]]
+file_glob = ".github/ISSUE_TEMPLATE/bug_report.md"
+search_format_pattern = "`hyper-bump-it` Version [e.g. {version}]"
