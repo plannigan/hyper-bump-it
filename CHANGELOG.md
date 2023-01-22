@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Ability to limit allowed starting branch.
+* Can be run as a module in addition to the entrypoint script.
 
 ### Internal
 
