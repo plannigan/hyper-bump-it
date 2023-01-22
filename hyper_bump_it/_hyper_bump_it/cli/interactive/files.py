@@ -104,7 +104,7 @@ def _prompt_file_glob(default: Optional[str]) -> str:
         )
     else:
         file_glob = prompt.Prompt.ask(
-            f"The current file glob pattern is '{default}'\n."
+            f"The current file glob pattern is '{default}'.\n"
             f"Enter a new glob pattern or leave it blank to kep the current file glob pattern",
             show_default=False,
             default=default,
