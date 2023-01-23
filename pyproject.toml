@@ -54,18 +54,9 @@ files = "hyper_bump_it"
 show_error_codes = true
 warn_unused_configs = true
 pretty = true
-
-[[tool.mypy.overrides]]
-module = "hyper_bump_it.*"
 strict = true
 disallow_any_explicit = true
 warn_unreachable = true
-
-[[tool.mypy.overrides]]
-module = [
-    "semantic_version.*",
-]
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
