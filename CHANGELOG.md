@@ -11,8 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Ability to limit allowed starting branch.
 * Can be run as a module in addition to the entrypoint script.
 
+### Fixed
+
+* Value of `hyper_bump_it.__version__`.
+
 ### Internal
 
+* Use `hyper-bump-it` to manage the version of the project.
 * Reorganize internal modules under a single internal sub-module.
 * Remove dependency on `semantic-version`.
 
