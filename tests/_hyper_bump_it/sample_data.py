@@ -114,6 +114,8 @@ SOME_OLD_LINE = "start text"
 SOME_OTHER_OLD_LINE = "other start text"
 SOME_NEW_LINE = "updated text"
 SOME_OTHER_NEW_LINE = "other updated text"
+SOME_WHITE_SPACE_OLD_LINE = "  start text with spaces on both side  "
+SOME_WHITE_SPACE_NEW_LINE = "  updated text with spaces on both side  "
 
 
 def some_git_actions(

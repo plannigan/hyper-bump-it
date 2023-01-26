@@ -250,16 +250,34 @@ def test_update_file_actions__call__updater_called_with_version(mocker):
     perform_change.assert_called_once_with(some_change)
 
 
-def test_update_file_actions__display__message_displayed(capture_rich: StringIO):
-    action = execution_plan.update_file_actions([sd.some_planned_change()])
+@pytest.mark.parametrize(
+    ["old_line", "new_line"],
+    [
+        (sd.SOME_OLD_LINE, sd.SOME_NEW_LINE),
+        (sd.SOME_WHITE_SPACE_OLD_LINE, sd.SOME_WHITE_SPACE_NEW_LINE),
+    ],
+)
+def test_update_file_actions__display__message_displayed(
+    old_line, new_line, capture_rich: StringIO
+):
+    action = execution_plan.update_file_actions(
+        [
+            sd.some_planned_change(
+                line_changes=sd.some_line_change(old_line=old_line, new_line=new_line)
+            )
+        ]
+    )
 
     action.display_intent()
 
     output = capture_rich.getvalue()
+    print("----------")
+    print(output)
+    print("----------")
     assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
     assert (
-        f"{sd.SOME_FILE_INDEX + 1}: - {sd.SOME_OLD_LINE}\n"
-        f"{sd.SOME_FILE_INDEX + 1}: + {sd.SOME_NEW_LINE}" in output
+        f"{sd.SOME_FILE_INDEX + 1}: - {old_line}\n"
+        f"{sd.SOME_FILE_INDEX + 1}: + {new_line}\n" in output
     )
 
 
