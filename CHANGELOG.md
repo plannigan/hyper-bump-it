@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Internal
 
 * Use `hyper-bump-it` to manage the version of the project.
+* Automate the release process of new versions.
 * Reorganize internal modules under a single internal sub-module.
 * Remove dependency on `semantic-version`.
 
