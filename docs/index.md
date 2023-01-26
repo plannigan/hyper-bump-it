@@ -1,4 +1,4 @@
-# Hyper Bump It - 0.2.0
+# Hyper Bump It - 0.3.0
 
 [![CI pipeline status](https://github.com/plannigan/hyper-bump-it/actions/workflows/main.yml/badge.svg?branch=main)][ci]
 [![PyPI](https://img.shields.io/pypi/v/hyper-bump-it)][pypi]
