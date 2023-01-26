@@ -108,9 +108,7 @@ class ChangeFileAction:
         print(Rule(title=str(self._change.file)))
         for line_change in self._change.line_changes:
             print(f"{line_change.line_index + 1}: [red]- {line_change.old_line}")
-            print(
-                f"{line_change.line_index + 1}: [green]+ {line_change.new_line.strip()}"
-            )
+            print(f"{line_change.line_index + 1}: [green]+ {line_change.new_line}")
 
 
 def update_file_actions(planned_changes: list[files.PlannedChange]) -> Action:

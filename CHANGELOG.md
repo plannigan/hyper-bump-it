@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* Incorrectly display of planned change for lines that contained leading whitespace characters.
+
 ## [0.3.0] - 2023-01-26
 
 ### Added
