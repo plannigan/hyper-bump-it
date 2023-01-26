@@ -1,0 +1,50 @@
+name: Publish Release
+
+env:
+  PYTHON_VERSION: "3.11"
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update_docs_for_version_bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
+
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+        with:
+          requirements: "true"
+          test-requirements: "true"
+          docs-requirements: "true"
+
+      - name: Push documentation changes
+        uses: ./.github/actions/publish-docs-with-mike
+        with:
+          new_version: true
+
+  build-and-publish-wheel-to-pypi:
+    runs-on: ubuntu-latest
+    environment: "Upload Release"
+    steps:
+      - name: Check out code
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
+
+      - uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912 # v4.4.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build wheel
+        uses: ./.github/actions/build-dist
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@c7f29f7adef1a245bd91520e94867e5c6eedddcc # v1.6.4
+        with:
+          password: ${{ secrets.PYPI_UPLOAD_TOKEN }}
