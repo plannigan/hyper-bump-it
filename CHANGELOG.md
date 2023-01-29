@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Incorrectly display of planned change for lines that contained leading whitespace characters.
+* Incorrectly display of text containing square brackets (`[`, `]`).
 
 ## [0.3.0] - 2023-01-26
 

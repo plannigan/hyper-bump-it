@@ -1,5 +1,7 @@
 from io import StringIO
 
+import pytest
+
 from hyper_bump_it._hyper_bump_it.cli.interactive import git
 from hyper_bump_it._hyper_bump_it.cli.interactive.git import (
     AllowedBranchesMenu,
@@ -44,6 +46,23 @@ def test_configure__remote_no_input__unchanged_remote(force_input: ForceInput):
     assert result == initial_config
 
 
+def test_configure__remote_require_escape__values_escaped(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        GitMenu.Remote.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(
+        sd.some_git_config_file(remote=sd.SOME_ESCAPE_REQUIRED_TEXT)
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
+
+
 def test_configure__commit_format_pattern_value__updated_pattern(
     force_input: ForceInput,
 ):
@@ -75,6 +94,23 @@ def test_configure__commit_format_pattern_no_input__unchanged_pattern(
     result = editor.configure()
 
     assert result == initial_config
+
+
+def test_configure__commit_format_pattern_require_escape__values_escaped(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        GitMenu.CommitFormatPattern.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(
+        sd.some_git_config_file(commit_format_pattern=sd.SOME_ESCAPE_REQUIRED_TEXT)
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
 
 
 def test_configure__branch_format_pattern_value__updated_pattern(
@@ -110,6 +146,23 @@ def test_configure__branch_format_pattern_no_input__unchanged_pattern(
     assert result == initial_config
 
 
+def test_configure__branch_format_pattern_require_escape__values_escaped(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        GitMenu.BranchFormatPattern.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(
+        sd.some_git_config_file(branch_format_pattern=sd.SOME_ESCAPE_REQUIRED_TEXT)
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
+
+
 def test_configure__tag_format_pattern_value__updated_pattern(
     force_input: ForceInput,
 ):
@@ -139,6 +192,23 @@ def test_configure__tag_format_pattern_no_input__unchanged_pattern(
     result = editor.configure()
 
     assert result == initial_config
+
+
+def test_configure__tag_format_pattern_require_escape__values_escaped(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        GitMenu.TagFormatPattern.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(
+        sd.some_git_config_file(tag_format_pattern=sd.SOME_ESCAPE_REQUIRED_TEXT)
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
 
 
 def test_configure__actions_values__updated_actions(
@@ -450,3 +520,30 @@ def test_configure_allowed_branches__start_default_remove_one__remaining_allowed
         allowed_initial_branches={to_remain},
         extend_allowed_initial_branches=set(),
     )
+
+
+@pytest.mark.parametrize(
+    "branches",
+    [
+        {sd.SOME_ESCAPE_REQUIRED_TEXT},
+        {sd.SOME_ESCAPE_REQUIRED_TEXT, sd.SOME_OTHER_ESCAPE_REQUIRED_TEXT},
+    ],
+)
+def test_configure_allowed_branches__require_escape__values_escaped(
+    branches, force_input: ForceInput, capture_rich: StringIO
+):
+    initial_config = sd.some_git_config_file(
+        allowed_initial_branches=branches,
+    )
+    force_input(
+        GitMenu.AllowedBranches.value,
+        force_input.NO_INPUT,
+        force_input.NO_INPUT,
+    )
+    editor = git.GitConfigEditor(initial_config)
+
+    editor.configure()
+
+    output = capture_rich.getvalue()
+    for branch in branches:
+        assert branch in output

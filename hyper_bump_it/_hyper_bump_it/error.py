@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Collection, TypeVar
 
 from pydantic import ValidationError
+from rich.markup import escape
 
 if TYPE_CHECKING:
     from pydantic.error_wrappers import ErrorDict
@@ -34,7 +35,8 @@ class FormatKeyError(FormatError):
 
     def __rich__(self) -> str:
         return (
-            f"Format pattern '{_rich_invalid_value(self.format_pattern)}' used an invalid key.\n"
+            f"Format pattern '{_rich_invalid_value(escape(self.format_pattern))}' "
+            "used an invalid key.\n"
             f"Valid keys are: {_list_values(self.valid_keys, _rich_valid_value)}"
         )
 
@@ -81,7 +83,7 @@ class FormatPatternError(FormatError):
 
     def __rich__(self) -> str:
         return (
-            f"Format pattern '{_rich_invalid_value(self.format_pattern)}' was invalid:\n"
+            f"Format pattern '{_rich_invalid_value(escape(self.format_pattern))}' was invalid:\n"
             f"{_rich_error_message(self.error)}"
         )
 
@@ -99,7 +101,7 @@ class TodayFormatKeyError(FormatError):
 
     def __rich__(self) -> str:
         return (
-            f"Today format directive '{_rich_invalid_value(self.date_format_pattern)}' "
+            f"Today format directive '{_rich_invalid_value(escape(self.date_format_pattern))}' "
             "used an unsupported key for keystone parsing.\n"
             f"Valid keys are: {_list_values(self.valid_keys, _rich_valid_value)}"
         )
@@ -117,7 +119,7 @@ class IncompleteKeystoneVersionError(FormatError):
     def __rich__(self) -> str:
         return (
             f"Keystone version found in file '{_rich_path(self.file)}' using pattern "
-            f"'{_rich_invalid_value(self.search_pattern)}' was incomplete."
+            f"'{_rich_invalid_value(escape(self.search_pattern))}' was incomplete."
         )
 
 
@@ -131,7 +133,7 @@ class FileGlobError(BumpItError):
 
     def __rich__(self) -> str:
         return (
-            f"File glob '{_rich_file_glob(self.file_glob)}' did not match any files "
+            f"File glob '{_rich_file_glob(escape(self.file_glob))}' did not match any files "
             f"in '{_rich_path(self.working_dir)}'"
         )
 
@@ -153,7 +155,8 @@ class KeystoneFileGlobError(KeystoneError):
 
     def __rich__(self) -> str:
         return (
-            f"The file glob ({_rich_file_glob(self.file_glob)}) for the keystone files must match "
+            f"The file glob ({_rich_file_glob(escape(self.file_glob))}) for the keystone files "
+            "must match "
             f"exactly one file.\n{self._matched_description(_rich_path)}"
         )
 
@@ -175,7 +178,7 @@ class VersionNotFound(KeystoneError):
     def __rich__(self) -> str:
         return (
             f"Current version not found in file '{_rich_path(self.file)}' using pattern "
-            f"'{_rich_valid_value(self.search_pattern)}'"
+            f"'{_rich_valid_value(escape(self.search_pattern))}'"
         )
 
 
@@ -236,7 +239,7 @@ class MissingRemoteError(GitError):
     def __rich__(self) -> str:
         return (
             f"The repository at '{_rich_path(self.project_root)}' does not define the "
-            f"[bold]remote[/] '{_rich_valid_value(self.remote)}'"
+            f"[bold]remote[/] '{_rich_valid_value(escape(self.remote))}'"
         )
 
 
@@ -266,15 +269,15 @@ class DisallowedInitialBranchError(GitError):
 
     def __rich__(self) -> str:
         if len(self.allowed_initial_branches) == 1:
-            must_message = f"'{_rich_valid_value(self._first_branch)}'"
+            must_message = f"'{_rich_valid_value(escape(self._first_branch))}'"
         else:
             branches = "', '".join(
-                _rich_valid_value(x) for x in self.allowed_initial_branches
+                _rich_valid_value(escape(x)) for x in self.allowed_initial_branches
             )
             must_message = f"one of: '{branches}'"
         return (
             f"The repository at '{_rich_path(self.project_root)}' is current on branch "
-            f"'{_rich_invalid_value(self.active_branch)}', "
+            f"'{_rich_invalid_value(escape(self.active_branch))}', "
             f"which is not allowed. Must be {must_message}."
         )
 
@@ -292,7 +295,7 @@ class AlreadyExistsError(GitError):
     def __rich__(self) -> str:
         return (
             f"The repository at '{_rich_path(self.project_root)}' already has a "
-            f"{_rich_bold(self.ref_type)} named '{_rich_valid_value(self.name)}'"
+            f"{_rich_bold(self.ref_type)} named '{_rich_valid_value(escape(self.name))}'"
         )
 
 
@@ -325,7 +328,7 @@ class ConfigurationFileReadError(ConfigurationError):
     def __rich__(self) -> str:
         return (
             f"The configuration file ({_rich_path(self.file)}) could not be read:\n"
-            + _rich_error_message(str(self.cause))
+            + _rich_error_message(escape(str(self.cause)))
         )
 
 
@@ -340,7 +343,7 @@ class ConfigurationFileWriteError(ConfigurationError):
     def __rich__(self) -> str:
         return (
             f"The configuration file ({_rich_path(self.file)}) could not be written to:\n"
-            + _rich_error_message(str(self.cause))
+            + _rich_error_message(escape(str(self.cause)))
         )
 
 
@@ -384,7 +387,8 @@ class InvalidConfigurationError(ConfigurationError):
     @staticmethod
     def display_errors(errors: list["ErrorDict"]) -> str:
         return "\n".join(
-            f'{InvalidConfigurationError._display_error_loc(e)}  {_rich_error_message(e["msg"])}'
+            f"{InvalidConfigurationError._display_error_loc(e)}  "
+            f'{_rich_error_message(escape(e["msg"]))}'
             for e in errors
         )
 
@@ -423,7 +427,7 @@ def _rich_error_message(value: str) -> str:
 
 
 def _rich_path(value: Path) -> str:
-    return _rich_value(str(value), _RICH_STYLE_PATHLIKE)
+    return _rich_value(escape(str(value)), _RICH_STYLE_PATHLIKE)
 
 
 def _rich_file_glob(value: str) -> str:

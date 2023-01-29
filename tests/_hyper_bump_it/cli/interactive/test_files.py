@@ -18,7 +18,10 @@ EXAMPLE_CONFIG = [files._EXAMPLE_DEFINITION]
 ALWAYS_VALID = cast(DefinitionValidator, lambda _: None)
 
 
-def create_invalid_first() -> DefinitionValidator:
+def create_invalid_first(
+    failure: FailureType = FailureType.NoFiles,
+    description: str = "some failure message",
+) -> DefinitionValidator:
     was_called = False
 
     def _validator(_) -> Optional[ValidationFailure]:
@@ -26,7 +29,7 @@ def create_invalid_first() -> DefinitionValidator:
         if was_called:
             return None
         was_called = True
-        return ValidationFailure(FailureType.NoFiles, "")
+        return ValidationFailure(failure, description)
 
     return cast(DefinitionValidator, _validator)
 
@@ -121,9 +124,7 @@ def test_configure__add__addition_definition(force_input: ForceInput):
     assert result_has_keystone is False
 
 
-def test_configure__add_keystone_exists__result_has_keystone(
-    force_input: ForceInput, capture_rich: StringIO
-):
+def test_configure__add_keystone_exists__result_has_keystone(force_input: ForceInput):
     force_input(
         FilesMenu.Add.value,
         sd.SOME_OTHER_FILE_GLOB,
@@ -460,3 +461,84 @@ def test_file_summary__default_search_pattern__formats_to_version(
     )
 
     assert files._definition_summary(some_file) == expected_output
+
+
+@pytest.mark.parametrize(
+    "field_name",
+    [
+        "file_glob",
+        "search_format_pattern",
+        "replace_format_pattern",
+    ],
+)
+def test_configure__prompt_current_values_require_escape__values_escaped(
+    field_name, force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.Edit.value,
+        force_input.NO_INPUT,  # file glob
+        force_input.NO_INPUT,  # search pattern
+        "n",  # omit replace format pattern
+        force_input.NO_INPUT,  # replace pattern
+        "n",  # not keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(
+        [sd.some_file_definition(**{field_name: sd.SOME_ESCAPE_REQUIRED_TEXT})],
+        ALWAYS_VALID,
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
+
+
+@pytest.mark.parametrize(
+    "field_name",
+    [
+        "file_glob",
+        "search_format_pattern",
+        "replace_format_pattern",
+    ],
+)
+def test_configure__list_current_values_require_escape__values_escaped(
+    field_name, force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.List.value,
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(
+        [sd.some_file_definition(**{field_name: sd.SOME_ESCAPE_REQUIRED_TEXT})],
+        ALWAYS_VALID,
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
+
+
+def test_configure__failure_require_escape__values_escaped(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.Edit.value,
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "y",  # yes, omit replace format pattern
+        "n",  # no, keystone
+        # start again
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "y",  # yes, omit replace format pattern
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(
+        [sd.some_file_definition()],
+        create_invalid_first(description=sd.SOME_ESCAPE_REQUIRED_TEXT),
+    )
+
+    editor.configure()
+
+    assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()

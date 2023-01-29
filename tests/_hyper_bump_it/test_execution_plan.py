@@ -250,20 +250,42 @@ def test_update_file_actions__call__updater_called_with_version(mocker):
     perform_change.assert_called_once_with(some_change)
 
 
+def test_update_file_actions__call_file_needs_escaping__shows_escaped_text(
+    mocker, capture_rich: StringIO
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.files.perform_change")
+    some_change = sd.some_planned_change(file=Path(sd.SOME_ESCAPE_REQUIRED_TEXT))
+    action = execution_plan.update_file_actions([some_change])
+
+    action()
+
+    assert f"Updating {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+
+
 @pytest.mark.parametrize(
-    ["old_line", "new_line"],
+    ["file_name", "old_line", "new_line"],
     [
-        (sd.SOME_OLD_LINE, sd.SOME_NEW_LINE),
-        (sd.SOME_WHITE_SPACE_OLD_LINE, sd.SOME_WHITE_SPACE_NEW_LINE),
+        (sd.SOME_GLOB_MATCHED_FILE_NAME, sd.SOME_OLD_LINE, sd.SOME_NEW_LINE),
+        (
+            sd.SOME_GLOB_MATCHED_FILE_NAME,
+            sd.SOME_WHITE_SPACE_OLD_LINE,
+            sd.SOME_WHITE_SPACE_NEW_LINE,
+        ),
+        (
+            sd.SOME_ESCAPE_REQUIRED_TEXT,
+            sd.SOME_ESCAPE_REQUIRED_TEXT,
+            sd.SOME_OTHER_ESCAPE_REQUIRED_TEXT,
+        ),
     ],
 )
 def test_update_file_actions__display__message_displayed(
-    old_line, new_line, capture_rich: StringIO
+    file_name, old_line, new_line, capture_rich: StringIO
 ):
     action = execution_plan.update_file_actions(
         [
             sd.some_planned_change(
-                line_changes=sd.some_line_change(old_line=old_line, new_line=new_line)
+                file=Path(file_name),
+                line_changes=sd.some_line_change(old_line=old_line, new_line=new_line),
             )
         ]
     )
@@ -271,10 +293,7 @@ def test_update_file_actions__display__message_displayed(
     action.display_intent()
 
     output = capture_rich.getvalue()
-    print("----------")
-    print(output)
-    print("----------")
-    assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
+    assert f"─── {file_name} ───" in output
     assert (
         f"{sd.SOME_FILE_INDEX + 1}: - {old_line}\n"
         f"{sd.SOME_FILE_INDEX + 1}: + {new_line}\n" in output
@@ -336,15 +355,28 @@ def test_create_branch_action__call__create_branch_called(mocker):
     mock_create_branch.assert_called_once_with(mock_repo, sd.SOME_BRANCH)
 
 
-def test_create_branch_action__display__show_branch_name(
+def test_create_branch_action__call_needs_escaping__shows_escaped_text(
     capture_rich: StringIO, mocker
 ):
+    mocker.patch("hyper_bump_it._hyper_bump_it.vcs.create_branch")
     mock_repo = mocker.Mock()
-    action = execution_plan.CreateBranchAction(mock_repo, sd.SOME_BRANCH)
+    action = execution_plan.CreateBranchAction(mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT)
+
+    action()
+
+    assert f"Creating branch {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+
+
+@pytest.mark.parametrize("branch", [sd.SOME_BRANCH, sd.SOME_ESCAPE_REQUIRED_TEXT])
+def test_create_branch_action__display__show_branch_name(
+    branch, capture_rich: StringIO, mocker
+):
+    mock_repo = mocker.Mock()
+    action = execution_plan.CreateBranchAction(mock_repo, branch)
 
     action.display_intent()
 
-    assert sd.SOME_BRANCH in capture_rich.getvalue()
+    assert branch in capture_rich.getvalue()
 
 
 def test_switch_branch_action__call__switch_to_called(mocker):
@@ -355,6 +387,20 @@ def test_switch_branch_action__call__switch_to_called(mocker):
     action()
 
     mock_switch_to.assert_called_once_with(mock_repo, sd.SOME_BRANCH)
+
+
+def test_switch_branch_action__call_needs_escaping__create_branch_called(
+    capture_rich: StringIO, mocker
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.vcs.switch_to")
+    mock_repo = mocker.Mock()
+    action = execution_plan.SwitchBranchAction(mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT)
+
+    action()
+
+    assert (
+        f"Switching to branch {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+    )
 
 
 def test_switch_branch_action__display__show_branch_name(
@@ -380,6 +426,20 @@ def test_commit_changes_action__call__switch_to_called(mocker):
     mock_commit_changes.assert_called_once_with(mock_repo, sd.SOME_COMMIT_MESSAGE)
 
 
+def test_commit_changes_action__call_needs_escaping__shows_escaped_text(
+    capture_rich: StringIO, mocker
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.vcs.commit_changes")
+    mock_repo = mocker.Mock()
+    action = execution_plan.CommitChangesAction(mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT)
+
+    action()
+
+    assert (
+        f"Committing changes: {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+    )
+
+
 def test_commit_changes_action__display__show_commit_message(
     capture_rich: StringIO, mocker
 ):
@@ -401,6 +461,18 @@ def test_create_tag_action__call__switch_to_called(mocker):
     mock_create_tag.assert_called_once_with(mock_repo, sd.SOME_TAG)
 
 
+def test_create_tag_action__call_needs_escaping__shows_escaped_text(
+    capture_rich: StringIO, mocker
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.vcs.create_tag")
+    mock_repo = mocker.Mock()
+    action = execution_plan.CreateTagAction(mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT)
+
+    action()
+
+    assert f"Tagging commit: {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+
+
 def test_create_tag_action__display__show_tag_name(capture_rich: StringIO, mocker):
     mock_repo = mocker.Mock()
     action = execution_plan.CreateTagAction(mock_repo, sd.SOME_TAG)
@@ -419,6 +491,34 @@ def test_push_changes_action__call__switch_to_called(mocker):
     action()
 
     mock_push_changes.assert_called_once_with(mock_repo, git_operations_info)
+
+
+def test_push_changes__call_needs_escaping__show_description(
+    capture_rich: StringIO, mocker
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.vcs.push_changes")
+    mock_repo = mocker.Mock()
+    action = execution_plan.PushChangesAction(
+        mock_repo,
+        sd.some_git_operations_info(
+            remote=sd.SOME_ESCAPE_REQUIRED_TEXT,
+            branch_name=sd.SOME_ESCAPE_REQUIRED_TEXT,
+            tag_name=sd.SOME_ESCAPE_REQUIRED_TEXT,
+            actions=sd.some_git_actions(
+                commit=GitAction.CreateAndPush,
+                branch=GitAction.CreateAndPush,
+                tag=GitAction.CreateAndPush,
+            ),
+        ),
+    )
+
+    action()
+
+    assert (
+        f"Pushing commit to {sd.SOME_ESCAPE_REQUIRED_TEXT} "
+        f"on branch {sd.SOME_ESCAPE_REQUIRED_TEXT} "
+        f"with tag {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+    )
 
 
 @pytest.mark.parametrize(
@@ -478,6 +578,33 @@ def test_push_changes__display__show_description(
     action.display_intent()
 
     assert expected_description in capture_rich.getvalue()
+
+
+def test_push_changes__display_needs_escaping__show_description(
+    capture_rich: StringIO, mocker
+):
+    mock_repo = mocker.Mock()
+    action = execution_plan.PushChangesAction(
+        mock_repo,
+        sd.some_git_operations_info(
+            remote=sd.SOME_ESCAPE_REQUIRED_TEXT,
+            branch_name=sd.SOME_ESCAPE_REQUIRED_TEXT,
+            tag_name=sd.SOME_ESCAPE_REQUIRED_TEXT,
+            actions=sd.some_git_actions(
+                commit=GitAction.CreateAndPush,
+                branch=GitAction.CreateAndPush,
+                tag=GitAction.CreateAndPush,
+            ),
+        ),
+    )
+
+    action.display_intent()
+
+    assert (
+        f"Push commit to {sd.SOME_ESCAPE_REQUIRED_TEXT} "
+        f"on branch {sd.SOME_ESCAPE_REQUIRED_TEXT} "
+        f"with tag {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+    )
 
 
 @pytest.mark.parametrize(
