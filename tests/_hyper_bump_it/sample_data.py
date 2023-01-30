@@ -116,6 +116,12 @@ SOME_NEW_LINE = "updated text"
 SOME_OTHER_NEW_LINE = "other updated text"
 SOME_WHITE_SPACE_OLD_LINE = "  start text with spaces on both side  "
 SOME_WHITE_SPACE_NEW_LINE = "  updated text with spaces on both side  "
+SOME_ESCAPE_REQUIRED_TEXT = (
+    "text that has a square brackets [v1.2.3] that need to be escaped"
+)
+SOME_OTHER_ESCAPE_REQUIRED_TEXT = (
+    "other text that has a square brackets [v1.2.3] that need to be escaped"
+)
 
 
 def some_git_actions(

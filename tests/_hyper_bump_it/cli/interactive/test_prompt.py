@@ -2,9 +2,11 @@ from enum import Enum
 from io import StringIO
 
 import pytest
+from rich import print as r_print
 from rich.text import Text
 
 from hyper_bump_it._hyper_bump_it.cli.interactive import prompt
+from tests._hyper_bump_it import sample_data as sd
 from tests.conftest import ForceInput
 
 
@@ -81,6 +83,27 @@ def test_enum_prompt__expected_output(force_input: ForceInput, capture_rich: Str
     )
 
 
+def test_enum_prompt__text_require_escape__values_escaped(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(force_input.NO_INPUT)
+    prompt.enum_prompt(
+        sd.SOME_ESCAPE_REQUIRED_TEXT,
+        {
+            Options.Foo: sd.SOME_ESCAPE_REQUIRED_TEXT,
+            Options.Bar: sd.SOME_ESCAPE_REQUIRED_TEXT,
+        },
+        SOME_OPTION,
+    )
+
+    assert (
+        capture_rich.getvalue() == f"{sd.SOME_ESCAPE_REQUIRED_TEXT}\n"
+        f"{Options.Foo.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT}\n"
+        f"{Options.Bar.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT} (default)\n"
+        f"Enter the option name: "
+    )
+
+
 @pytest.mark.parametrize(
     ["options", "default", "expected_text"],
     [
@@ -114,3 +137,23 @@ def test_list_options__expected_output(options, default, expected_text):
     )
 
     assert text.plain == expected_text
+
+
+def test_list_options__text_require_escape__values_escaped(capture_rich: StringIO):
+    text = Text()
+
+    prompt.list_options(
+        text,
+        {
+            Options.Foo.value: sd.SOME_ESCAPE_REQUIRED_TEXT,
+            Options.Bar.value: sd.SOME_ESCAPE_REQUIRED_TEXT,
+        },
+        SOME_OPTION.value,
+    )
+
+    r_print(text)
+
+    assert (
+        f"{Options.Foo.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT}\n"
+        f"{Options.Bar.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT} (default)\n"
+    )

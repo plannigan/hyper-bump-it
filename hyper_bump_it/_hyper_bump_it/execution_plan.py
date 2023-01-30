@@ -8,6 +8,7 @@ from typing import Optional, Protocol, TypeVar
 
 from git import Repo
 from rich import print
+from rich.markup import escape
 from rich.rule import Rule
 
 from . import files, vcs
@@ -101,14 +102,18 @@ class ChangeFileAction:
         self._change = change
 
     def __call__(self) -> None:
-        print(f"Updating {self._change.file}")
+        print(f"Updating {escape(str(self._change.file))}")
         files.perform_change(self._change)
 
     def display_intent(self) -> None:
-        print(Rule(title=str(self._change.file)))
+        print(Rule(title=escape(str(self._change.file))))
         for line_change in self._change.line_changes:
-            print(f"{line_change.line_index + 1}: [red]- {line_change.old_line}")
-            print(f"{line_change.line_index + 1}: [green]+ {line_change.new_line}")
+            print(
+                f"{line_change.line_index + 1}: [red]- {escape(line_change.old_line)}"
+            )
+            print(
+                f"{line_change.line_index + 1}: [green]+ {escape(line_change.new_line)}"
+            )
 
 
 def update_file_actions(planned_changes: list[files.PlannedChange]) -> Action:
@@ -125,11 +130,11 @@ class CreateBranchAction:
         self._branch_name = branch_name
 
     def __call__(self) -> None:
-        print(f"Creating branch {self._branch_name}")
+        print(f"Creating branch {escape(self._branch_name)}")
         vcs.create_branch(self._repo, self._branch_name)
 
     def display_intent(self) -> None:
-        print(f"Create branch {self._branch_name}")
+        print(f"Create branch {escape(self._branch_name)}")
 
 
 class SwitchBranchAction:
@@ -138,11 +143,11 @@ class SwitchBranchAction:
         self._branch_name = branch_name
 
     def __call__(self) -> None:
-        print(f"Switching to branch {self._branch_name}")
+        print(f"Switching to branch {escape(self._branch_name)}")
         vcs.switch_to(self._repo, self._branch_name)
 
     def display_intent(self) -> None:
-        print(f"Switch to branch {self._branch_name}")
+        print(f"Switch to branch {escape(self._branch_name)}")
 
 
 class CommitChangesAction:
@@ -151,11 +156,11 @@ class CommitChangesAction:
         self._commit_message = commit_message
 
     def __call__(self) -> None:
-        print(f"Committing changes: {self._commit_message}")
+        print(f"Committing changes: {escape(self._commit_message)}")
         vcs.commit_changes(self._repo, self._commit_message)
 
     def display_intent(self) -> None:
-        print(f"Commit changes: {self._commit_message}")
+        print(f"Commit changes: {escape(self._commit_message)}")
 
 
 class CreateTagAction:
@@ -164,11 +169,11 @@ class CreateTagAction:
         self._tag_name = tag_name
 
     def __call__(self) -> None:
-        print(f"Tagging commit: {self._tag_name}")
+        print(f"Tagging commit: {escape(self._tag_name)}")
         vcs.create_tag(self._repo, self._tag_name)
 
     def display_intent(self) -> None:
-        print(f"Tag commit: {self._tag_name}")
+        print(f"Tag commit: {escape(self._tag_name)}")
 
 
 class PushChangesAction:
@@ -185,11 +190,11 @@ class PushChangesAction:
 
     def _description(self, intent: bool) -> str:
         action = "Push" if intent else "Pushing"
-        message = f"{action} commit to {self._operation_info.remote}"
+        message = f"{action} commit to {escape(self._operation_info.remote)}"
         if self._operation_info.actions.branch == GitAction.CreateAndPush:
-            message = f"{message} on branch {self._operation_info.branch_name}"
+            message = f"{message} on branch {escape(self._operation_info.branch_name)}"
         if self._operation_info.actions.tag == GitAction.CreateAndPush:
-            message = f"{message} with tag {self._operation_info.tag_name}"
+            message = f"{message} with tag {escape(self._operation_info.tag_name)}"
         return message
 
 

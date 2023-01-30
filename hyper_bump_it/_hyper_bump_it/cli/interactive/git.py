@@ -6,6 +6,7 @@ from typing import Optional, TypeVar, Union
 
 from pydantic import ValidationError
 from rich import print, prompt
+from rich.markup import escape
 
 from ...config import (
     DEFAULT_BRANCH_ACTION,
@@ -134,7 +135,7 @@ class GitConfigEditor:
                 )
                 break
             except ValidationError as ex:
-                print(f"[prompt.invalid]Error[/]: {first_error_message(ex)}")
+                print(f"[prompt.invalid]Error[/]: {escape(first_error_message(ex))}")
 
         self._config = self._config.copy(update={"actions": actions})
 
@@ -159,7 +160,7 @@ def _prompt_remote(current_remote: str) -> Optional[str]:
     return prompt.Prompt.ask(
         f"When an action is set to 'create-and-push`, the name of the remote repository is needed."
         f"The remote is currently set to: "
-        f"[bold]{current_remote}[/]{_default_message(current_remote, DEFAULT_REMOTE)}\n"
+        f"[bold]{escape(current_remote)}[/]{_default_message(current_remote, DEFAULT_REMOTE)}\n"
         "Enter a new name or leave it blank to keep the value",
         show_default=False,
         default=None,
@@ -172,7 +173,7 @@ def _prompt_format_pattern(
     return prompt.Prompt.ask(
         f"Format patterns are used to generate text. "
         f"The format pattern for {name} is currently set to: "
-        f"[bold]{current_pattern}[/]{_default_message(current_pattern, default)}\n"
+        f"[bold]{escape(current_pattern)}[/]{_default_message(current_pattern, default)}\n"
         "Enter a new format pattern or leave it blank to keep the value",
         show_default=False,
         default=None,
@@ -283,10 +284,10 @@ def _display_branch_list(config: frozenset[str]) -> None:
         print("No allowed branches are currently set.")
     elif len(config) == 1:
         branch = next(iter(config))
-        print(f"The allowed branch is '{branch}'.")
+        print(f"The allowed branch is '{escape(branch)}'.")
     else:
         branches = "', '".join(config)
-        print(f"The allowed branches are: '{branches}'")
+        print(f"The allowed branches are: '{escape(branches)}'")
 
 
 def _prompt_add_branch() -> Optional[str]:

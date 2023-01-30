@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Optional
 
 from rich import print, prompt
+from rich.markup import escape
 from rich.text import Text
 
 from ...config import DEFAULT_SEARCH_PATTERN, FileDefinition
@@ -80,7 +81,7 @@ class FilesConfigEditor:
     def _list_definitions(self) -> None:
         print("The current file definitions:")
         for definition in self._config:
-            print(_definition_summary(definition))
+            print(escape(_definition_summary(definition)))
 
 
 def _prompt_file_menu() -> FilesMenu:
@@ -104,7 +105,7 @@ def _prompt_file_glob(default: Optional[str]) -> str:
         )
     else:
         file_glob = prompt.Prompt.ask(
-            f"The current file glob pattern is '{default}'.\n"
+            f"The current file glob pattern is '{escape(default)}'.\n"
             f"Enter a new glob pattern or leave it blank to kep the current file glob pattern",
             show_default=False,
             default=default,
@@ -152,7 +153,7 @@ def _prompt_definition(
             return definition
 
         print("The configured file definition was not valid:")
-        print(result.description)
+        print(escape(result.description))
         print("Update the definition to address the issue.")
         # Replace current with the new definition so the prompt defaults match what the user
         # entered. This allows the user to quickly get to the prompt that needs to be addressed.
@@ -185,7 +186,7 @@ def _prompt_keystone(default: bool) -> bool:
 def _prompt_format_pattern(name: str, current: str, new: bool) -> str:
     description = "default" if new else "current"
     return prompt.Prompt.ask(
-        f"The {description} {name} format pattern is '{current}'.\n"
+        f"The {description} {name} format pattern is '{escape(current)}'.\n"
         f"Enter a new format pattern or leave it blank to kep the {description} format pattern",
         show_default=False,
         default=current,
