@@ -39,8 +39,8 @@ def by_command(
         app_config = config_for_bump_by(
             BumpByArgs(
                 part_to_bump,
-                config_file=config_file,
-                project_root=project_root,
+                config_file=common.resolve(config_file),
+                project_root=common.resolve(project_root),
                 dry_run=dry_run,
                 skip_confirm_prompt=skip_confirm_prompt,
                 current_version=current_version_parsed,

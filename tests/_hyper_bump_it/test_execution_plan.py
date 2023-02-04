@@ -1,7 +1,6 @@
 from datetime import datetime
 from io import StringIO
 from itertools import zip_longest
-from pathlib import Path
 from typing import Type
 
 import pytest
@@ -254,7 +253,8 @@ def test_update_file_actions__call_file_needs_escaping__shows_escaped_text(
     mocker, capture_rich: StringIO
 ):
     mocker.patch("hyper_bump_it._hyper_bump_it.files.perform_change")
-    some_change = sd.some_planned_change(file=Path(sd.SOME_ESCAPE_REQUIRED_TEXT))
+    some_file = sd.SOME_ABSOLUTE_DIRECTORY / sd.SOME_ESCAPE_REQUIRED_TEXT
+    some_change = sd.some_planned_change(file=some_file)
     action = execution_plan.update_file_actions([some_change])
 
     action()
@@ -281,10 +281,11 @@ def test_update_file_actions__call_file_needs_escaping__shows_escaped_text(
 def test_update_file_actions__display__message_displayed(
     file_name, old_line, new_line, capture_rich: StringIO
 ):
+    file = sd.SOME_ABSOLUTE_DIRECTORY / file_name
     action = execution_plan.update_file_actions(
         [
             sd.some_planned_change(
-                file=Path(file_name),
+                file=file,
                 line_changes=sd.some_line_change(old_line=old_line, new_line=new_line),
             )
         ]
@@ -331,10 +332,11 @@ def test_update_file_actions__display_multi_line_change__both_displayed(
 
 
 def test_update_file_actions__multi_display__each_name_appears(capture_rich: StringIO):
+    some_other_file = sd.SOME_ABSOLUTE_DIRECTORY / sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME
     action = execution_plan.update_file_actions(
         [
             sd.some_planned_change(),
-            sd.some_planned_change(file=Path(sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME)),
+            sd.some_planned_change(file=some_other_file),
         ]
     )
 

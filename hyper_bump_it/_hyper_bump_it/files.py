@@ -1,7 +1,7 @@
 """
 Operation on files.
 """
-from dataclasses import dataclass
+from dataclasses import InitVar, dataclass, field
 from pathlib import Path
 
 from .config import File
@@ -19,8 +19,13 @@ class LineChange:
 
 @dataclass
 class PlannedChange:
-    file: Path  # including project root directory
+    file: Path  # absolute resolved path
+    project_root: InitVar[Path]  # absolute resolved path
+    relative_file: Path = field(init=False)
     line_changes: list[LineChange]
+
+    def __post_init__(self, project_root: Path) -> None:
+        self.relative_file = self.file.relative_to(project_root)
 
 
 def collect_planned_changes(
@@ -38,7 +43,11 @@ def collect_planned_changes(
     """
     changes = [
         _planned_change_for(
-            file, config.search_format_pattern, config.replace_format_pattern, formatter
+            file,
+            config.search_format_pattern,
+            config.replace_format_pattern,
+            formatter,
+            project_root,
         )
         for file in project_root.glob(config.file_glob)
     ]
@@ -52,6 +61,7 @@ def _planned_change_for(
     search_pattern: str,
     replace_pattern: str,
     formatter: TextFormatter,
+    project_root: Path,
 ) -> PlannedChange:
     search_text = formatter.format(search_pattern, FormatContext.search)
     changes: list[LineChange] = []
@@ -67,9 +77,9 @@ def _planned_change_for(
             )
 
     if changes:
-        return PlannedChange(file, changes)
+        return PlannedChange(file, project_root, changes)
 
-    raise VersionNotFound(file, search_pattern)
+    raise VersionNotFound(file.relative_to(project_root), search_pattern)
 
 
 def perform_change(change: PlannedChange) -> None:

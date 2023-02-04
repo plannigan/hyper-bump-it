@@ -82,6 +82,7 @@ def init_command(
     if allow_any_init_branch:
         allowed_init_branch = []
 
+    project_root = common.resolve(project_root)
     config = ConfigFile(
         current_version=version,
         files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],

@@ -73,6 +73,8 @@ SOME_NON_VERSION_STRING = "abc-123"
 SOME_BUMP_PART = BumpPart.Minor
 SOME_CONFIG_FILE_NAME = "config.toml"
 SOME_DIRECTORY_NAME = "test-dir"
+SOME_ABSOLUTE_DIRECTORY = Path("/test/path") / SOME_DIRECTORY_NAME
+SOME_ABSOLUTE_CONFIG_FILE = SOME_ABSOLUTE_DIRECTORY / SOME_CONFIG_FILE_NAME
 SOME_ERROR_MESSAGE = "it went bang"
 
 
@@ -467,12 +469,15 @@ def some_line_change(
 
 
 def some_planned_change(
-    file=Path(SOME_GLOB_MATCHED_FILE_NAME),
+    file=SOME_ABSOLUTE_DIRECTORY / SOME_GLOB_MATCHED_FILE_NAME,
+    project_root=SOME_ABSOLUTE_DIRECTORY,
     line_changes: Union[LineChange, list[LineChange]] = some_line_change(),
 ) -> PlannedChange:
     if not isinstance(line_changes, list):
         line_changes = [line_changes]
-    return PlannedChange(file=file, line_changes=line_changes)
+    return PlannedChange(
+        file=file, project_root=project_root, line_changes=line_changes
+    )
 
 
 @dataclass

@@ -160,3 +160,17 @@ def display_and_exit(message: RenderableType, exit_code: int = 1) -> NoReturn:
         )
     )
     raise typer.Exit(exit_code)
+
+
+@overload
+def resolve(path: Path) -> Path:
+    ...
+
+
+@overload
+def resolve(path: Optional[Path]) -> Optional[Path]:
+    ...
+
+
+def resolve(path: Optional[Path]) -> Optional[Path]:
+    return None if path is None else path.resolve()
