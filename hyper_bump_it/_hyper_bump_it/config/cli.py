@@ -16,8 +16,8 @@ class BumpPart(str, Enum):
 @dataclass
 class BumpToArgs:
     new_version: Version
-    config_file: Optional[Path]
-    project_root: Path
+    config_file: Optional[Path]  # absolute resolved path
+    project_root: Path  # absolute resolved path
     dry_run: bool
     skip_confirm_prompt: Optional[bool]
     current_version: Optional[Version]
@@ -34,8 +34,8 @@ class BumpToArgs:
 @dataclass
 class BumpByArgs:
     part_to_bump: BumpPart
-    config_file: Optional[Path]
-    project_root: Path
+    config_file: Optional[Path]  # absolute resolved path
+    project_root: Path  # absolute resolved path
     dry_run: bool
     skip_confirm_prompt: Optional[bool]
     current_version: Optional[Version]

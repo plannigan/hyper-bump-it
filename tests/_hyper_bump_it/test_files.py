@@ -40,8 +40,9 @@ def test_collect_planned_changes__default_search_replace_single_line__planned_ch
 
     assert changes == [
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=0,
                     old_line=original_text,
@@ -69,8 +70,9 @@ def test_collect_planned_changes__multi_occurrence__multiple_planned_change_with
 
     assert changes == [
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=0,
                     old_line=original_line_1,
@@ -105,8 +107,9 @@ def test_collect_planned_changes__custom_search_replace__planned_change_with_new
 
     assert changes == [
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=0,
                     old_line=original_text,
@@ -133,8 +136,9 @@ def test_collect_planned_changes__match_later_in_file__planned_change_with_match
 
     assert changes == [
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=some_line_index,
                     old_line=original_text,
@@ -164,8 +168,9 @@ def test_collect_planned_changes__multiple_files__planned_change_for_both(
 
     assert sorted(changes, key=lambda x: x.file) == [
         PlannedChange(
-            some_other_file,
-            [
+            file=some_other_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=0,
                     old_line=other_original_text,
@@ -174,8 +179,9 @@ def test_collect_planned_changes__multiple_files__planned_change_for_both(
             ],
         ),
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=0,
                     old_line=original_text,
@@ -228,8 +234,9 @@ def test_perform_change__single_line_file__file_updated_proper_end(
 
     files.perform_change(
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=0,
                     old_line=original_text,
@@ -266,8 +273,9 @@ def test_perform_change__multi_line_file__file_updated_proper_end(
 
     files.perform_change(
         PlannedChange(
-            some_file,
-            [
+            file=some_file,
+            project_root=tmp_path,
+            line_changes=[
                 LineChange(
                     line_index=1,
                     old_line=original_text,
@@ -289,8 +297,9 @@ def test_perform_change__invalid_file__error(tmp_path: Path):
     with pytest.raises(ValueError):
         files.perform_change(
             PlannedChange(
-                some_non_existent_file,
-                [
+                file=some_non_existent_file,
+                project_root=tmp_path,
+                line_changes=[
                     LineChange(
                         line_index=0,
                         old_line=original_text,
@@ -311,8 +320,9 @@ def test_perform_change__invalid_line_index__error(tmp_path: Path):
     with pytest.raises(ValueError):
         files.perform_change(
             PlannedChange(
-                some_file,
-                [
+                file=some_file,
+                project_root=tmp_path,
+                line_changes=[
                     LineChange(
                         line_index=some_too_large_index,
                         old_line=original_text,

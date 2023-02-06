@@ -307,13 +307,13 @@ class ConfigurationFileNotFoundError(ConfigurationError):
     def __init__(self, project_root: Path) -> None:
         self.project_root = project_root
         super().__init__(
-            f"No configuration file found in directory {self.project_root.resolve()}"
+            f"No configuration file found in directory {self.project_root}"
         )
 
     def __rich__(self) -> str:
         return (
             f"No configuration file found in directory "
-            f"{_rich_path(self.project_root.resolve())}"
+            f"{_rich_path(self.project_root)}"
         )
 
 

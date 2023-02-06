@@ -37,6 +37,22 @@ def test_validation__keystone_multiple_matched_files__failure(tmp_path: Path):
     )
 
 
+def test_validation__keystone_multiple_matched_files__paths_relative_to_root(
+    tmp_path: Path,
+):
+    tmp_path.joinpath(sd.SOME_GLOB_MATCHED_FILE_NAME).touch()
+    tmp_path.joinpath(sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME).touch()
+    resolved_root = tmp_path.resolve()
+    validator = DefinitionValidator(sd.SOME_VERSION, project_root=resolved_root)
+    definition = sd.some_file_definition(keystone=True)
+
+    result = validator(definition)
+
+    assert result.failure_type == FailureType.KeystoneMultipleFiles
+    assert definition.file_glob in result.description
+    assert str(resolved_root) not in result.description
+
+
 @pytest.mark.parametrize(
     ["pattern_name", "expected_failure_type"],
     [

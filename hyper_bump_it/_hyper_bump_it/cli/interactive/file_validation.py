@@ -67,7 +67,9 @@ class DefinitionValidator:
                 f"'{definition.file_glob}' did not match any files in the project root: {self._project_root}",
             )
         if definition.keystone and len(matched_files) != 1:
-            file_names = "', '".join(str(file) for file in matched_files)
+            file_names = "', '".join(
+                str(file.relative_to(self._project_root)) for file in matched_files
+            )
             return ValidationFailure(
                 FailureType.KeystoneMultipleFiles,
                 f"Keystone files can only match one file. '{definition.file_glob}' matched: '{file_names}'",

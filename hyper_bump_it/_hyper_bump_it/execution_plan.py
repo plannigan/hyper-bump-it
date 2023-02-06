@@ -102,11 +102,11 @@ class ChangeFileAction:
         self._change = change
 
     def __call__(self) -> None:
-        print(f"Updating {escape(str(self._change.file))}")
+        print(f"Updating {escape(str(self._change.relative_file))}")
         files.perform_change(self._change)
 
     def display_intent(self) -> None:
-        print(Rule(title=escape(str(self._change.file))))
+        print(Rule(title=escape(str(self._change.relative_file))))
         for line_change in self._change.line_changes:
             print(
                 f"{line_change.line_index + 1}: [red]- {escape(line_change.old_line)}"

@@ -6,9 +6,9 @@ runner = CliRunner()
 
 CLI_OVERRIDE_ARGS_WITHOUT_DRY_RUN: list[str] = [
     "--config-file",
-    sd.SOME_CONFIG_FILE_NAME,
+    str(sd.SOME_ABSOLUTE_CONFIG_FILE),
     "--project-root",
-    sd.SOME_DIRECTORY_NAME,
+    str(sd.SOME_ABSOLUTE_DIRECTORY),
     "--current-version",
     sd.SOME_OTHER_PARTIAL_VERSION_STRING,
     "--commit",

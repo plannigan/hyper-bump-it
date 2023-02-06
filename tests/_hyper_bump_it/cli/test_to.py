@@ -64,8 +64,8 @@ def test_to__valid__args_sent_to_config_for_bump_to(mocker):
     assert_success(result)
     mock_config_for_bump_to.assert_called_once_with(
         sd.some_bump_to_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
         )
     )
@@ -99,8 +99,8 @@ def test_to__dry_run_options__args_sent_to_config_for_bump_to(dry_run_args, mock
     assert_success(result)
     mock_config_for_bump_to.assert_called_once_with(
         sd.some_bump_to_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
         )
     )
@@ -135,8 +135,8 @@ def test_to__skip_confirm_prompt_options__args_sent_to_config_for_bump_to(
     assert_success(result)
     mock_config_for_bump_to.assert_called_once_with(
         sd.some_bump_to_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
             skip_confirm_prompt=True,
         )
@@ -234,8 +234,8 @@ def test_to__allow_any_branch__other_branches_cleared(mocker):
     assert_success(result)
     mock_config_for_bump_to.assert_called_once_with(
         sd.some_bump_to_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
             allowed_initial_branches=frozenset(),
         )
@@ -285,4 +285,31 @@ def test_to__multiple_duplicate_allowed_branches__error(
     assert (
         f"'allowed-init-branch' should only be given unique values. Appeared more than once: {names}"
         in str(result.output)
+    )
+
+
+def test_to__relative_project_root_and_config_file__resolved_paths(mocker):
+    mock_config_for_bump_to = mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.to.config_for_bump_to"
+    )
+    mocker.patch("hyper_bump_it._hyper_bump_it.core.do_bump")
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "to",
+            sd.SOME_OTHER_VERSION_STRING,
+            "--config-file",
+            str(sd.SOME_CONFIG_FILE_NAME),
+            "--project-root",
+            str(sd.SOME_DIRECTORY_NAME),
+        ],
+    )
+
+    assert_success(result)
+    mock_config_for_bump_to.assert_called_once_with(
+        sd.no_config_override_bump_to_args(
+            config_file=Path(sd.SOME_CONFIG_FILE_NAME).resolve(),
+            project_root=Path(sd.SOME_DIRECTORY_NAME).resolve(),
+        )
     )

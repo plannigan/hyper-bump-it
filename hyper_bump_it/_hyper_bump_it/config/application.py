@@ -53,7 +53,7 @@ class File:
 class Config:
     current_version: Version
     new_version: Version
-    project_root: Path
+    project_root: Path  # absolute resolved path
     files: list[File]
     git: Git
     dry_run: bool

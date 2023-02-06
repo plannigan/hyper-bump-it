@@ -60,8 +60,8 @@ def test_by__valid__args_sent_to_config_for_bump_by(mocker):
     assert_success(result)
     mock_config_for_bump_by.assert_called_once_with(
         sd.some_bump_by_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
         )
     )
@@ -95,8 +95,8 @@ def test_by__dry_run_options__args_sent_to_config_for_bump_by(dry_run_args, mock
     assert_success(result)
     mock_config_for_bump_by.assert_called_once_with(
         sd.some_bump_by_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
         )
     )
@@ -131,8 +131,8 @@ def test_by__skip_confirm_prompt_options__args_sent_to_config_for_bump_by(
     assert_success(result)
     mock_config_for_bump_by.assert_called_once_with(
         sd.some_bump_by_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
             skip_confirm_prompt=True,
         )
@@ -158,8 +158,8 @@ def test_by__interactive_option__args_sent_to_config_for_bump_by(mocker):
     assert_success(result)
     mock_config_for_bump_by.assert_called_once_with(
         sd.some_bump_by_args(
-            config_file=Path(sd.SOME_CONFIG_FILE_NAME),
-            project_root=Path(sd.SOME_DIRECTORY_NAME),
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
             dry_run=True,
             skip_confirm_prompt=False,
         )
@@ -211,3 +211,30 @@ def test_by__other_error__no_special_handling(mocker, capture_rich: StringIO):
     assert_failure(result)
     assert sd.SOME_ERROR_MESSAGE not in capture_rich.getvalue()
     assert sd.SOME_ERROR_MESSAGE in str(result.exception)
+
+
+def test_tby__relative_project_root_and_config_file__resolved_paths(mocker):
+    mock_config_for_bump_by = mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.by.config_for_bump_by"
+    )
+    mocker.patch("hyper_bump_it._hyper_bump_it.core.do_bump")
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "by",
+            sd.SOME_BUMP_PART,
+            "--config-file",
+            str(sd.SOME_CONFIG_FILE_NAME),
+            "--project-root",
+            str(sd.SOME_DIRECTORY_NAME),
+        ],
+    )
+
+    assert_success(result)
+    mock_config_for_bump_by.assert_called_once_with(
+        sd.no_config_override_bump_by_args(
+            config_file=Path(sd.SOME_CONFIG_FILE_NAME).resolve(),
+            project_root=Path(sd.SOME_DIRECTORY_NAME).resolve(),
+        )
+    )
