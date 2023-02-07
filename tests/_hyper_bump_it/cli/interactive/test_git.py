@@ -547,3 +547,16 @@ def test_configure_allowed_branches__require_escape__values_escaped(
     output = capture_rich.getvalue()
     for branch in branches:
         assert branch in output
+
+
+@pytest.mark.parametrize(
+    ["value", "default", "expected_output"],
+    [
+        ("a", "b", ""),
+        ("a", "a", " (the default)"),
+    ],
+)
+def test_default_message__expected_output(value, default, expected_output):
+    result = git._default_message(value, default)
+
+    assert result.plain == expected_output

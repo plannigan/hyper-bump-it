@@ -1,9 +1,8 @@
 from typing import Optional
 
 from git import Repo
-from rich import print, prompt
 
-from . import execution_plan, files, vcs
+from . import execution_plan, files, ui, vcs
 from .config import Config, ConfigVersionUpdater
 from .files import PlannedChange
 from .text_formatter import TextFormatter
@@ -35,11 +34,9 @@ def do_bump(config: Config) -> None:
     if config.dry_run:
         return
 
-    print()  # blank line before prompt
+    ui.blank_line()
     if config.show_confirm_prompt:
-        response = prompt.Confirm.ask(
-            "Do you want to perform these actions?", default=False
-        )
+        response = ui.confirm("Do you want to perform these actions?", default=False)
 
         if not response:
             return

@@ -6,6 +6,9 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Optional
 
+from rich.text import Text
+
+from ... import ui
 from ...config import FileDefinition
 from ...error import FormatError
 from ...text_formatter import FormatContext, TextFormatter
@@ -25,7 +28,7 @@ class FailureType(Enum):
 @dataclass
 class ValidationFailure:
     failure_type: FailureType
-    description: str
+    description: Text
 
 
 class DefinitionValidator:
@@ -47,7 +50,7 @@ class DefinitionValidator:
                 definition.search_format_pattern, context=FormatContext.search
             )
         except FormatError as ex:
-            return ValidationFailure(FailureType.BadSearchPattern, str(ex))
+            return ValidationFailure(FailureType.BadSearchPattern, Text(str(ex)))
 
         if definition.replace_format_pattern is not None:
             try:
@@ -55,7 +58,7 @@ class DefinitionValidator:
                     definition.replace_format_pattern, context=FormatContext.replace
                 )
             except FormatError as ex:
-                return ValidationFailure(FailureType.BadReplacePattern, str(ex))
+                return ValidationFailure(FailureType.BadReplacePattern, Text(str(ex)))
         return self._check_file_contents(search_text, matched_files)
 
     def _validate_matched_files(
@@ -64,16 +67,26 @@ class DefinitionValidator:
         if len(matched_files) == 0:
             return ValidationFailure(
                 FailureType.NoFiles,
-                f"'{definition.file_glob}' did not match any files in the project root: {self._project_root}",
+                Text("'")
+                .append(definition.file_glob, style="file.glob")
+                .append("' did not match any files in the project root: ")
+                .append(str(self._project_root), style="file.path"),
             )
         if definition.keystone and len(matched_files) != 1:
-            file_names = "', '".join(
-                str(file.relative_to(self._project_root)) for file in matched_files
+            message = Text("Keystone files can only match one file. '")
+            message.append(definition.file_glob, style="file.glob")
+            message.append("' matched: ")
+            message.append_text(
+                ui.list_styled_values(
+                    (
+                        str(file.relative_to(self._project_root))
+                        for file in matched_files
+                    ),
+                    style="file.path",
+                    quoted=True,
+                )
             )
-            return ValidationFailure(
-                FailureType.KeystoneMultipleFiles,
-                f"Keystone files can only match one file. '{definition.file_glob}' matched: '{file_names}'",
-            )
+            return ValidationFailure(FailureType.KeystoneMultipleFiles, message)
         return None
 
     @staticmethod
@@ -84,6 +97,10 @@ class DefinitionValidator:
             if search_text not in file.read_text():
                 return ValidationFailure(
                     FailureType.SearchPatternNotFound,
-                    f"The search text '{search_text}' was not found in matched file '{file}'",
+                    Text("The search text '")
+                    .append(search_text, style="format.text")
+                    .append("' was not found in matched file '")
+                    .append(str(file), style="file.path")
+                    .append("'"),
                 )
         return None

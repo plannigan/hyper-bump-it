@@ -3,15 +3,14 @@ from pathlib import Path
 
 import pytest
 from pydantic import BaseModel, ValidationError, root_validator
-from rich import print as r_print
 
-from hyper_bump_it._hyper_bump_it import error
+from hyper_bump_it._hyper_bump_it import error, ui
 from hyper_bump_it._hyper_bump_it.text_formatter import keys
 from tests._hyper_bump_it import sample_data as sd
 
 SOME_VALID_KEYS = [keys.VERSION, keys.NEW_VERSION]
 SOME_ERROR_MESSAGE = "test error message"
-SOME_REF_TYPE = "test-branch"
+SOME_REF_TYPE = "branch"
 SOME_SUB_TABLES = ("some-name", "some-sub-name")
 
 
@@ -113,7 +112,7 @@ SOME_SUB_TABLES = ("some-name", "some-sub-name")
 def test_errors__rich_output__equivalent_to_str_representation(
     exception, capture_rich: StringIO
 ):
-    r_print(exception)
+    ui.display(exception)
 
     rich_content = capture_rich.getvalue()
     assert rich_content.strip().replace("\n", " ") == str(exception)
@@ -222,10 +221,10 @@ def test_invalid_configuration_error__rich_output__expected_text(
         Path(sd.SOME_CONFIG_FILE_NAME), validation_error
     )
 
-    r_print(exception)
+    ui.display(exception)
 
     rich_content = capture_rich.getvalue()
-    assert expected_content == rich_content
+    assert rich_content == expected_content
 
 
 def test_invalid_configuration_error__rich_output_escape_required__expected_text(
@@ -236,7 +235,7 @@ def test_invalid_configuration_error__rich_output_escape_required__expected_text
         Path(sd.SOME_ESCAPE_REQUIRED_TEXT), validation_error
     )
 
-    r_print(exception)
+    ui.display(exception)
 
     rich_content = capture_rich.getvalue()
     expected_content = (

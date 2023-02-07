@@ -2,10 +2,8 @@ from enum import Enum
 from io import StringIO
 
 import pytest
-from rich import print as r_print
-from rich.text import Text
 
-from hyper_bump_it._hyper_bump_it.cli.interactive import prompt
+from hyper_bump_it._hyper_bump_it import ui
 from tests._hyper_bump_it import sample_data as sd
 from tests.conftest import ForceInput
 
@@ -23,10 +21,16 @@ SOME_OTHER_OPTION = Options.Bar
 SOME_NON_OPTION_VALUE = "not an option value"
 
 
+def test_blank_line__newline(capture_rich: StringIO):
+    ui.blank_line()
+
+    assert "\n" == capture_rich.getvalue()
+
+
 def test_enum_prompt__no_response__default(force_input: ForceInput):
     force_input(force_input.NO_INPUT)
 
-    result = prompt.enum_prompt(
+    result = ui.choice_enum(
         SOME_PROMPT_TEXT,
         {
             Options.Foo: SOME_DESCRIPTION,
@@ -41,7 +45,7 @@ def test_enum_prompt__no_response__default(force_input: ForceInput):
 def test_enum_prompt__invalid_valid__valid_response(force_input: ForceInput):
     force_input(SOME_NON_OPTION_VALUE, SOME_OPTION.value)
 
-    result = prompt.enum_prompt(
+    result = ui.choice_enum(
         SOME_PROMPT_TEXT,
         {
             Options.Foo: SOME_DESCRIPTION,
@@ -55,7 +59,7 @@ def test_enum_prompt__invalid_valid__valid_response(force_input: ForceInput):
 
 def test_enum_prompt__missing_option_description__error():
     with pytest.raises(ValueError):
-        prompt.enum_prompt(
+        ui.choice_enum(
             SOME_PROMPT_TEXT,
             {
                 Options.Bar: SOME_OTHER_DESCRIPTION,
@@ -66,7 +70,7 @@ def test_enum_prompt__missing_option_description__error():
 
 def test_enum_prompt__expected_output(force_input: ForceInput, capture_rich: StringIO):
     force_input(force_input.NO_INPUT)
-    prompt.enum_prompt(
+    ui.choice_enum(
         SOME_PROMPT_TEXT,
         {
             Options.Foo: SOME_DESCRIPTION,
@@ -87,7 +91,7 @@ def test_enum_prompt__text_require_escape__values_escaped(
     force_input: ForceInput, capture_rich: StringIO
 ):
     force_input(force_input.NO_INPUT)
-    prompt.enum_prompt(
+    ui.choice_enum(
         sd.SOME_ESCAPE_REQUIRED_TEXT,
         {
             Options.Foo: sd.SOME_ESCAPE_REQUIRED_TEXT,
@@ -128,22 +132,16 @@ def test_enum_prompt__text_require_escape__values_escaped(
     ],
 )
 def test_list_options__expected_output(options, default, expected_text):
-    text = Text()
-
-    prompt.list_options(
-        text,
+    result = ui.list_options(
         options,
         default,
     )
 
-    assert text.plain == expected_text
+    assert result.plain == expected_text
 
 
 def test_list_options__text_require_escape__values_escaped(capture_rich: StringIO):
-    text = Text()
-
-    prompt.list_options(
-        text,
+    result = ui.list_options(
         {
             Options.Foo.value: sd.SOME_ESCAPE_REQUIRED_TEXT,
             Options.Bar.value: sd.SOME_ESCAPE_REQUIRED_TEXT,
@@ -151,9 +149,9 @@ def test_list_options__text_require_escape__values_escaped(capture_rich: StringI
         SOME_OPTION.value,
     )
 
-    r_print(text)
+    ui.display(result)
 
-    assert (
+    assert capture_rich.getvalue() == (
         f"{Options.Foo.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT}\n"
-        f"{Options.Bar.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT} (default)\n"
+        f"{Options.Bar.value} - {sd.SOME_ESCAPE_REQUIRED_TEXT} (default)\n\n"
     )
