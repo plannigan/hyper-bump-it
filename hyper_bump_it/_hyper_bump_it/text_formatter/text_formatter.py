@@ -79,7 +79,7 @@ class TextFormatter:
 
         try:
             return format_pattern.format(**values)
-        except KeyError:
+        except (KeyError, IndexError):
             raise FormatKeyError(format_pattern, values.keys())
         except ValueError as ex:
             raise FormatPatternError(format_pattern, str(ex))

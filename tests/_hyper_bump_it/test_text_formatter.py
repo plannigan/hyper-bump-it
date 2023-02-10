@@ -88,6 +88,7 @@ def test_format__invalid_pattern__error():
         TEXT_FORMATTER.format("--{--")
 
 
-def test_format__invalid_key__error():
+@pytest.mark.parametrize("key_name", ["SOME_NOT_VALID_KEY", "123", ""])
+def test_format__invalid_key__error(key_name):
     with pytest.raises(FormatKeyError):
-        TEXT_FORMATTER.format("--{SOME_NOT_VALID_KEY}--")
+        TEXT_FORMATTER.format(f"--{{{key_name}}}--")
