@@ -246,7 +246,7 @@ def _read_config(config_file: Path, sub_tables: Sequence[str]) -> ConfigReadResu
         raise ConfigurationFileReadError(config_file, ex) from ex
     config_table = full_document
     for key in sub_tables:
-        config_table = config_table.get(key)
+        config_table = cast(TOMLDocument, config_table.get(key))
         if config_table is None:
             raise SubTableNotExistError(config_file, PYPROJECT_SUB_TABLE_KEYS)
 
