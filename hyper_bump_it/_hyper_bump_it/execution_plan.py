@@ -7,11 +7,10 @@ to be made before files are edited.
 from typing import Optional, Protocol, TypeVar
 
 from git import Repo
-from rich import print
-from rich.markup import escape
-from rich.rule import Rule
+from rich.text import Text
 
-from . import files, vcs
+from . import files, ui, vcs
+from .compat import LiteralString
 from .config import ConfigVersionUpdater, GitAction
 from .version import Version
 
@@ -34,8 +33,8 @@ TAction = TypeVar("TAction", bound=Action)
 class ActionGroup:
     def __init__(
         self,
-        intent_description: str,
-        execution_description: str,
+        intent_description: LiteralString,
+        execution_description: LiteralString,
         actions: list[TAction],
     ) -> None:
         """
@@ -45,17 +44,17 @@ class ActionGroup:
         :param execution_description: Text displayed before executing the actions.
         :param actions: Sub-actions contained by this group.
         """
-        self._intent_description = intent_description
-        self._description = execution_description
+        self._intent_description: LiteralString = intent_description
+        self._description: LiteralString = execution_description
         self._actions = actions
 
     def __call__(self) -> None:
-        print(self._description)
+        ui.display(self._description)
         for action in self._actions:
             action()
 
     def display_intent(self) -> None:
-        print(self._intent_description)
+        ui.display(self._intent_description)
         for action in self._actions:
             action.display_intent()
 
@@ -75,7 +74,7 @@ class ExecutionPlan:
             action()
 
     def display_plan(self) -> None:
-        print("[bold]Execution Plan[/]:")
+        ui.display("[bold]Execution Plan[/]:")
         for action in self._actions:
             action.display_intent()
 
@@ -86,11 +85,11 @@ class UpdateConfiAction:
         self._new_version = new_version
 
     def __call__(self) -> None:
-        print("Updating version in configuration file")
+        ui.display("Updating version in configuration file")
         self._updater(self._new_version)
 
     def display_intent(self) -> None:
-        print("Update version in configuration file")
+        ui.display("Update version in configuration file")
 
 
 def update_config_action(updater: ConfigVersionUpdater, new_version: Version) -> Action:
@@ -102,17 +101,23 @@ class ChangeFileAction:
         self._change = change
 
     def __call__(self) -> None:
-        print(f"Updating {escape(str(self._change.relative_file))}")
+        message = Text("Updating ")
+        message.append(str(self._change.relative_file), style="file.path")
+        ui.display(message)
         files.perform_change(self._change)
 
     def display_intent(self) -> None:
-        print(Rule(title=escape(str(self._change.relative_file))))
+        ui.rule(Text(str(self._change.relative_file), style="file.path"))
         for line_change in self._change.line_changes:
-            print(
-                f"{line_change.line_index + 1}: [red]- {escape(line_change.old_line)}"
+            ui.display(
+                Text(f"{line_change.line_index + 1}: ").append(
+                    f"- {line_change.old_line}", style="patch.old"
+                )
             )
-            print(
-                f"{line_change.line_index + 1}: [green]+ {escape(line_change.new_line)}"
+            ui.display(
+                Text(f"{line_change.line_index + 1}: ").append(
+                    f"+ {line_change.new_line}", style="patch.new"
+                )
             )
 
 
@@ -130,11 +135,13 @@ class CreateBranchAction:
         self._branch_name = branch_name
 
     def __call__(self) -> None:
-        print(f"Creating branch {escape(self._branch_name)}")
+        ui.display(
+            Text("Creating branch ").append(self._branch_name, style="vcs.branch")
+        )
         vcs.create_branch(self._repo, self._branch_name)
 
     def display_intent(self) -> None:
-        print(f"Create branch {escape(self._branch_name)}")
+        ui.display(Text("Create branch ").append(self._branch_name, style="vcs.branch"))
 
 
 class SwitchBranchAction:
@@ -143,11 +150,15 @@ class SwitchBranchAction:
         self._branch_name = branch_name
 
     def __call__(self) -> None:
-        print(f"Switching to branch {escape(self._branch_name)}")
+        ui.display(
+            Text("Switching to branch ").append(self._branch_name, style="vcs.branch")
+        )
         vcs.switch_to(self._repo, self._branch_name)
 
     def display_intent(self) -> None:
-        print(f"Switch to branch {escape(self._branch_name)}")
+        ui.display(
+            Text("Switch to branch ").append(self._branch_name, style="vcs.branch")
+        )
 
 
 class CommitChangesAction:
@@ -156,11 +167,17 @@ class CommitChangesAction:
         self._commit_message = commit_message
 
     def __call__(self) -> None:
-        print(f"Committing changes: {escape(self._commit_message)}")
+        ui.display(
+            Text("Committing changes: ").append(
+                self._commit_message, style="vcs.commit"
+            )
+        )
         vcs.commit_changes(self._repo, self._commit_message)
 
     def display_intent(self) -> None:
-        print(f"Commit changes: {escape(self._commit_message)}")
+        ui.display(
+            Text("Commit changes: ").append(self._commit_message, style="vcs.commit")
+        )
 
 
 class CreateTagAction:
@@ -169,11 +186,11 @@ class CreateTagAction:
         self._tag_name = tag_name
 
     def __call__(self) -> None:
-        print(f"Tagging commit: {escape(self._tag_name)}")
+        ui.display(Text("Tagging commit: ").append(self._tag_name, style="vcs.tag"))
         vcs.create_tag(self._repo, self._tag_name)
 
     def display_intent(self) -> None:
-        print(f"Tag commit: {escape(self._tag_name)}")
+        ui.display(Text("Tag commit: ").append(self._tag_name, style="vcs.tag"))
 
 
 class PushChangesAction:
@@ -182,19 +199,22 @@ class PushChangesAction:
         self._operation_info = operation_info
 
     def __call__(self) -> None:
-        print(self._description(intent=False))
+        ui.display(self._description(intent=False))
         vcs.push_changes(self._repo, self._operation_info)
 
     def display_intent(self) -> None:
-        print(self._description(intent=True))
+        ui.display(self._description(intent=True))
 
-    def _description(self, intent: bool) -> str:
-        action = "Push" if intent else "Pushing"
-        message = f"{action} commit to {escape(self._operation_info.remote)}"
+    def _description(self, intent: bool) -> Text:
+        message = Text("Push" if intent else "Pushing")
+        message.append(" commit to ")
+        message.append(self._operation_info.remote, style="vcs.remote")
         if self._operation_info.actions.branch == GitAction.CreateAndPush:
-            message = f"{message} on branch {escape(self._operation_info.branch_name)}"
+            message.append(" on branch ")
+            message.append(self._operation_info.branch_name, style="vcs.branch")
         if self._operation_info.actions.tag == GitAction.CreateAndPush:
-            message = f"{message} with tag {escape(self._operation_info.tag_name)}"
+            message.append(" with tag ")
+            message.append(self._operation_info.tag_name, style="vcs.tag")
         return message
 
 

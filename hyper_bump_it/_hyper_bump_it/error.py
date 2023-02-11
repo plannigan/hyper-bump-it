@@ -2,10 +2,12 @@
 Errors raised by the library.
 """
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Collection, TypeVar
+from typing import TYPE_CHECKING, Callable, Collection, Literal, TypeVar, Union
 
 from pydantic import ValidationError
-from rich.markup import escape
+from rich.text import Text
+
+from . import ui
 
 if TYPE_CHECKING:
     from pydantic.error_wrappers import ErrorDict
@@ -14,8 +16,8 @@ if TYPE_CHECKING:
 class BumpItError(Exception):
     """Base for library errors"""
 
-    def __rich__(self) -> str:
-        return str(self)
+    def __rich__(self) -> Text:
+        return Text(str(self))
 
 
 class FormatError(BumpItError):
@@ -33,12 +35,12 @@ class FormatKeyError(FormatError):
             f"Valid keys are: {_list_str_values(self.valid_keys)}"
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"Format pattern '{_rich_invalid_value(escape(self.format_pattern))}' "
-            "used an invalid key.\n"
-            f"Valid keys are: {_list_values(self.valid_keys, _rich_valid_value)}"
-        )
+    def __rich__(self) -> Text:
+        message = Text("Format pattern '")
+        message.append(self.format_pattern, style="invalid")
+        message.append("' used an invalid key.\nValid keys are: ")
+        message.append_text(ui.list_styled_values(self.valid_keys, "valid"))
+        return message
 
     @staticmethod
     def _sort_keys(valid_keys: Collection[str]) -> tuple[str, ...]:
@@ -81,11 +83,12 @@ class FormatPatternError(FormatError):
             f"Format pattern '{self.format_pattern}' was invalid: {self.error}"
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"Format pattern '{_rich_invalid_value(escape(self.format_pattern))}' was invalid:\n"
-            f"{_rich_error_message(self.error)}"
-        )
+    def __rich__(self) -> Text:
+        message = Text("Format pattern '")
+        message.append(self.format_pattern, style="invalid")
+        message.append("' was invalid:\n")
+        message.append(self.error, style="error.msg")
+        return message
 
 
 class TodayFormatKeyError(FormatError):
@@ -99,12 +102,14 @@ class TodayFormatKeyError(FormatError):
             f"keystone parsing. Valid keys are: {_list_str_values(self.valid_keys)}"
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"Today format directive '{_rich_invalid_value(escape(self.date_format_pattern))}' "
-            "used an unsupported key for keystone parsing.\n"
-            f"Valid keys are: {_list_values(self.valid_keys, _rich_valid_value)}"
+    def __rich__(self) -> Text:
+        message = Text("Today format directive '")
+        message.append(self.date_format_pattern, style="invalid")
+        message.append(
+            "' used an unsupported key for keystone parsing.\nValid keys are: "
         )
+        message.append_text(ui.list_styled_values(self.valid_keys, "valid"))
+        return message
 
 
 class IncompleteKeystoneVersionError(FormatError):
@@ -116,11 +121,13 @@ class IncompleteKeystoneVersionError(FormatError):
             f" was incomplete."
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"Keystone version found in file '{_rich_path(self.file)}' using pattern "
-            f"'{_rich_invalid_value(escape(self.search_pattern))}' was incomplete."
-        )
+    def __rich__(self) -> Text:
+        message = Text("Keystone version found in file '")
+        message.append(str(self.file), style="file.path")
+        message.append("' using pattern '")
+        message.append(str(self.search_pattern), style="invalid")
+        message.append("' was incomplete.")
+        return message
 
 
 class FileGlobError(BumpItError):
@@ -128,14 +135,16 @@ class FileGlobError(BumpItError):
         self.working_dir = working_dir
         self.file_glob = file_glob
         super().__init__(
-            f"File glob '{self.file_glob}' did not match any files in '{self.working_dir}'"
+            f"File glob '{self.file_glob}' did not match any files in '{self.working_dir}'."
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"File glob '{_rich_file_glob(escape(self.file_glob))}' did not match any files "
-            f"in '{_rich_path(self.working_dir)}'"
-        )
+    def __rich__(self) -> Text:
+        message = Text("File glob '")
+        message.append(self.file_glob, style="file.glob")
+        message.append("' did not match any files in '")
+        message.append(str(self.working_dir), style="file.path")
+        message.append("'.")
+        return message
 
 
 class KeystoneError(BumpItError):
@@ -148,22 +157,30 @@ class KeystoneFileGlobError(KeystoneError):
     def __init__(self, file_glob: str, matches: list[Path]) -> None:
         self.file_glob = file_glob
         self.matches = matches
-        super().__init__(
-            f"The file glob ({self.file_glob}) for the keystone files must match exactly one "
-            f"file. {self._matched_description(str)}"
+        message = (
+            f"The file glob ({self.file_glob}) "
+            "for the keystone files must match exactly one file."
         )
-
-    def __rich__(self) -> str:
-        return (
-            f"The file glob ({_rich_file_glob(escape(self.file_glob))}) for the keystone files "
-            "must match "
-            f"exactly one file.\n{self._matched_description(_rich_path)}"
-        )
-
-    def _matched_description(self, to_str: Callable[[Path], str]) -> str:
         if self.matches:
-            return f"Matched: {_list_values(self.matches, to_str)}"
-        return KeystoneFileGlobError._NO_MATCH_TEXT
+            message = f"{message} Matched: {_list_values(self.matches, str)}"
+        else:
+            message = f"{message} {KeystoneFileGlobError._NO_MATCH_TEXT}"
+        super().__init__(message)
+
+    def __rich__(self) -> Text:
+        message = Text("The file glob (")
+        message.append(self.file_glob, style="file.glob")
+        message.append(") for the keystone files must match exactly one file.\n")
+        if self.matches:
+            message.append("Matched: ")
+            message.append_text(
+                ui.list_styled_values(
+                    [str(match) for match in self.matches], style="file.path"
+                )
+            )
+        else:
+            message.append(KeystoneFileGlobError._NO_MATCH_TEXT)
+        return message
 
 
 class VersionNotFound(KeystoneError):
@@ -175,71 +192,74 @@ class VersionNotFound(KeystoneError):
             f"'{self.search_pattern}'"
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"Current version not found in file '{_rich_path(self.file)}' using pattern "
-            f"'{_rich_valid_value(escape(self.search_pattern))}'"
-        )
+    def __rich__(self) -> Text:
+        message = Text("Current version not found in file '")
+        message.append(str(self.file), style="file.path")
+        message.append("' using pattern '")
+        message.append(self.search_pattern, style="valid")
+        message.append("'")
+        return message
 
 
 class GitError(BumpItError):
     """Base for git errors"""
 
-
-class NoRepositoryError(GitError):
-    def __init__(self, project_root: Path) -> None:
+    def __init__(self, project_root: Path, message_suffix: str) -> None:
         self.project_root = project_root
-        super().__init__(
-            f"The project root '{self.project_root}' is not a git repository"
+        super().__init__(f"The project root '{self.project_root}' {message_suffix}")
+
+    @property
+    def _message_prefix(self) -> Text:
+        return (
+            Text("The project root '")
+            .append(str(self.project_root), style="file.path")
+            .append("' ")
         )
 
-    def __rich__(self) -> str:
-        return f"The project root '{_rich_path(self.project_root)}' is not a git repository"
+
+class GitErrorSimple(GitError):
+    """Base for git errors that don't need styling of the suffix"""
+
+    def __init__(self, project_root: Path, message_suffix: str) -> None:
+        self.message_suffix = message_suffix
+        super().__init__(project_root, self.message_suffix)
+
+    def __rich__(self) -> Text:
+        return self._message_prefix.append(self.message_suffix)
 
 
-class EmptyRepositoryError(GitError):
+class NoRepositoryError(GitErrorSimple):
     def __init__(self, project_root: Path) -> None:
-        self.project_root = project_root
-        super().__init__(f"The repository at '{self.project_root}' has no commits")
-
-    def __rich__(self) -> str:
-        return f"The repository at '{_rich_path(self.project_root)}' has no commits"
+        super().__init__(project_root, "is not a git repository")
 
 
-class DirtyRepositoryError(GitError):
+class EmptyRepositoryError(GitErrorSimple):
     def __init__(self, project_root: Path) -> None:
-        self.project_root = project_root
-        super().__init__(
-            f"The repository at '{self.project_root}' has uncommitted changes"
-        )
-
-    def __rich__(self) -> str:
-        return f"The repository at '{_rich_path(self.project_root)}' has uncommitted changes"
+        super().__init__(project_root, "has no commits")
 
 
-class DetachedRepositoryError(GitError):
+class DirtyRepositoryError(GitErrorSimple):
     def __init__(self, project_root: Path) -> None:
-        self.project_root = project_root
-        super().__init__(
-            f"The repository at '{self.project_root}' is not currently on a branch"
-        )
+        super().__init__(project_root, "has uncommitted changes")
 
-    def __rich__(self) -> str:
-        return f"The repository at '{_rich_path(self.project_root)}' is not currently on a branch"
+
+class DetachedRepositoryError(GitErrorSimple):
+    def __init__(self, project_root: Path) -> None:
+        super().__init__(project_root, "is not currently on a branch")
 
 
 class MissingRemoteError(GitError):
     def __init__(self, remote: str, project_root: Path) -> None:
-        self.project_root = project_root
         self.remote = remote
-        super().__init__(
-            f"The repository at '{self.project_root}' does not define the remote '{self.remote}'"
-        )
+        super().__init__(project_root, f"does not define the remote '{self.remote}'")
 
-    def __rich__(self) -> str:
+    def __rich__(self) -> Text:
         return (
-            f"The repository at '{_rich_path(self.project_root)}' does not define the "
-            f"[bold]remote[/] '{_rich_valid_value(escape(self.remote))}'"
+            self._message_prefix.append("does not define the ")
+            .append("remote", style="emphasis")
+            .append(" '")
+            .append(self.remote, style="vcs.remote")
+            .append("'")
         )
 
 
@@ -252,50 +272,61 @@ class DisallowedInitialBranchError(GitError):
     ) -> None:
         self.allowed_initial_branches = allowed_initial_branches
         self.active_branch = active_branch
-        self.project_root = project_root
         if len(self.allowed_initial_branches) == 1:
             must_message = f"'{self._first_branch}'"
         else:
             branches = "', '".join(self.allowed_initial_branches)
             must_message = f"one of: '{branches}'"
         super().__init__(
-            f"The repository at '{self.project_root}' is current on branch '{self.active_branch}', "
-            f"which is not allowed. Must be {must_message}."
+            project_root,
+            f"is currently on branch '{self.active_branch}', "
+            f"which is not allowed. Must be {must_message}.",
         )
 
     @property
     def _first_branch(self) -> str:
         return next(iter(self.allowed_initial_branches))
 
-    def __rich__(self) -> str:
+    def __rich__(self) -> Text:
+        message = self._message_prefix.append("is currently on branch '")
+        message.append(self.active_branch, style="vcs.branch")
+        message.append("', which is not allowed. Must be ")
         if len(self.allowed_initial_branches) == 1:
-            must_message = f"'{_rich_valid_value(escape(self._first_branch))}'"
+            message.append("'")
+            message.append(self._first_branch, style="vcs.branch")
+            message.append("'")
         else:
-            branches = "', '".join(
-                _rich_valid_value(escape(x)) for x in self.allowed_initial_branches
+            message.append("one of: ")
+            message.append_text(
+                ui.list_styled_values(
+                    self.allowed_initial_branches, style="vcs.branch", quoted=True
+                )
             )
-            must_message = f"one of: '{branches}'"
-        return (
-            f"The repository at '{_rich_path(self.project_root)}' is current on branch "
-            f"'{_rich_invalid_value(escape(self.active_branch))}', "
-            f"which is not allowed. Must be {must_message}."
-        )
+        message.append(".")
+        return message
 
 
 class AlreadyExistsError(GitError):
-    def __init__(self, ref_type: str, name: str, project_root: Path) -> None:
+    def __init__(
+        self,
+        ref_type: Union[Literal["branch"], Literal["tag"]],
+        name: str,
+        project_root: Path,
+    ) -> None:
         self.project_root = project_root
         self.ref_type = ref_type
         self.name = name
         super().__init__(
-            f"The repository at '{self.project_root}' already has a {self.ref_type} named "
-            f"'{self.name}'"
+            project_root, f"already has a {self.ref_type} named '{self.name}'"
         )
 
-    def __rich__(self) -> str:
+    def __rich__(self) -> Text:
         return (
-            f"The repository at '{_rich_path(self.project_root)}' already has a "
-            f"{_rich_bold(self.ref_type)} named '{_rich_valid_value(escape(self.name))}'"
+            self._message_prefix.append("already has a ")
+            .append(self.ref_type, style="emphasis")
+            .append(" named '")
+            .append(self.name, style=f"vcs.{self.ref_type}")
+            .append("'")
         )
 
 
@@ -310,136 +341,104 @@ class ConfigurationFileNotFoundError(ConfigurationError):
             f"No configuration file found in directory {self.project_root}"
         )
 
-    def __rich__(self) -> str:
-        return (
-            f"No configuration file found in directory "
-            f"{_rich_path(self.project_root)}"
+    def __rich__(self) -> Text:
+        return Text("No configuration file found in directory ").append(
+            str(self.project_root), style="file.path"
         )
 
 
-class ConfigurationFileReadError(ConfigurationError):
-    def __init__(self, file: Path, cause: Exception) -> None:
+class ConfigurationFileError(ConfigurationError):
+    def __init__(self, file: Path, message_suffix: str) -> None:
         self.file = file
-        self.cause = cause
-        super().__init__(
-            f"The configuration file ({self.file}) could not be read: {self.cause}"
-        )
+        super().__init__(f"The configuration file ({self.file}) {message_suffix}")
 
-    def __rich__(self) -> str:
+    @property
+    def _message_prefix(self) -> Text:
         return (
-            f"The configuration file ({_rich_path(self.file)}) could not be read:\n"
-            + _rich_error_message(escape(str(self.cause)))
+            Text("The configuration file (")
+            .append(str(self.file), style="file.path")
+            .append(") ")
         )
 
 
-class ConfigurationFileWriteError(ConfigurationError):
+class ConfigurationFileReadError(ConfigurationFileError):
     def __init__(self, file: Path, cause: Exception) -> None:
-        self.file = file
         self.cause = cause
-        super().__init__(
-            f"The configuration file ({self.file}) could not be written to: {self.cause}"
-        )
+        super().__init__(file, f"could not be read: {self.cause}")
 
-    def __rich__(self) -> str:
-        return (
-            f"The configuration file ({_rich_path(self.file)}) could not be written to:\n"
-            + _rich_error_message(escape(str(self.cause)))
+    def __rich__(self) -> Text:
+        return self._message_prefix.append("could not be read:\n").append(
+            str(self.cause), style="error.msg"
         )
 
 
-class SubTableNotExistError(ConfigurationError):
+class ConfigurationFileWriteError(ConfigurationFileError):
+    def __init__(self, file: Path, cause: Exception) -> None:
+        self.cause = cause
+        super().__init__(file, f"could not be written to: {self.cause}")
+
+    def __rich__(self) -> Text:
+        return self._message_prefix.append("could not be written to:\n").append(
+            str(self.cause), style="error.msg"
+        )
+
+
+class SubTableNotExistError(ConfigurationFileError):
     def __init__(self, file: Path, sub_tables: tuple[str, str]) -> None:
-        self.file = file
         self.sub_table = ".".join(sub_tables)
-        super().__init__(
-            f"The configuration file ({self.file}) "
-            f"is missing the sub-table '{self.sub_table}'"
-        )
+        super().__init__(file, f"is missing the sub-table '{self.sub_table}'")
 
-    def __rich__(self) -> str:
+    def __rich__(self) -> Text:
         return (
-            f"The configuration file ({_rich_path(self.file)}) is missing the sub-table "
-            f"'{_rich_valid_value(self.sub_table)}'"
+            self._message_prefix.append("is missing the sub-table '")
+            .append(str(self.sub_table), style="valid")
+            .append("'")
         )
 
 
-class InvalidConfigurationError(ConfigurationError):
+class InvalidConfigurationError(ConfigurationFileError):
     def __init__(self, file: Path, cause: ValidationError) -> None:
-        self.file = file
         self.cause = cause
-        super().__init__(
-            f"The configuration file ({self.file}) is not valid: {self.cause}"
-        )
+        super().__init__(file, f"is not valid: {self.cause}")
 
     # Slightly customized variant of pydantic's __str__() to make it more end user-friendly
     # and enhanced with rich styles.
-    def __rich__(self) -> str:
+    def __rich__(self) -> Text:
         errors = self.cause.errors()
-        no_errors = len(errors)
+        num_errors = len(errors)
 
-        return (
-            f"The configuration file ({_rich_path(self.file)}) is not valid:\n"
-            f'{no_errors} validation error{"" if no_errors == 1 else "s"} '
-            f"for {_rich_bold(self.cause.model.__name__)}\n"
-            f"{InvalidConfigurationError.display_errors(errors)}"
-        )
+        message = self._message_prefix.append("is not valid:\n")
+        message.append(f"{num_errors} validation error")
+        if num_errors != 1:
+            message.append("s")
+        message.append(" for ")
+        message.append(self.cause.model.__name__, style="emphasis")
+        message.append("\n")
+        message.append(InvalidConfigurationError.display_errors(errors))
+        return message
 
     @staticmethod
-    def display_errors(errors: list["ErrorDict"]) -> str:
-        return "\n".join(
-            f"{InvalidConfigurationError._display_error_loc(e)}  "
-            f'{_rich_error_message(escape(e["msg"]))}'
+    def display_errors(errors: list["ErrorDict"]) -> Text:
+        return Text("\n").join(
+            InvalidConfigurationError._display_error_loc(e)
+            .append("  ")
+            .append(e["msg"], style="error.msg")
             for e in errors
         )
 
     @staticmethod
-    def _display_error_loc(error: "ErrorDict") -> str:
+    def _display_error_loc(error: "ErrorDict") -> Text:
         if len(error["loc"]) == 1 and error["loc"][0] == "__root__":
-            return ""
+            return Text("")
         return (
-            " -> ".join(f"[{_RICH_STYLE_ERROR_LOC}]{e}[/]" for e in error["loc"]) + "\n"
+            Text(" -> ")
+            .join(Text(str(e), style="error.loc") for e in error["loc"])
+            .append("\n")
         )
 
 
 def first_error_message(ex: ValidationError) -> str:
     return ex.errors()[0]["msg"]
-
-
-# rich specific functionality
-_RICH_STYLE_VALID = "green"
-_RICH_STYLE_INVALID = "bold red"
-_RICH_STYLE_ERROR_MESSAGE = "red"
-_RICH_STYLE_ERROR_LOC = "cyan"
-_RICH_STYLE_PATHLIKE = "bold bright_blue"
-_RICH_STYLE_FILE_GLOB = "deep_sky_blue1"
-
-
-def _rich_valid_value(value: str) -> str:
-    return _rich_value(value, _RICH_STYLE_VALID)
-
-
-def _rich_invalid_value(value: str) -> str:
-    return _rich_value(value, _RICH_STYLE_INVALID)
-
-
-def _rich_error_message(value: str) -> str:
-    return _rich_value(value, _RICH_STYLE_ERROR_MESSAGE)
-
-
-def _rich_path(value: Path) -> str:
-    return _rich_value(escape(str(value)), _RICH_STYLE_PATHLIKE)
-
-
-def _rich_file_glob(value: str) -> str:
-    return _rich_value(value, _RICH_STYLE_FILE_GLOB)
-
-
-def _rich_bold(value: str) -> str:
-    return _rich_value(value, "bold")
-
-
-def _rich_value(value: str, style: str) -> str:
-    return f"[{style}]{value}[/]"
 
 
 TValue = TypeVar("TValue")

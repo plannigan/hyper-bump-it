@@ -5,14 +5,14 @@ from enum import Enum
 from pathlib import Path
 from typing import Set
 
-from rich import prompt
+from rich.text import Text
 
+from ... import ui
 from ...config import HYPER_CONFIG_FILE_NAME, PYPROJECT_FILE_NAME, ConfigFile
 from ...version import Version
 from .file_validation import DefinitionValidator
 from .files import FilesConfigEditor
 from .git import GitConfigEditor
-from .prompt import enum_prompt
 
 
 class TopMenu(Enum):
@@ -53,6 +53,7 @@ class InteractiveConfigEditor:
             Otherwise (`False`), the configuration should be written to hyper-bump-it.toml.
         """
         while (selection := _prompt_top_level_menu()) is not TopMenu.Done:
+            ui.blank_line()
             self._was_configured.add(selection)
             self._config_funcs[selection]()
 
@@ -60,7 +61,9 @@ class InteractiveConfigEditor:
 
     def _configure_general(self) -> None:
         show_confirm_prompt = _prompt_show_confirm(self._config.show_confirm_prompt)
+        ui.blank_line()
         self._pyproject = _prompt_pyproject(self._pyproject)
+        ui.blank_line()
         self._config = self._config.copy(
             update={"show_confirm_prompt": show_confirm_prompt}
         )
@@ -82,7 +85,7 @@ class InteractiveConfigEditor:
 
 
 def _prompt_top_level_menu() -> TopMenu:
-    return enum_prompt(
+    return ui.choice_enum(
         "What part of configuration would you like to edit?",
         option_descriptions={
             TopMenu.General: "Top level settings that don't fit in a specific category",
@@ -97,16 +100,27 @@ def _prompt_top_level_menu() -> TopMenu:
 def _prompt_show_confirm(show_confirm_prompt: bool) -> bool:
     # It is easier to phrase the question as disabling the prompt. So the default is negated,
     # then the response is flipped back to the meaning used within the program.
-    return not prompt.Confirm.ask(
-        "hyper-bump-it shows a confirmation prompt before performing the actions.\n"
-        "Do you want to silence this prompt and execute the actions automatically?",
+    return not ui.confirm(
+        Text()
+        .append("hyper-bump-it", style="app")
+        .append(
+            " shows a confirmation prompt before performing the actions.\n"
+            "Do you want to silence this prompt and execute the actions automatically?"
+        ),
         default=not show_confirm_prompt,
     )
 
 
 def _prompt_pyproject(pyproject: bool) -> bool:
-    return prompt.Confirm.ask(
-        f"hyper-bump-it can store the configuration in {PYPROJECT_FILE_NAME} instead of"
-        f" {HYPER_CONFIG_FILE_NAME}.\nDo you want to use {PYPROJECT_FILE_NAME}?",
+    return ui.confirm(
+        Text()
+        .append("hyper-bump-it", style="app")
+        .append(" can store the configuration in ")
+        .append(PYPROJECT_FILE_NAME, style="file.path")
+        .append(" instead of ")
+        .append(HYPER_CONFIG_FILE_NAME, style="file.path")
+        .append(".\nDo you want to use ")
+        .append(PYPROJECT_FILE_NAME, style="file.path")
+        .append("?"),
         default=pyproject,
     )

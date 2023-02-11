@@ -2,6 +2,7 @@ from io import StringIO
 from typing import Optional, cast
 
 import pytest
+from rich.text import Text
 
 from hyper_bump_it._hyper_bump_it.cli.interactive import files
 from hyper_bump_it._hyper_bump_it.cli.interactive.file_validation import (
@@ -29,7 +30,7 @@ def create_invalid_first(
         if was_called:
             return None
         was_called = True
-        return ValidationFailure(failure, description)
+        return ValidationFailure(failure, Text(description))
 
     return cast(DefinitionValidator, _validator)
 
@@ -460,7 +461,7 @@ def test_file_summary__default_search_pattern__formats_to_version(
         replace_format_pattern=replace_format_pattern,
     )
 
-    assert files._definition_summary(some_file) == expected_output
+    assert files._definition_summary(some_file).plain == expected_output
 
 
 @pytest.mark.parametrize(

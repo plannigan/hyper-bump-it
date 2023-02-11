@@ -7,9 +7,9 @@ from typing import Mapping
 import tomlkit
 import typer
 from pydantic import ValidationError
-from rich import print
 from tomlkit.exceptions import TOMLKitError
 
+from .. import ui
 from ..config import (
     DEFAULT_ALLOWED_INITIAL_BRANCHES,
     DEFAULT_BRANCH_ACTION,
@@ -97,7 +97,7 @@ def init_command(
     )
     with common.handle_bump_errors():
         if non_interactive:
-            print(
+            ui.display(
                 "Non-interactive mode: "
                 "A sample configuration will be written that will need manual edits"
             )

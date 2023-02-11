@@ -6,11 +6,9 @@ from pathlib import Path
 from typing import Any, Iterator, NoReturn, Optional, Protocol, overload
 
 import typer
-from rich import print
 from rich.align import AlignMethod
-from rich.console import RenderableType
-from rich.panel import Panel
 
+from .. import ui
 from ..error import BumpItError
 from ..version import Version
 
@@ -149,15 +147,11 @@ def handle_bump_errors() -> Iterator[None]:
         display_and_exit(ex)
 
 
-def display_and_exit(message: RenderableType, exit_code: int = 1) -> NoReturn:
-    print(
-        Panel(
-            message,
-            border_style="red",
-            title="Error",
-            title_align="left",
-            highlight=True,
-        )
+def display_and_exit(message: ui.PanelMessage, exit_code: int = 1) -> NoReturn:
+    ui.panel(
+        message,
+        border_style="red",
+        title="Error",
     )
     raise typer.Exit(exit_code)
 

@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Incorrectly display of text containing square brackets (`[`, `]`).
 * Inconsistent display of file and directory paths (absolute vs relative path).
 * Crash when format pattern contained an integer key name or no key name.
+* Inconsistent colors of displayed text.
+* Minor typos in displayed text.
 
 ## [0.3.0] - 2023-01-26
 

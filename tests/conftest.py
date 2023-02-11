@@ -2,9 +2,11 @@ from io import StringIO
 from typing import Final, Literal
 
 import pytest
-import rich
 from pytest_mock import MockerFixture
+from rich.console import Console
 from typer import rich_utils as typer_rich_utils
+
+from hyper_bump_it._hyper_bump_it import ui
 
 # rich's line wrapping makes test cases that check output text tricky. By making the width very large, wrapping can be
 # avoided. rich does check for a COLUMNS environment variable, but pytest also utilizes that variable, so using that
@@ -15,12 +17,12 @@ FORCED_TERMINAL_WIDTH = 3000
 @pytest.fixture
 def capture_rich() -> StringIO:
     captured_text = StringIO()
-    original_console_config = rich.get_console().__dict__
-    rich.reconfigure(file=captured_text, width=FORCED_TERMINAL_WIDTH)
+    original_console = ui._CONSOLE
+    ui._CONSOLE = Console(file=captured_text, width=FORCED_TERMINAL_WIDTH)
     try:
         yield captured_text
     finally:
-        rich.get_console().__dict__ = original_console_config
+        ui._CONSOLE = original_console
 
 
 @pytest.fixture(autouse=True)
