@@ -3,8 +3,7 @@ Display interface for working with rich.
 """
 from collections.abc import Iterable, Mapping
 from enum import Enum
-from types import EllipsisType
-from typing import Optional, TypeAlias, TypeVar, Union, cast, overload
+from typing import Optional, TypeVar, Union, cast, overload
 
 from rich import prompt
 from rich.align import AlignMethod
@@ -15,7 +14,7 @@ from rich.style import Style, StyleType
 from rich.text import Text
 from rich.theme import Theme
 
-from .compat import LiteralString
+from .compat import LiteralString, TypeAlias
 
 TextType: TypeAlias = Union[Text, LiteralString]
 PanelMessage: TypeAlias = Union[RichCast, str]
@@ -91,6 +90,14 @@ def confirm(message: TextType, default: bool) -> bool:
     return prompt.Confirm.ask(message, default=default, console=_CONSOLE)
 
 
+class _Sentinel(Enum):
+    A = 0
+
+
+T = TypeVar("T")
+_NOT_GIVEN = _Sentinel.A
+
+
 @overload
 def choice(
     message: Text, *, choices: list[str], default: str = ..., show_choices: bool = False
@@ -109,10 +116,10 @@ def choice(
     message: Text,
     *,
     choices: list[str],
-    default: Union[Optional[str], EllipsisType] = ...,
+    default: Union[Optional[str], _Sentinel] = _NOT_GIVEN,
     show_choices: bool = False,
 ) -> Optional[str]:
-    if isinstance(default, EllipsisType):
+    if isinstance(default, _Sentinel):
         return prompt.Prompt.ask(
             message,
             choices=choices,

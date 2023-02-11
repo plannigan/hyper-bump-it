@@ -1,7 +1,7 @@
 import dataclasses
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Callable, Iterator, Optional, TypeAlias, Union, cast
+from typing import Callable, Iterator, Optional, Union, cast
 
 import tomlkit
 from pydantic import (
@@ -15,7 +15,7 @@ from pydantic import (
 from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
-# from ..compat import TypeAlias
+from ..compat import TypeAlias
 from ..error import (
     ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
