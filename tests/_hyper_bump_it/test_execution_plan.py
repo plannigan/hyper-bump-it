@@ -263,9 +263,13 @@ def test_update_file_actions__call_file_needs_escaping__shows_escaped_text(
 
 
 @pytest.mark.parametrize(
-    ["file_name", "old_line", "new_line"],
+    ["file_name", "old_content", "new_content"],
     [
-        (sd.SOME_GLOB_MATCHED_FILE_NAME, sd.SOME_OLD_LINE, sd.SOME_NEW_LINE),
+        (
+            sd.SOME_GLOB_MATCHED_FILE_NAME,
+            sd.SOME_FILE_CONTENT,
+            sd.SOME_OTHER_FILE_CONTENT,
+        ),
         (
             sd.SOME_GLOB_MATCHED_FILE_NAME,
             sd.SOME_WHITE_SPACE_OLD_LINE,
@@ -279,56 +283,47 @@ def test_update_file_actions__call_file_needs_escaping__shows_escaped_text(
     ],
 )
 def test_update_file_actions__display__message_displayed(
-    file_name, old_line, new_line, capture_rich: StringIO
+    file_name, old_content, new_content, capture_rich: StringIO
 ):
     file = sd.SOME_ABSOLUTE_DIRECTORY / file_name
-    action = execution_plan.update_file_actions(
-        [
-            sd.some_planned_change(
-                file=file,
-                line_changes=sd.some_line_change(old_line=old_line, new_line=new_line),
-            )
-        ]
+    planned_change = sd.some_planned_change(
+        file=file,
+        old_content=old_content,
+        new_content=new_content,
     )
+    action = execution_plan.update_file_actions([planned_change])
 
     action.display_intent()
 
     output = capture_rich.getvalue()
     assert f"─── {file_name} ───" in output
-    assert (
-        f"{sd.SOME_FILE_INDEX + 1}: - {old_line}\n"
-        f"{sd.SOME_FILE_INDEX + 1}: + {new_line}\n" in output
-    )
+    assert planned_change.change_diff in output
 
 
 def test_update_file_actions__display_multi_line_change__both_displayed(
     capture_rich: StringIO,
 ):
-    action = execution_plan.update_file_actions(
-        [
-            sd.some_planned_change(
-                line_changes=[
-                    sd.some_line_change(),
-                    sd.some_line_change(
-                        sd.SOME_OTHER_FILE_INDEX,
-                        sd.SOME_OTHER_OLD_LINE,
-                        sd.SOME_OTHER_NEW_LINE,
-                    ),
-                ]
-            )
-        ]
+    old_content = f"""
+    {sd.SOME_VERSION}--
+    abc
+    {sd.SOME_VERSION}--
+"""
+    new_content = f"""
+    {sd.SOME_OTHER_VERSION}--
+    abc
+    {sd.SOME_OTHER_VERSION}--
+"""
+    planned_change = sd.some_planned_change(
+        old_content=old_content,
+        new_content=new_content,
     )
+    action = execution_plan.update_file_actions([planned_change])
 
     action.display_intent()
 
     output = capture_rich.getvalue()
     assert f"─── {sd.SOME_GLOB_MATCHED_FILE_NAME} ───" in output
-    assert (
-        f"{sd.SOME_FILE_INDEX + 1}: - {sd.SOME_OLD_LINE}\n"
-        f"{sd.SOME_FILE_INDEX + 1}: + {sd.SOME_NEW_LINE}\n"
-        f"{sd.SOME_OTHER_FILE_INDEX + 1}: - {sd.SOME_OTHER_OLD_LINE}\n"
-        f"{sd.SOME_OTHER_FILE_INDEX + 1}: + {sd.SOME_OTHER_NEW_LINE}"
-    ) in output
+    assert planned_change.change_diff in output
 
 
 def test_update_file_actions__multi_display__each_name_appears(capture_rich: StringIO):

@@ -25,7 +25,7 @@ from hyper_bump_it._hyper_bump_it.config import (
     GitConfigFile,
 )
 from hyper_bump_it._hyper_bump_it.config.file import ConfigVersionUpdater
-from hyper_bump_it._hyper_bump_it.files import LineChange, PlannedChange
+from hyper_bump_it._hyper_bump_it.files import PlannedChange
 from hyper_bump_it._hyper_bump_it.text_formatter import TextFormatter, keys
 from hyper_bump_it._hyper_bump_it.vcs import GitOperationsInfo
 from hyper_bump_it._hyper_bump_it.version import Version
@@ -124,6 +124,8 @@ SOME_ESCAPE_REQUIRED_TEXT = (
 SOME_OTHER_ESCAPE_REQUIRED_TEXT = (
     "other text that has a square brackets [v1.2.3] that need to be escaped"
 )
+SOME_FILE_CONTENT = f"--{SOME_VERSION_STRING}--\nabc"
+SOME_OTHER_FILE_CONTENT = f"--{SOME_OTHER_VERSION_STRING}--\nabc"
 
 
 def some_git_actions(
@@ -460,23 +462,19 @@ def some_application_config(
     )
 
 
-def some_line_change(
-    line_index=SOME_FILE_INDEX,
-    old_line=SOME_OLD_LINE,
-    new_line=SOME_NEW_LINE,
-) -> LineChange:
-    return LineChange(line_index=line_index, old_line=old_line, new_line=new_line)
-
-
 def some_planned_change(
     file=SOME_ABSOLUTE_DIRECTORY / SOME_GLOB_MATCHED_FILE_NAME,
     project_root=SOME_ABSOLUTE_DIRECTORY,
-    line_changes: Union[LineChange, list[LineChange]] = some_line_change(),
+    old_content=SOME_FILE_CONTENT,
+    new_content=SOME_OTHER_FILE_CONTENT,
+    newline: Optional[str] = "\n",
 ) -> PlannedChange:
-    if not isinstance(line_changes, list):
-        line_changes = [line_changes]
     return PlannedChange(
-        file=file, project_root=project_root, line_changes=line_changes
+        file=file,
+        project_root=project_root,
+        old_content=old_content,
+        new_content=new_content,
+        newline=newline,
     )
 
 
