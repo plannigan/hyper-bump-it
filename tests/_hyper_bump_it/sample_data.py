@@ -30,6 +30,8 @@ from hyper_bump_it._hyper_bump_it.text_formatter import TextFormatter, keys
 from hyper_bump_it._hyper_bump_it.vcs import GitOperationsInfo
 from hyper_bump_it._hyper_bump_it.version import Version
 
+# flake8: noqa: W293
+
 ALL_KEYS = tuple(getattr(keys, name) for name in dir(keys) if not name.startswith("__"))
 
 SOME_DATE = date(year=2022, month=10, day=19)
@@ -126,6 +128,35 @@ SOME_OTHER_ESCAPE_REQUIRED_TEXT = (
 )
 SOME_FILE_CONTENT = f"--{SOME_VERSION_STRING}--\nabc"
 SOME_OTHER_FILE_CONTENT = f"--{SOME_OTHER_VERSION_STRING}--\nabc"
+
+
+SOME_DIFF_KEYSTONE = """--- foo-1.txt
++++ foo-1.txt
+@@ -1 +1 @@
+---1.2.3-11.22+b123.321--+--4.5.6-33.44+b456.654--
+"""
+# The line with only a space character after the current_version lines is intentional and required.
+SOME_DIFF_NO_KEYSTONE = """--- foo-1.txt
++++ foo-1.txt
+@@ -1 +1 @@
+---1.2.3-11.22+b123.321--+--4.5.6-33.44+b456.654--
+--- config.toml
++++ config.toml
+@@ -1,5 +1,5 @@
+ [hyper-bump-it]
+-current_version = "1.2.3-11.22+b123.321"
++current_version = "4.5.6-33.44+b456.654"
+ 
+ [[hyper-bump-it.files]]
+ file_glob = "foo*.txt"
+
+"""
+SOME_DIFF_NEEDS_ESCAPE = f"""--- foo-1.txt
++++ foo-1.txt
+@@ -1 +1 @@
+---1.2.3-11.22+b123.321--+--4.5.6-33.44+b456.654--
+{SOME_ESCAPE_REQUIRED_TEXT}
+"""
 
 
 def some_git_actions(
@@ -303,6 +334,7 @@ def no_config_override_bump_to_args(
     new_version: Version = SOME_OTHER_VERSION,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    patch: bool = False,
     skip_confirm_prompt: Optional[bool] = None,
 ) -> BumpToArgs:
     return BumpToArgs(
@@ -310,6 +342,7 @@ def no_config_override_bump_to_args(
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        patch=patch,
         skip_confirm_prompt=skip_confirm_prompt,
         current_version=None,
         commit=None,
@@ -328,6 +361,7 @@ def some_bump_to_args(
     new_version: Version = SOME_OTHER_VERSION,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    patch: bool = False,
     skip_confirm_prompt: Optional[bool] = None,
     current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
     commit: Optional[GitAction] = SOME_COMMIT_ACTION,
@@ -344,6 +378,7 @@ def some_bump_to_args(
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        patch=patch,
         skip_confirm_prompt=skip_confirm_prompt,
         current_version=current_version,
         commit=commit,
@@ -364,6 +399,7 @@ def no_config_override_bump_by_args(
     part_to_bump: BumpPart = SOME_BUMP_PART,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    patch: bool = False,
     skip_confirm_prompt: Optional[bool] = None,
 ) -> BumpByArgs:
     return BumpByArgs(
@@ -371,6 +407,7 @@ def no_config_override_bump_by_args(
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        patch=patch,
         skip_confirm_prompt=skip_confirm_prompt,
         current_version=None,
         commit=None,
@@ -389,6 +426,7 @@ def some_bump_by_args(
     part_to_bump: BumpPart = SOME_BUMP_PART,
     config_file: Optional[Path] = None,
     dry_run: bool = False,
+    patch: bool = False,
     skip_confirm_prompt: Optional[bool] = None,
     current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
     commit: Optional[GitAction] = SOME_COMMIT_ACTION,
@@ -407,6 +445,7 @@ def some_bump_by_args(
         config_file=config_file,
         project_root=project_root,
         dry_run=dry_run,
+        patch=patch,
         skip_confirm_prompt=skip_confirm_prompt,
         current_version=current_version,
         commit=commit,
@@ -426,7 +465,7 @@ class AnyConfigVersionUpdater(ConfigVersionUpdater):
     """A helper object that compares equal to any ConfigVersionUpdater instance."""
 
     def __init__(self):
-        super().__init__(Path(), TOMLDocument(), TOMLDocument())
+        super().__init__(Path(), Path(), TOMLDocument(), TOMLDocument(), newline=None)
 
     def __eq__(self, other):
         return isinstance(other, ConfigVersionUpdater)
@@ -445,6 +484,7 @@ def some_application_config(
     files: Optional[list[File]] = None,
     git: Git = some_git(),
     dry_run: bool = False,
+    patch: bool = False,
     show_confirm_prompt: bool = True,
     config_version_updater: Optional[ConfigVersionUpdater] = AnyConfigVersionUpdater(),
 ) -> Config:
@@ -457,6 +497,7 @@ def some_application_config(
         files=files,
         git=git,
         dry_run=dry_run,
+        patch=patch,
         show_confirm_prompt=show_confirm_prompt,
         config_version_updater=config_version_updater,
     )

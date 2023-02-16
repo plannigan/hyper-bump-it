@@ -61,6 +61,12 @@ DRY_RUN = typer.Option(
     "Only displaying the operations that would be performed",
     show_default=False,
 )
+PATCH = typer.Option(
+    False,
+    "--patch/--no-patch",
+    help="Like --dry-run, but only display the unified diff output for the planned changes",
+    show_default=False,
+)
 SKIP_CONFIRM_PROMPT = typer.Option(
     None,
     "--yes/--interactive",

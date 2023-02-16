@@ -97,12 +97,6 @@ SOME_SUB_TABLES = ("some-name", "some-sub-name")
         error.ConfigurationFileReadError(
             Path(sd.SOME_ESCAPE_REQUIRED_TEXT), Exception(sd.SOME_ESCAPE_REQUIRED_TEXT)
         ),
-        error.ConfigurationFileWriteError(
-            Path(sd.SOME_CONFIG_FILE_NAME), Exception(SOME_ERROR_MESSAGE)
-        ),
-        error.ConfigurationFileWriteError(
-            Path(sd.SOME_ESCAPE_REQUIRED_TEXT), Exception(sd.SOME_ESCAPE_REQUIRED_TEXT)
-        ),
         error.SubTableNotExistError(Path(sd.SOME_CONFIG_FILE_NAME), SOME_SUB_TABLES),
         error.SubTableNotExistError(
             Path(sd.SOME_ESCAPE_REQUIRED_TEXT), SOME_SUB_TABLES

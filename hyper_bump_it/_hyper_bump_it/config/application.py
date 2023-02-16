@@ -57,8 +57,13 @@ class Config:
     files: list[File]
     git: Git
     dry_run: bool
+    patch: bool
     show_confirm_prompt: bool
     config_version_updater: Optional[file.ConfigVersionUpdater]
+
+    @property
+    def no_execute_plan(self) -> bool:
+        return self.dry_run or self.patch
 
 
 BUMP_FUNCTIONS: dict[BumpPart, Callable[[Version], Version]] = {
@@ -89,6 +94,7 @@ def config_for_bump_to(args: BumpToArgs) -> Config:
         files=_convert_files(file_config.files),
         git=_convert_git(args, file_config.git),
         dry_run=args.dry_run,
+        patch=args.patch,
         show_confirm_prompt=_show_confirm_prompt(
             file_config.show_confirm_prompt, args.skip_confirm_prompt
         ),
@@ -118,6 +124,7 @@ def config_for_bump_by(args: BumpByArgs) -> Config:
         files=_convert_files(file_config.files),
         git=_convert_git(args, file_config.git),
         dry_run=args.dry_run,
+        patch=args.patch,
         show_confirm_prompt=_show_confirm_prompt(
             file_config.show_confirm_prompt, args.skip_confirm_prompt
         ),

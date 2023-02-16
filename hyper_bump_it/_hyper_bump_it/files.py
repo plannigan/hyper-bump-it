@@ -1,41 +1,14 @@
 """
 Operation on files.
 """
-import difflib
-from dataclasses import InitVar, dataclass, field
-from functools import cached_property
+
 from pathlib import Path
-from typing import Optional
 
 from .config import File
 from .error import FileGlobError, VersionNotFound
+from .planned_changes import PlannedChange
 from .text_formatter import TextFormatter
 from .text_formatter.text_formatter import FormatContext
-
-
-@dataclass
-class PlannedChange:
-    file: Path  # absolute resolved path
-    project_root: InitVar[Path]  # absolute resolved path
-    relative_file: Path = field(init=False)
-    old_content: str
-    new_content: str
-    newline: Optional[str]
-
-    def __post_init__(self, project_root: Path) -> None:
-        self.relative_file = self.file.relative_to(project_root)
-
-    @cached_property
-    def change_diff(self) -> str:
-        relative_file_str = str(self.relative_file)
-        return "".join(
-            difflib.unified_diff(
-                self.old_content.splitlines(keepends=True),
-                self.new_content.splitlines(keepends=True),
-                fromfile=relative_file_str,
-                tofile=relative_file_str,
-            )
-        )
 
 
 def collect_planned_changes(
@@ -75,7 +48,8 @@ def _planned_change_for(
 ) -> PlannedChange:
     search_text = formatter.format(search_pattern, FormatContext.search)
 
-    file_text = file.read_text()
+    file_data = file.read_bytes()
+    file_text = file_data.decode()
     updated_text = file_text.replace(
         search_text, formatter.format(replace_pattern, FormatContext.replace)
     )
@@ -87,7 +61,7 @@ def _planned_change_for(
         project_root,
         old_content=file_text,
         new_content=updated_text,
-        newline=_detect_line_ending(file),
+        newline=PlannedChange.detect_line_ending(file_data),
     )
 
 
@@ -99,14 +73,3 @@ def perform_change(change: PlannedChange) -> None:
         raise ValueError(
             f"Given file '{change.file}' does not exist. PlannedChange is not valid."
         )
-
-
-def _detect_line_ending(file: Path) -> Optional[str]:
-    line = file.read_bytes().splitlines(keepends=True)[0]
-    # match line ending of file instead of assuming os.linesep
-    if line.endswith(b"\r\n"):
-        return "\r\n"
-    if line.endswith(b"\n"):
-        return "\n"
-    # no trailing new line
-    return None

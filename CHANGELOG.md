@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* `--patch` as command line options to display the planned changes as a patch instead of performing
+    any operations.
+
 ### Changed
 
 * Display planned changes as a unified diff instead of a custom format.

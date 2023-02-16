@@ -19,10 +19,10 @@ from ..compat import TypeAlias
 from ..error import (
     ConfigurationFileNotFoundError,
     ConfigurationFileReadError,
-    ConfigurationFileWriteError,
     InvalidConfigurationError,
     SubTableNotExistError,
 )
+from ..planned_changes import PlannedChange
 from ..version import Version
 from .core import (
     DEFAULT_ALLOWED_INITIAL_BRANCHES,
@@ -142,34 +142,49 @@ class ConfigVersionUpdater:
     def __init__(
         self,
         config_file: Path,
+        project_root: Path,
         full_document: TOMLDocument,
         config_table: TOMLDocument,
+        newline: Optional[str],
     ) -> None:
         """
         Initialize instance.
 
         :param config_file: File to write updated contents to.
+        :param project_root: Directory to look for a configuration file.
         :param full_document: Config document to be written to file. Possibly including other
             values beyond what is used for this program.
         :param config_table: Config document with only the values used for this program.
+        :param newline: New line character sequence for the file. `None` if no new line characters
+            are found.
         """
         self._config_file = config_file
+        self._project_root = project_root
         self._full_document = full_document
         self._config_table = config_table
+        self._newline = newline
 
-    def __call__(self, new_version: Version) -> None:
+    def __call__(self, new_version: Version) -> PlannedChange:
         """
         Write the new version back to the configuration file.
 
         :param new_version: Version that should be stored in the configuration file.
-        :raises ConfigurationFileWriteError: An error occurred writing out the configuration file.
+        :return: Representation of the update to occur to the configuration file.
         """
-
+        old_content = self._full_document_text
         self._config_table["current_version"] = str(new_version)
-        try:
-            self._config_file.write_text(tomlkit.dumps(self._full_document))
-        except OSError as ex:
-            raise ConfigurationFileWriteError(self._config_file, ex)
+        new_content = self._full_document_text
+        return PlannedChange(
+            self._config_file,
+            self._project_root,
+            old_content=old_content,
+            new_content=new_content,
+            newline=self._newline,
+        )
+
+    @property
+    def _full_document_text(self) -> str:
+        return tomlkit.dumps(self._full_document)
 
 
 ConfigReadResult: TypeAlias = tuple[ConfigFile, Optional[ConfigVersionUpdater]]
@@ -180,8 +195,8 @@ def read_config(config_file: Optional[Path], project_root: Path) -> ConfigReadRe
     Read the appropriate configuration file.
 
     If `config_file` is given, that will be used as the dedicated configuration file to read.
-    If `config_file` is not given, look for a configuration file in the project root. First check for a dedicated
-    configuration file. If that doesn't exist, try pyproject.toml.
+    If `config_file` is not given, look for a configuration file in the project root. First check
+    for a dedicated configuration file. If that doesn't exist, try pyproject.toml.
 
     :param config_file: Hyper config file to read from.
     :param project_root: Directory to look for a configuration file.
@@ -191,52 +206,59 @@ def read_config(config_file: Optional[Path], project_root: Path) -> ConfigReadRe
     :raises ConfigurationError: No file was found or there was some error in the file.
     """
     if config_file is not None:
-        return read_hyper_config(config_file)
+        return read_hyper_config(config_file, project_root)
 
     hyper_config_file = project_root / HYPER_CONFIG_FILE_NAME
     if hyper_config_file.exists():
-        return read_hyper_config(hyper_config_file)
+        return read_hyper_config(hyper_config_file, project_root)
 
     pyproject_config_file = project_root / PYPROJECT_FILE_NAME
     if pyproject_config_file.exists():
-        return read_pyproject_config(pyproject_config_file)
+        return read_pyproject_config(pyproject_config_file, project_root)
 
     raise ConfigurationFileNotFoundError(project_root)
 
 
 def read_pyproject_config(
     pyproject_file: Path,
+    project_root: Path,
 ) -> ConfigReadResult:
     """
     Read configuration from pyproject file.
 
     :param pyproject_file: Path to the file to read.
+    :param project_root: Directory to look for a configuration file.
     :return: Parsed configuration content and an object that can be used to update the version
         stored in the configuration file. If the configuration uses a keystone file, this second
         values will be `None`.
     :raises ConfigurationError: Some error exists in the configuration file.
     """
-    return _read_config(pyproject_file, PYPROJECT_SUB_TABLE_KEYS)
+    return _read_config(pyproject_file, PYPROJECT_SUB_TABLE_KEYS, project_root)
 
 
 def read_hyper_config(
     hyper_config_file: Path,
+    project_root: Path,
 ) -> ConfigReadResult:
     """
     Read configuration from pyproject file.
 
     :param hyper_config_file: Path to the decided configuration file to read.
+    :param project_root: Directory to look for a configuration file.
     :return: Parsed configuration content and an object that can be used to update the version
         stored in the configuration file. If the configuration uses a keystone file, this second
         values will be `None`.
     :raises ConfigurationError: Some error exists in the configuration file.
     """
-    return _read_config(hyper_config_file, [ROOT_TABLE_KEY])
+    return _read_config(hyper_config_file, [ROOT_TABLE_KEY], project_root)
 
 
-def _read_config(config_file: Path, sub_tables: Sequence[str]) -> ConfigReadResult:
+def _read_config(
+    config_file: Path, sub_tables: Sequence[str], project_root: Path
+) -> ConfigReadResult:
     try:
-        full_document = tomlkit.parse(config_file.read_text())
+        file_data = config_file.read_bytes()
+        full_document = tomlkit.parse(file_data.decode())
     except (OSError, TOMLKitError) as ex:
         raise ConfigurationFileReadError(config_file, ex) from ex
     config_table = full_document
@@ -254,4 +276,10 @@ def _read_config(config_file: Path, sub_tables: Sequence[str]) -> ConfigReadResu
     if config.current_version is None:
         # uses keystone file & doesn't need to write back to pyproject file.
         return config, None
-    return config, ConfigVersionUpdater(config_file, full_document, config_table)
+    return config, ConfigVersionUpdater(
+        config_file=config_file,
+        project_root=project_root,
+        full_document=full_document,
+        config_table=config_table,
+        newline=PlannedChange.detect_line_ending(file_data),
+    )

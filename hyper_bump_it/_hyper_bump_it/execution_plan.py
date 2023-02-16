@@ -12,6 +12,7 @@ from rich.text import Text
 from . import files, ui, vcs
 from .compat import LiteralString
 from .config import ConfigVersionUpdater, GitAction
+from .planned_changes import PlannedChange
 from .version import Version
 
 
@@ -73,8 +74,9 @@ class ExecutionPlan:
         for action in self._actions:
             action()
 
-    def display_plan(self) -> None:
-        ui.display("[bold]Execution Plan[/]:")
+    def display_plan(self, show_header: bool = True) -> None:
+        if show_header:
+            ui.display("[bold]Execution Plan[/]:")
         for action in self._actions:
             action.display_intent()
 
@@ -86,7 +88,7 @@ class UpdateConfiAction:
 
     def __call__(self) -> None:
         ui.display("Updating version in configuration file")
-        self._updater(self._new_version)
+        files.perform_change(self._updater(self._new_version))
 
     def display_intent(self) -> None:
         ui.display("Update version in configuration file")
@@ -97,7 +99,7 @@ def update_config_action(updater: ConfigVersionUpdater, new_version: Version) ->
 
 
 class ChangeFileAction:
-    def __init__(self, change: files.PlannedChange) -> None:
+    def __init__(self, change: PlannedChange) -> None:
         self._change = change
 
     def __call__(self) -> None:
@@ -111,12 +113,24 @@ class ChangeFileAction:
         ui.display_diff(self._change.change_diff)
 
 
-def update_file_actions(planned_changes: list[files.PlannedChange]) -> Action:
+def update_file_actions(planned_changes: list[PlannedChange]) -> Action:
     return ActionGroup(
         intent_description="Update files",
         execution_description="Updating files",
         actions=[ChangeFileAction(change) for change in planned_changes],
     )
+
+
+class DisplayFilePatchesAction:
+    def __init__(self, changes: list[PlannedChange]) -> None:
+        self._changes = changes
+
+    def __call__(self) -> None:
+        raise ValueError("This action should only every be used to display an intent")
+
+    def display_intent(self) -> None:
+        for change in self._changes:
+            ui.display_diff(change.change_diff)
 
 
 class CreateBranchAction:

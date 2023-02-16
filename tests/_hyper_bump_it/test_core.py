@@ -1,3 +1,4 @@
+from io import StringIO
 from pathlib import Path
 
 import tomlkit
@@ -50,20 +51,25 @@ def _keystone_file_updated(tmp_path: Path, config: Config):
 
 
 def test_do_bump__config_version_no_git__files_updated(tmp_path: Path):
-    config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
+    project_root = tmp_path
+    config_file = project_root / sd.SOME_CONFIG_FILE_NAME
     config_text = sd.some_minimal_config_text(
         file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING
     )
     config_file.write_text(config_text)
     toml_doc = tomlkit.parse(config_text)
     config = sd.some_application_config(
-        project_root=tmp_path,
+        project_root=project_root,
         git=sd.some_git(
             actions=sd.some_git_actions(GitAction.Skip, GitAction.Skip, GitAction.Skip)
         ),
         show_confirm_prompt=False,
         config_version_updater=ConfigVersionUpdater(
-            config_file, toml_doc, toml_doc[file.ROOT_TABLE_KEY]
+            config_file,
+            project_root,
+            toml_doc,
+            toml_doc[file.ROOT_TABLE_KEY],
+            newline="\n",
         ),
     )
 
@@ -123,7 +129,7 @@ def test_do_bump__keystone_no_git_decline_prompt__file_unchanged(
     _no_edits(tmp_path, config)
 
 
-def test_do_bump__keystone_no_git_dry_run__file_unchanged(tmp_path: Path, force_input):
+def test_do_bump__keystone_no_git_dry_run__file_unchanged(tmp_path: Path):
     config = sd.some_application_config(
         project_root=tmp_path,
         git=sd.some_git(
@@ -133,6 +139,96 @@ def test_do_bump__keystone_no_git_dry_run__file_unchanged(tmp_path: Path, force_
         dry_run=True,
     )
     _no_edits(tmp_path, config)
+
+
+def test_do_bump__patch_keystone__file_unchanged(tmp_path: Path):
+    config = sd.some_application_config(
+        project_root=tmp_path,
+        git=sd.some_git(
+            actions=sd.some_git_actions(GitAction.Skip, GitAction.Skip, GitAction.Skip)
+        ),
+        config_version_updater=None,
+        patch=True,
+    )
+    _no_edits(tmp_path, config)
+
+
+def test_do_bump__patch_keystone__only_patch_output(
+    tmp_path: Path, capture_rich: StringIO
+):
+    config = sd.some_application_config(
+        project_root=tmp_path,
+        git=sd.some_git(
+            actions=sd.some_git_actions(GitAction.Skip, GitAction.Skip, GitAction.Skip)
+        ),
+        config_version_updater=None,
+        patch=True,
+    )
+    original_text = f"--{sd.SOME_VERSION}--"
+    some_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
+    some_file.write_text(original_text)
+
+    core.do_bump(config)
+
+    assert capture_rich.getvalue() == sd.SOME_DIFF_KEYSTONE
+
+
+def test_do_bump__patch_no_keystone__file_unchanged(tmp_path: Path):
+    project_root = tmp_path
+    config_file = project_root / sd.SOME_CONFIG_FILE_NAME
+    config_text = sd.some_minimal_config_text(
+        file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING
+    )
+    config_file.write_text(config_text)
+    toml_doc = tomlkit.parse(config_text)
+    config = sd.some_application_config(
+        project_root=tmp_path,
+        git=sd.some_git(
+            actions=sd.some_git_actions(GitAction.Skip, GitAction.Skip, GitAction.Skip)
+        ),
+        config_version_updater=ConfigVersionUpdater(
+            config_file,
+            project_root,
+            toml_doc,
+            toml_doc[file.ROOT_TABLE_KEY],
+            newline="\n",
+        ),
+        patch=True,
+    )
+    _no_edits(tmp_path, config)
+
+
+def test_do_bump__patch_no_keystone__only_patch_output(
+    tmp_path: Path, capture_rich: StringIO
+):
+    project_root = tmp_path
+    config_file = project_root / sd.SOME_CONFIG_FILE_NAME
+    config_text = sd.some_minimal_config_text(
+        file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING
+    )
+    config_file.write_text(config_text)
+    toml_doc = tomlkit.parse(config_text)
+    config = sd.some_application_config(
+        project_root=tmp_path,
+        git=sd.some_git(
+            actions=sd.some_git_actions(GitAction.Skip, GitAction.Skip, GitAction.Skip)
+        ),
+        config_version_updater=ConfigVersionUpdater(
+            config_file,
+            project_root,
+            toml_doc,
+            toml_doc[file.ROOT_TABLE_KEY],
+            newline="\n",
+        ),
+        patch=True,
+    )
+    original_text = f"--{sd.SOME_VERSION}--"
+    some_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
+    some_file.write_text(original_text)
+
+    core.do_bump(config)
+
+    assert capture_rich.getvalue() == sd.SOME_DIFF_NO_KEYSTONE
 
 
 def _no_edits(tmp_path: Path, config: Config):

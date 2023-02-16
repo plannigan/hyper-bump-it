@@ -19,6 +19,7 @@ class BumpToArgs:
     config_file: Optional[Path]  # absolute resolved path
     project_root: Path  # absolute resolved path
     dry_run: bool
+    patch: bool
     skip_confirm_prompt: Optional[bool]
     current_version: Optional[Version]
     commit: Optional[GitAction]
@@ -37,6 +38,7 @@ class BumpByArgs:
     config_file: Optional[Path]  # absolute resolved path
     project_root: Path  # absolute resolved path
     dry_run: bool
+    patch: bool
     skip_confirm_prompt: Optional[bool]
     current_version: Optional[Version]
     commit: Optional[GitAction]

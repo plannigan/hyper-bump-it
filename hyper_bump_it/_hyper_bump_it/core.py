@@ -4,7 +4,7 @@ from git import Repo
 
 from . import execution_plan, files, ui, vcs
 from .config import Config, ConfigVersionUpdater
-from .files import PlannedChange
+from .planned_changes import PlannedChange
 from .text_formatter import TextFormatter
 from .vcs import GitOperationsInfo
 from .version import Version
@@ -23,15 +23,22 @@ def do_bump(config: Config) -> None:
     else:
         git_repo = vcs.get_vetted_repo(config.project_root, git_operations_info)
 
-    plan = _construct_plan(
-        config.new_version,
-        planned_changes,
-        git_operations_info,
-        git_repo,
-        config.config_version_updater,
-    )
-    plan.display_plan()
-    if config.dry_run:
+    if config.patch:
+        plan = _construct_patch_plan(
+            config.new_version,
+            planned_changes,
+            config.config_version_updater,
+        )
+    else:
+        plan = _construct_plan(
+            config.new_version,
+            planned_changes,
+            git_operations_info,
+            git_repo,
+            config.config_version_updater,
+        )
+    plan.display_plan(show_header=not config.patch)
+    if config.no_execute_plan:
         return
 
     ui.blank_line()
@@ -64,4 +71,16 @@ def _construct_plan(
         )
     plan.add_action(execution_plan.update_file_actions(planned_changes))
     plan.add_actions(git_actions)
+    return plan
+
+
+def _construct_patch_plan(
+    new_version: Version,
+    planned_changes: list[PlannedChange],
+    config_version_updater: Optional[ConfigVersionUpdater],
+) -> execution_plan.ExecutionPlan:
+    plan = execution_plan.ExecutionPlan()
+    if config_version_updater is not None:
+        planned_changes.append(config_version_updater(new_version))
+    plan.add_action(execution_plan.DisplayFilePatchesAction(planned_changes))
     return plan
