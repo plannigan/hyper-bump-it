@@ -11,6 +11,7 @@ from rich.console import Console, RichCast
 from rich.panel import Panel
 from rich.rule import Rule
 from rich.style import Style, StyleType
+from rich.syntax import Syntax
 from rich.text import Text
 from rich.theme import Theme
 
@@ -186,6 +187,11 @@ def choice_enum(
         default=default_value,
     )
     return enum_type(result_value)
+
+
+def display_diff(diff_text: str) -> None:
+    syntax = Syntax(diff_text, "udiff", background_color="default")
+    _CONSOLE.print(syntax)
 
 
 def list_options(

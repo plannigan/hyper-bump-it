@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Display planned changes as a unified diff instead of a custom format.
+
 ## [0.3.1] - 2023-02-11
 
 ### Fixed

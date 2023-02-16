@@ -108,17 +108,7 @@ class ChangeFileAction:
 
     def display_intent(self) -> None:
         ui.rule(Text(str(self._change.relative_file), style="file.path"))
-        for line_change in self._change.line_changes:
-            ui.display(
-                Text(f"{line_change.line_index + 1}: ").append(
-                    f"- {line_change.old_line}", style="patch.old"
-                )
-            )
-            ui.display(
-                Text(f"{line_change.line_index + 1}: ").append(
-                    f"+ {line_change.new_line}", style="patch.new"
-                )
-            )
+        ui.display_diff(self._change.change_diff)
 
 
 def update_file_actions(planned_changes: list[files.PlannedChange]) -> Action:

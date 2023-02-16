@@ -1,8 +1,11 @@
 """
 Operation on files.
 """
+import difflib
 from dataclasses import InitVar, dataclass, field
+from functools import cached_property
 from pathlib import Path
+from typing import Optional
 
 from .config import File
 from .error import FileGlobError, VersionNotFound
@@ -11,21 +14,28 @@ from .text_formatter.text_formatter import FormatContext
 
 
 @dataclass
-class LineChange:
-    line_index: int
-    old_line: str
-    new_line: str
-
-
-@dataclass
 class PlannedChange:
     file: Path  # absolute resolved path
     project_root: InitVar[Path]  # absolute resolved path
     relative_file: Path = field(init=False)
-    line_changes: list[LineChange]
+    old_content: str
+    new_content: str
+    newline: Optional[str]
 
     def __post_init__(self, project_root: Path) -> None:
         self.relative_file = self.file.relative_to(project_root)
+
+    @cached_property
+    def change_diff(self) -> str:
+        relative_file_str = str(self.relative_file)
+        return "".join(
+            difflib.unified_diff(
+                self.old_content.splitlines(keepends=True),
+                self.new_content.splitlines(keepends=True),
+                fromfile=relative_file_str,
+                tofile=relative_file_str,
+            )
+        )
 
 
 def collect_planned_changes(
@@ -64,51 +74,39 @@ def _planned_change_for(
     project_root: Path,
 ) -> PlannedChange:
     search_text = formatter.format(search_pattern, FormatContext.search)
-    changes: list[LineChange] = []
-    for i, line in enumerate(file.read_text().splitlines()):
-        if search_text in line:
-            replace_text = formatter.format(replace_pattern, FormatContext.replace)
-            changes.append(
-                LineChange(
-                    line_index=i,
-                    old_line=line,
-                    new_line=line.replace(search_text, replace_text),
-                )
-            )
 
-    if changes:
-        return PlannedChange(file, project_root, changes)
+    file_text = file.read_text()
+    updated_text = file_text.replace(
+        search_text, formatter.format(replace_pattern, FormatContext.replace)
+    )
+    if updated_text == file_text:
+        raise VersionNotFound(file.relative_to(project_root), search_pattern)
 
-    raise VersionNotFound(file.relative_to(project_root), search_pattern)
+    return PlannedChange(
+        file,
+        project_root,
+        old_content=file_text,
+        new_content=updated_text,
+        newline=_detect_line_ending(file),
+    )
 
 
 def perform_change(change: PlannedChange) -> None:
     try:
-        contents = change.file.read_bytes()
+        with change.file.open("w", newline=change.newline) as f:
+            f.write(change.new_content)
     except FileNotFoundError:
         raise ValueError(
             f"Given file '{change.file}' does not exist. PlannedChange is not valid."
         )
-    lines = contents.splitlines(keepends=True)
-    for line_change in change.line_changes:
-        try:
-            old_line = lines[line_change.line_index]
-        except IndexError:
-            raise ValueError(
-                f"Given file '{change.file}' does not contain a line with the index of"
-                f" {line_change.line_index}. PlannedChange is not valid."
-            )
-        lines[line_change.line_index] = line_change.new_line.encode() + _line_ending(
-            old_line
-        )
-    change.file.write_bytes(b"".join(lines))
 
 
-def _line_ending(line: bytes) -> bytes:
+def _detect_line_ending(file: Path) -> Optional[str]:
+    line = file.read_bytes().splitlines(keepends=True)[0]
     # match line ending of file instead of assuming os.linesep
     if line.endswith(b"\r\n"):
-        return b"\r\n"
+        return "\r\n"
     if line.endswith(b"\n"):
-        return b"\n"
+        return "\n"
     # no trailing new line
-    return b""
+    return None
