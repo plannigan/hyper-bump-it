@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Display planned changes as a unified diff instead of a custom format.
 
+### Fixed
+
+* Configuration file line endings changed to system default when updating file.
+
 ## [0.3.1] - 2023-02-11
 
 ### Fixed

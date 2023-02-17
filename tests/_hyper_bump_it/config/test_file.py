@@ -551,6 +551,33 @@ def test_read_hyper_config__valid_current_version__returned_updater_updates_file
     )
 
 
+def test_read_hyper_config__crlf_newline__newline_as_crlf(
+    tmp_path: Path,
+):
+    project_root = tmp_path
+    config_file = project_root / sd.SOME_CONFIG_FILE_NAME
+    original_text = sd.some_minimal_config_text(
+        file.ROOT_TABLE_KEY, sd.SOME_VERSION_STRING, crlf_newline=True
+    )
+
+    config_file.write_text(original_text)
+
+    config, updater = file.read_hyper_config(config_file, project_root=tmp_path)
+
+    assert updater is not None
+    result = updater(sd.SOME_OTHER_VERSION)
+
+    assert result == sd.some_planned_change(
+        config_file,
+        project_root,
+        old_content=original_text,
+        new_content=sd.some_minimal_config_text(
+            file.ROOT_TABLE_KEY, sd.SOME_OTHER_VERSION_STRING, crlf_newline=True
+        ),
+        newline="\r\n",
+    )
+
+
 def test_read_hyper_config__valid_keystone__config_returned(
     tmp_path: Path,
 ):
