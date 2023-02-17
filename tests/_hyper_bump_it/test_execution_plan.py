@@ -219,8 +219,32 @@ def test_execution_plan__add_actions__display_actions_in_order(mocker):
     assert some_other_action_call_time > some_action_call_time
 
 
+def test_execution_plan__display_plan_show_header__display_header(
+    mocker, capture_rich: StringIO
+):
+    plan = execution_plan.ExecutionPlan()
+    some_action = mocker.Mock()
+    plan.add_action(some_action)
+
+    plan.display_plan()
+
+    assert "Execution Plan" in capture_rich.getvalue()
+
+
+def test_execution_plan__display_plan_no_show_header__no_display_header(
+    mocker, capture_rich: StringIO
+):
+    plan = execution_plan.ExecutionPlan()
+    some_action = mocker.Mock()
+    plan.add_action(some_action)
+
+    plan.display_plan(show_header=False)
+
+    assert "Execution Plan" not in capture_rich.getvalue()
+
+
 def test_update_config_action__call__updater_called_with_version(mocker):
-    mock_updater = mocker.Mock()
+    mock_updater = mocker.MagicMock()
     action = execution_plan.update_config_action(mock_updater, sd.SOME_VERSION)
 
     action()
@@ -340,6 +364,41 @@ def test_update_file_actions__multi_display__each_name_appears(capture_rich: Str
     output = capture_rich.getvalue()
     assert sd.SOME_GLOB_MATCHED_FILE_NAME in output
     assert sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME in output
+
+
+def test_display_file_patches__call__error():
+    action = execution_plan.DisplayFilePatchesAction([])
+
+    with pytest.raises(ValueError):
+        action()
+
+
+@pytest.mark.parametrize(
+    "diff", [sd.SOME_DIFF_KEYSTONE, sd.SOME_DIFF_NO_KEYSTONE, sd.SOME_DIFF_NEEDS_ESCAPE]
+)
+def test_display_file_patches__display__show_diff(diff, capture_rich: StringIO, mocker):
+    mock_planned_change = mocker.Mock(change_diff=diff)
+    action = execution_plan.DisplayFilePatchesAction([mock_planned_change])
+
+    action.display_intent()
+
+    assert capture_rich.getvalue() == f"{diff}\n"
+
+
+def test_display_file_patches__display_multiple__show_diffs(
+    capture_rich: StringIO, mocker
+):
+    mock_planned_change = mocker.Mock(change_diff=sd.SOME_DIFF_NO_KEYSTONE)
+    action = execution_plan.DisplayFilePatchesAction(
+        [mock_planned_change, mock_planned_change]
+    )
+
+    action.display_intent()
+
+    assert (
+        capture_rich.getvalue()
+        == f"{sd.SOME_DIFF_NO_KEYSTONE}\n{sd.SOME_DIFF_NO_KEYSTONE}\n"
+    )
 
 
 def test_create_branch_action__call__create_branch_called(mocker):

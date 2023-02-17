@@ -238,3 +238,36 @@ def test_tby__relative_project_root_and_config_file__resolved_paths(mocker):
             project_root=Path(sd.SOME_DIRECTORY_NAME).resolve(),
         )
     )
+
+
+@pytest.mark.parametrize(
+    "patch_args",
+    [
+        (["--patch"]),
+        (["--patch", "--no-patch", "--patch"]),
+    ],
+)
+def test_by__patch_options__args_sent_to_config_for_bump_to(patch_args, mocker):
+    mock_config_for_bump_to = mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.by.config_for_bump_by"
+    )
+    mocker.patch("hyper_bump_it._hyper_bump_it.core.do_bump")
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "by",
+            sd.SOME_BUMP_PART,
+            *CLI_OVERRIDE_ARGS_WITHOUT_DRY_RUN,
+            *patch_args,
+        ],
+    )
+
+    assert_success(result)
+    mock_config_for_bump_to.assert_called_once_with(
+        sd.some_bump_by_args(
+            config_file=sd.SOME_ABSOLUTE_CONFIG_FILE,
+            project_root=sd.SOME_ABSOLUTE_DIRECTORY,
+            patch=True,
+        )
+    )

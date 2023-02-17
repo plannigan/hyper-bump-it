@@ -372,17 +372,6 @@ class ConfigurationFileReadError(ConfigurationFileError):
         )
 
 
-class ConfigurationFileWriteError(ConfigurationFileError):
-    def __init__(self, file: Path, cause: Exception) -> None:
-        self.cause = cause
-        super().__init__(file, f"could not be written to: {self.cause}")
-
-    def __rich__(self) -> Text:
-        return self._message_prefix.append("could not be written to:\n").append(
-            str(self.cause), style="error.msg"
-        )
-
-
 class SubTableNotExistError(ConfigurationFileError):
     def __init__(self, file: Path, sub_tables: tuple[str, str]) -> None:
         self.sub_table = ".".join(sub_tables)
