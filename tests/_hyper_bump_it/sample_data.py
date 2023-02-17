@@ -299,6 +299,8 @@ def some_minimal_config_text(
     show_confirm_prompt: Optional[bool] = None,
     trim_empty_lines: bool = False,
     include_empty_tables: bool = True,
+    *,
+    crlf_newline: bool = False,
 ) -> str:
     root_table_header = f"[{table_root}]"
     if version is None:
@@ -326,6 +328,10 @@ def some_minimal_config_text(
     )
     if trim_empty_lines:
         content = "\n".join(line for line in content.splitlines() if line != "") + "\n"
+
+    if crlf_newline:
+        content = content.replace("\n", "\r\n")
+
     return content
 
 
