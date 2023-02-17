@@ -34,26 +34,43 @@ This first example
 * Commits those changes to a newly created branch
 
 ```commandline
-$ hyper-bump-it to 2.3.4
+hyper-bump-it to 2.3.4
+Execution Plan:
 Create branch bump_version_to_2.3.4
 Switch to branch bump_version_to_2.3.4
-Updating version in configuration file
+Update version in configuration file
 Update files
 ────────────────────────────── example/foo.txt ──────────────────────────────
-2: - --1.2.3--abc
-2: + --2.3.4--abc
-6: - --1.2.3--edf
-6: + --2.3.4--edf
+--- example/foo.txt
++++ example/foo.txt
+@@ -1,3 +1,3 @@
+ hello
+---1.2.3--abc
++--2.3.4--abc
+ world
+
+ Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod.
+---1.2.3--edf
++--2.3.4--edf
+ Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis.
+
 ────────────────────────────── example/bar.txt ──────────────────────────────
-2: - more --1.2.3-- text
-2: + more --2.3.4-- text
+--- example/bar.txt
++++ example/bar.txt
+@@ -1,3 +1,3 @@
+ hello
+-more --1.2.3-- text
++more --2.3.4-- text
+ world
+
 Commit changes: Bump version: 1.2.3 → 2.3.4
 Switch to branch main
+
 Do you want to perform these actions? [y/n] (n): y
 Creating branch bump_version_to_2.3.4
 Switching to branch bump_version_to_2.3.4
 Updating version in configuration file
-Update files
+Updating files
 Updating example/foo.txt
 Updating example/bar.txt
 Committing changes: Bump version: 1.2.3 → 2.3.4
@@ -68,27 +85,44 @@ This second example
 
 ```commandline
 $ hyper-bump-it by minor
-Updating version in configuration file
+Execution Plan:
+Update version in configuration file
 Update files
 ────────────────────────────── example/foo.txt ──────────────────────────────
-2: - --1.2.3--abc
-2: + --1.3.0--abc
-6: - --1.2.3--edf
-6: + --1.3.0--edf
+--- example/foo.txt
++++ example/foo.txt
+@@ -1,7 +1,7 @@
+ hello
+---1.2.3--abc
++--1.3.0--abc
+ world
+ 
+ Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod.
+---1.2.3--edf
++--1.3.0--edf
+ Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis.
+
 ────────────────────────────── example/bar.txt ──────────────────────────────
-2: - more --1.2.3-- text
-2: + more --1.3.0-- text
+--- example/bar.txt
++++ example/bar.txt
+@@ -1,3 +1,3 @@
+ hello
+-more --1.2.3-- text
++more --1.3.0-- text
+ world
+
 Commit changes: Bump version: 1.2.3 → 1.3.0
 Tag commit: v1.3.0
-Pushing commit with tag v1.3.0
+Push commit to origin with tag v1.3.0
+
 Do you want to perform these actions? [y/n] (n): y
 Updating version in configuration file
-Update files
+Updating files
 Updating example/foo.txt
 Updating example/bar.txt
 Committing changes: Bump version: 1.2.3 → 1.3.0
 Tagging commit: v1.3.0
-Pushing commit with tag v1.3.0
+Pushing commit to origin with tag v1.3.0
 ```
 
 [ci]: https://github.com/plannigan/hyper-bump-it/actions
