@@ -669,17 +669,25 @@ dedicated configuration file.</p>
 <h2 id="example-executions">Example Executions</h2>
 <p>Using the configuration shown above, lets see how <code>hyper-bump-it</code> runs.</p>
 <div class="highlight"><pre><span></span><code>$ hyper-bump-it to 2.3.4
-Updating version in configuration file
+Execution Plan:
+Update version in configuration file
 Update files
 ────────────────────────────── version.txt ──────────────────────────────
-2: - version=&quot;1.3.0&quot;
-2: + version=&quot;2.3.4&quot;
-Commit changes: Bump version: 1.3.0 → 2.3.4
+--- version.txt
++++ version.txt
+@@ -1,3 +1,3 @@
+ hello
+-version=&quot;1.2.3&quot;
++version=&quot;2.3.4&quot;
+ world
+
+Commit changes: Bump version: 1.2.3 → 2.3.4
+
 Do you want to perform these actions? [y/n] (n): y
 Updating version in configuration file
-Update files
+Updating files
 Updating version.txt
-Committing changes: Bump version: 1.3.0 → 2.3.4
+Committing changes: Bump version: 1.2.3 → 2.3.4
 </code></pre></div>
 <p><code>hyper-bump-it</code> finds the file with the version text and displays the changes it plans to make.
 After the user confirms the change, the program continues with editing the files.</p>
@@ -693,9 +701,16 @@ state, to the next minor version.</p>
 Updating version in configuration file
 Update files
 ────────────────────────────── version.txt ──────────────────────────────
-2: - version=&quot;1.3.0&quot;
-2: + version=&quot;1.4.0&quot;
+--- version.txt
++++ version.txt
+@@ -1,3 +1,3 @@
+ hello
+-version=&quot;1.2.3&quot;
++version=&quot;1.3.0&quot;
+ world
+
 Commit changes: Bump version: 1.3.0 → 1.4.0
+
 Do you want to perform these actions? [y/n] (n): y
 Updating version in configuration file
 Update files
