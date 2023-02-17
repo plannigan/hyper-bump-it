@@ -167,17 +167,25 @@ Using the configuration shown above, lets see how `hyper-bump-it` runs.
 
 ```commandline
 $ hyper-bump-it to 2.3.4
-Updating version in configuration file
+Execution Plan:
+Update version in configuration file
 Update files
 ────────────────────────────── version.txt ──────────────────────────────
-2: - version="1.3.0"
-2: + version="2.3.4"
-Commit changes: Bump version: 1.3.0 → 2.3.4
+--- version.txt
++++ version.txt
+@@ -1,3 +1,3 @@
+ hello
+-version="1.2.3"
++version="2.3.4"
+ world
+
+Commit changes: Bump version: 1.2.3 → 2.3.4
+
 Do you want to perform these actions? [y/n] (n): y
 Updating version in configuration file
-Update files
+Updating files
 Updating version.txt
-Committing changes: Bump version: 1.3.0 → 2.3.4
+Committing changes: Bump version: 1.2.3 → 2.3.4
 ```
 
 `hyper-bump-it` finds the file with the version text and displays the changes it plans to make.
@@ -196,9 +204,16 @@ $ hyper-bump-it by minor
 Updating version in configuration file
 Update files
 ────────────────────────────── version.txt ──────────────────────────────
-2: - version="1.3.0"
-2: + version="1.4.0"
+--- version.txt
++++ version.txt
+@@ -1,3 +1,3 @@
+ hello
+-version="1.2.3"
++version="1.3.0"
+ world
+
 Commit changes: Bump version: 1.3.0 → 1.4.0
+
 Do you want to perform these actions? [y/n] (n): y
 Updating version in configuration file
 Update files
