@@ -12,6 +12,7 @@ from hyper_bump_it._hyper_bump_it.cli.interactive.file_validation import (
 )
 from hyper_bump_it._hyper_bump_it.cli.interactive.files import FilesMenu
 from hyper_bump_it._hyper_bump_it.config import FileDefinition
+from hyper_bump_it._hyper_bump_it.text_formatter import keys
 from tests._hyper_bump_it import sample_data as sd
 from tests.conftest import ForceInput
 
@@ -449,6 +450,15 @@ def test_configure__list__display_definitions(
             f"replace-format-pattern: '{sd.SOME_REPLACE_FORMAT_PATTERN}' "
             f"(keystone)",
         ),
+        (
+            sd.SOME_FILE_GLOB,
+            False,
+            f"\n--{{{keys.VERSION}}}",
+            f"\n++{{{keys.VERSION}}}",
+            f"file-glob: '{sd.SOME_FILE_GLOB}' "
+            f"search-format-pattern: '\\n--{{{keys.VERSION}}}' "
+            f"replace-format-pattern: '\\n++{{{keys.VERSION}}}'",
+        ),
     ],
 )
 def test_file_summary__default_search_pattern__formats_to_version(
@@ -543,3 +553,56 @@ def test_configure__failure_require_escape__values_escaped(
     editor.configure()
 
     assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
+
+
+def test_configure__search_slash_n_pattern__convert_to_multiline_pattern(
+    force_input: ForceInput,
+):
+    force_input(
+        "y",  # yes, replace example
+        sd.SOME_FILE_GLOB,
+        f"\\n{{{keys.VERSION}}}",  # a slash followed by an n
+        "y",  # yes, omit replace format pattern
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(EXAMPLE_CONFIG, ALWAYS_VALID)
+
+    result_config, result_has_keystone = editor.configure()
+
+    assert result_config == [
+        FileDefinition(
+            file_glob=sd.SOME_FILE_GLOB,
+            keystone=False,
+            search_format_pattern=f"\n{{{keys.VERSION}}}",  # a newline
+            replace_format_pattern=None,
+        )
+    ]
+    assert result_has_keystone is False
+
+
+def test_configure__replace_slash_n_pattern__convert_to_multiline_pattern(
+    force_input: ForceInput,
+):
+    force_input(
+        "y",  # yes, replace example
+        sd.SOME_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "n",  # yes, omit replace format pattern
+        f"\\n{{{keys.VERSION}}}",  # a slash followed by an n
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(EXAMPLE_CONFIG, ALWAYS_VALID)
+
+    result_config, result_has_keystone = editor.configure()
+
+    assert result_config == [
+        FileDefinition(
+            file_glob=sd.SOME_FILE_GLOB,
+            keystone=False,
+            search_format_pattern=sd.SOME_SEARCH_FORMAT_PATTERN,
+            replace_format_pattern=f"\n{{{keys.VERSION}}}",  # a newline
+        )
+    ]
+    assert result_has_keystone is False

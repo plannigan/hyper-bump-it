@@ -184,6 +184,36 @@ def test_collect_planned_changes__multiple_files__planned_change_for_both(
     ]
 
 
+def test_collect_planned_changes__multiline_search_replace__planned_change_with_expected_content(
+    tmp_path: Path,
+):
+    original_text = f"abc\n--{sd.SOME_VERSION}--\nedf\n--{sd.SOME_VERSION}--\n"
+    expected_text = f"abc\n--{sd.SOME_VERSION}--\nedf\n--{sd.SOME_OTHER_VERSION}--\n"
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_text(original_text)
+    format_pattern = f"edf\n--{{{keys.VERSION}}}"
+
+    changes = files.collect_planned_changes(
+        tmp_path,
+        sd.some_file(
+            "*.txt",
+            search_format_pattern=format_pattern,
+            replace_format_pattern=format_pattern,
+        ),
+        formatter=TEXT_FORMATTER,
+    )
+
+    assert changes == [
+        PlannedChange(
+            file=some_file,
+            project_root=tmp_path,
+            old_content=original_text,
+            new_content=expected_text,
+            newline="\n",
+        )
+    ]
+
+
 @pytest.mark.parametrize(
     ["text", "expected_line_ending"],
     [

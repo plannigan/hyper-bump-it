@@ -197,14 +197,14 @@ def _prompt_format_pattern(name: str, current: str, new: bool) -> str:
     message.append(" ")
     message.append(name)
     message.append(" format pattern is '")
-    message.append(current, style="format.pattern")
+    message.append(_newline_display(current), style="format.pattern")
     message.append("'.\nEnter a new format pattern or leave it blank to keep the ")
     message.append(description)
     message.append(" format pattern")
     return ui.ask(
         message,
         default=current,
-    )
+    ).replace("\\n", "\n")
 
 
 def _prompt_replace_format_pattern(
@@ -256,10 +256,16 @@ def _definition_summary(definition: FileDefinition) -> Text:
     summary = Text("file-glob: '")
     summary.append(definition.file_glob, style="file.glob")
     summary.append("' search-format-pattern: '")
-    summary.append(definition.search_format_pattern, style="format.pattern")
+    summary.append(
+        _newline_display(definition.search_format_pattern), style="format.pattern"
+    )
     summary.append("' replace-format-pattern: '")
-    summary.append(replace_format_pattern, style="format.pattern")
+    summary.append(_newline_display(replace_format_pattern), style="format.pattern")
     summary.append("'")
     if definition.keystone:
         summary.append(" (keystone)")
     return summary
+
+
+def _newline_display(pattern: str) -> str:
+    return pattern.replace("\n", "\\n")
