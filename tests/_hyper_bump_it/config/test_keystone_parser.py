@@ -310,6 +310,18 @@ def test_format__invalid_key__error():
             Version.parse("1.2.3-p+a"),
             "11.22.33-pp+aa 1.2.3-p+a",
         ),
+        (
+            "multiline pattern - extra specific",
+            f"edf\n{{{keys.VERSION}}}",
+            Version.parse("1.2.3-p+a"),
+            "abc\n11.22.33-pp+aa\nedf\n1.2.3-p+a\n",
+        ),
+        (
+            "multiline pattern - values split",
+            f"{{{keys.CURRENT_MAJOR}}}.{{{keys.CURRENT_MINOR}}}\n{{{keys.CURRENT_PATCH}}}",
+            Version.parse("1.2.3"),
+            "1.2\n3",
+        ),
     ],
 )
 def test_find_current_version__valid_pattern_match__found(

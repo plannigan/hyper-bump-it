@@ -91,12 +91,11 @@ def find_current_version(
     :raises VersionNotFound: None of the lines in the file matched the search pattern.
     """
     matching_pattern = _create_matching_pattern(search_pattern)
-    for i, line in enumerate(file.read_text().splitlines()):
-        if (match := matching_pattern.search(line)) is not None:
-            version_string = _version_string_from_match(match)
-            if version_string is None:
-                raise IncompleteKeystoneVersionError(file, search_pattern)
-            return Version.parse(version_string)
+    if (match := matching_pattern.search(file.read_text())) is not None:
+        version_string = _version_string_from_match(match)
+        if version_string is None:
+            raise IncompleteKeystoneVersionError(file, search_pattern)
+        return Version.parse(version_string)
 
     raise VersionNotFound(file, search_pattern)
 
