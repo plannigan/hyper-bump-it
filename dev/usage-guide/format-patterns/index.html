@@ -363,6 +363,19 @@
     Helper Keys
   </a>
   
+    <nav class="md-nav" aria-label="Helper Keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#today-in-search-patterns" class="md-nav__link">
+    Today in Search Patterns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -508,6 +521,19 @@
   <a href="#helper-keys" class="md-nav__link">
     Helper Keys
   </a>
+  
+    <nav class="md-nav" aria-label="Helper Keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#today-in-search-patterns" class="md-nav__link">
+    Today in Search Patterns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -723,6 +749,13 @@ supported.</p>
 </tr>
 </tbody>
 </table>
+<h4 id="today-in-search-patterns">Today in Search Patterns</h4>
+<p>The <code>today</code> key operates differently from all other keys when used in a search format pattern.
+Instead of strictly matching the value of the current date, it will match any date. This is allows
+for updating a line of text that contains a date to be the current date. A search format pattern of
+<code>today = {today}</code> would match <code>today = 2023-02-24</code>, <code>today = 0000-01-01</code> and <code>today = 9999-12-31</code>.</p>
+<p>Locale-independent <a href="https://docs.python.org/3/library/datetime.html?highlight=strftime#strftime-and-strptime-format-codes">format specifications codes</a> are supported. A search format
+pattern of <code>{today:%m/%d/%Y}.</code> matches <code>02/24/2023</code>.</p>
 <h2 id="keystone-file-considerations">Keystone File Considerations</h2>
 <p>When utilizing the <a href="../configuration/#current-version">keystone file functionality</a>, <code>hyper-bump-it</code> converts the
 search format pattern into a regular expression that can be used to parse the current version from
