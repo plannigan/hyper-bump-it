@@ -58,8 +58,8 @@ def _planned_change_for(
             search_text_maybe, file_text, replace_text
         )
     else:
+        no_replacement = search_text_maybe not in file_text
         updated_text = file_text.replace(search_text_maybe, replace_text)
-        no_replacement = updated_text == file_text
 
     if no_replacement:
         raise VersionNotFound(file.relative_to(project_root), search_pattern)
