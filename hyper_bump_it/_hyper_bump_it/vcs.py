@@ -16,7 +16,7 @@ from .error import (
     MissingRemoteError,
     NoRepositoryError,
 )
-from .text_formatter import TextFormatter
+from .format_pattern import TextFormatter
 
 
 @dataclass

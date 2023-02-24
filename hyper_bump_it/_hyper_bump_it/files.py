@@ -4,11 +4,11 @@ Operation on files.
 
 from pathlib import Path
 
+from . import format_pattern
 from .config import File
 from .error import FileGlobError, VersionNotFound
+from .format_pattern import FormatContext, TextFormatter, keys
 from .planned_changes import PlannedChange
-from .text_formatter import TextFormatter
-from .text_formatter.text_formatter import FormatContext
 
 
 def collect_planned_changes(
@@ -46,14 +46,22 @@ def _planned_change_for(
     formatter: TextFormatter,
     project_root: Path,
 ) -> PlannedChange:
-    search_text = formatter.format(search_pattern, FormatContext.search)
-
     file_data = file.read_bytes()
     file_text = file_data.decode()
-    updated_text = file_text.replace(
-        search_text, formatter.format(replace_pattern, FormatContext.replace)
-    )
-    if updated_text == file_text:
+
+    replace_text = formatter.format(replace_pattern, FormatContext.replace)
+    search_text_maybe = formatter.format(search_pattern, FormatContext.search)
+
+    if TextFormatter.is_used(keys.TODAY, search_text_maybe):
+        # we need to convert the search text into a regex in order to match any date
+        updated_text, no_replacement = _today_replace(
+            search_text_maybe, file_text, replace_text
+        )
+    else:
+        updated_text = file_text.replace(search_text_maybe, replace_text)
+        no_replacement = updated_text == file_text
+
+    if no_replacement:
         raise VersionNotFound(file.relative_to(project_root), search_pattern)
 
     return PlannedChange(
@@ -63,6 +71,18 @@ def _planned_change_for(
         new_content=updated_text,
         newline=PlannedChange.detect_line_ending(file_data),
     )
+
+
+def _today_replace(
+    partial_format_pattern: str,
+    file_text: str,
+    replace_text: str,
+) -> tuple[str, bool]:
+    # The first pass formatted all the keys except "today". Now, that is the only key to convert
+    # into a regex pattern.
+    match_pattern = format_pattern.create_matching_pattern(partial_format_pattern)
+    updated_text, replace_count = match_pattern.subn(replace_text, file_text)
+    return updated_text, replace_count == 0
 
 
 def perform_change(change: PlannedChange) -> None:

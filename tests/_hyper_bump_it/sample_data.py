@@ -26,7 +26,7 @@ from hyper_bump_it._hyper_bump_it.config import (
 )
 from hyper_bump_it._hyper_bump_it.config.file import ConfigVersionUpdater
 from hyper_bump_it._hyper_bump_it.files import PlannedChange
-from hyper_bump_it._hyper_bump_it.text_formatter import TextFormatter, keys
+from hyper_bump_it._hyper_bump_it.format_pattern import TextFormatter, keys
 from hyper_bump_it._hyper_bump_it.vcs import GitOperationsInfo
 from hyper_bump_it._hyper_bump_it.version import Version
 
@@ -35,6 +35,8 @@ from hyper_bump_it._hyper_bump_it.version import Version
 ALL_KEYS = tuple(getattr(keys, name) for name in dir(keys) if not name.startswith("__"))
 
 SOME_DATE = date(year=2022, month=10, day=19)
+SOME_OLDER_DATE = date(year=2021, month=10, day=12)
+SOME_NEWER_DATE = date(year=2024, month=10, day=12)
 SOME_MAJOR = 1
 SOME_MINOR = 2
 SOME_PATCH = 3

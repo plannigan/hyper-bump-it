@@ -4,8 +4,8 @@ from git import Repo
 
 from . import execution_plan, files, ui, vcs
 from .config import Config, ConfigVersionUpdater
+from .format_pattern import TextFormatter
 from .planned_changes import PlannedChange
-from .text_formatter import TextFormatter
 from .vcs import GitOperationsInfo
 from .version import Version
 

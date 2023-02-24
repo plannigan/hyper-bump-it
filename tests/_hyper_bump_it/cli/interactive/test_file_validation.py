@@ -6,7 +6,7 @@ from hyper_bump_it._hyper_bump_it.cli.interactive.file_validation import (
     DefinitionValidator,
     FailureType,
 )
-from hyper_bump_it._hyper_bump_it.text_formatter import FormatContext
+from hyper_bump_it._hyper_bump_it.format_pattern import FormatContext
 from tests._hyper_bump_it import sample_data as sd
 
 

@@ -81,6 +81,16 @@ supported.
 |---------------|-------------------------------|---------------------|
 | today         | Current date                  | `datetime.date`[^3] |
 
+#### Today in Search Patterns
+
+The `today` key operates differently from all other keys when used in a search format pattern.
+Instead of strictly matching the value of the current date, it will match any date. This is allows
+for updating a line of text that contains a date to be the current date. A search format pattern of
+`today = {today}` would match `today = 2023-02-24`, `today = 0000-01-01` and `today = 9999-12-31`.
+
+Locale-independent [format specifications codes][date-format-code] are supported. A search format
+pattern of `{today:%m/%d/%Y}.` matches `02/24/2023`.
+
 ## Keystone File Considerations
 
 When utilizing the [keystone file functionality][keystone-file], `hyper-bump-it` converts the

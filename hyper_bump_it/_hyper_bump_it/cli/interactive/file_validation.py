@@ -11,7 +11,7 @@ from rich.text import Text
 from ... import ui
 from ...config import FileDefinition
 from ...error import FormatError
-from ...text_formatter import FormatContext, TextFormatter
+from ...format_pattern import FormatContext, TextFormatter
 from ...version import Version
 
 _FAKE_NEXT_VERSION = Version(1, 2, 3)
