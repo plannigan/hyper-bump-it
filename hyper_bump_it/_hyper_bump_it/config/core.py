@@ -1,6 +1,6 @@
 from enum import Enum
 
-from ..text_formatter import keys
+from ..format_pattern import keys
 
 
 class GitAction(str, Enum):

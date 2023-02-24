@@ -4,11 +4,12 @@ from textwrap import dedent
 from typing import Optional
 
 import pytest
+from freezegun.api import FrozenDateTimeFactory
 
 from hyper_bump_it._hyper_bump_it import files
 from hyper_bump_it._hyper_bump_it.error import FileGlobError, VersionNotFound
 from hyper_bump_it._hyper_bump_it.files import PlannedChange
-from hyper_bump_it._hyper_bump_it.text_formatter import keys
+from hyper_bump_it._hyper_bump_it.format_pattern import keys
 from tests._hyper_bump_it import sample_data as sd
 
 SOME_FILE_NAME = "foo.txt"
@@ -236,6 +237,57 @@ def test_collect_planned_changes__detect_line_ending__expected_ending(
 
     assert len(changes) == 1
     assert changes[0].newline == expected_line_ending
+
+
+@pytest.mark.parametrize(
+    ["format_pattern", "original_text", "expected_text"],
+    [
+        (f"{{{keys.TODAY}}}", f"ab {sd.SOME_OLDER_DATE} cd", f"ab {sd.SOME_DATE} cd"),
+        (
+            f"{{{keys.TODAY}}}",
+            f"ab {sd.SOME_NEWER_DATE} cd",
+            f"ab {sd.SOME_DATE} cd",
+        ),
+        (
+            f"{{{keys.TODAY}:%Y}}",
+            f"ab {sd.SOME_OLDER_DATE.strftime('%Y')} cd",
+            f"ab {sd.SOME_DATE.strftime('%Y')} cd",
+        ),
+        (
+            f"{{{keys.TODAY}:%m}}",
+            f"ab {sd.SOME_OLDER_DATE.strftime('%m')} cd",
+            f"ab {sd.SOME_DATE.strftime('%m')} cd",
+        ),
+        (
+            f"{{{keys.TODAY}:%d}}",
+            f"ab {sd.SOME_OLDER_DATE.strftime('%d')} cd",
+            f"ab {sd.SOME_DATE.strftime('%d')} cd",
+        ),
+    ],
+)
+def test_collect_planned_changes__includes_today__matches_any_date(
+    format_pattern: str,
+    original_text: str,
+    expected_text: str,
+    tmp_path: Path,
+    freezer: FrozenDateTimeFactory,
+):
+    freezer.move_to(sd.SOME_DATE)
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_text(original_text)
+
+    changes = files.collect_planned_changes(
+        tmp_path,
+        sd.some_file(
+            "*.txt",
+            search_format_pattern=format_pattern,
+            replace_format_pattern=format_pattern,
+        ),
+        formatter=TEXT_FORMATTER,
+    )
+
+    assert len(changes) == 1
+    assert changes[0].new_content == expected_text
 
 
 def test_collect_planned_changes__version_not_found__error(tmp_path: Path):

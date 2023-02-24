@@ -3,6 +3,7 @@ Central place for performing text formatting.
 """
 from datetime import date
 from enum import Enum, auto
+from string import Formatter
 from typing import Optional
 
 from ..error import FormatKeyError, FormatPatternError
@@ -39,6 +40,9 @@ class TextFormatter:
         """
         Perform string formatting on the given pattern.
 
+        NOTE: If `context` is `FormatContext.search`, the "today" key will NOT be altered.
+        This allows for converting just that key into a regex expression later.
+
         :param format_pattern: Pattern to be formatted.
         :param context: What context the format pattern is being evaluated. This controls that
             values used for the optional general keys. Default: None.
@@ -74,6 +78,8 @@ class TextFormatter:
         if context is not None:
             if context == FormatContext.search:
                 _add_general(self._current_version)
+                # override to preserve format pattern so a second pass can convert it into a regex
+                values[keys.TODAY] = PreserveFormat(keys.TODAY)
             else:
                 _add_general(self._new_version)
 
@@ -84,6 +90,31 @@ class TextFormatter:
         except ValueError as ex:
             raise FormatPatternError(format_pattern, str(ex))
 
+    @staticmethod
+    def is_used(key: str, by: str) -> bool:
+        """
+        Check if a format string uses the given key.
+
+        :param key: Key to check for.
+        :param by: Format string to check.
+        :return: `True` if the key is used in the given format string.
+        """
+        formatter = Formatter()
+        for _, field_name, *_ in formatter.parse(by):
+            if field_name == key:
+                return True
+        return False
+
 
 def _merge_parts(parts: tuple[str, ...]) -> str:
     return ".".join(parts)
+
+
+class PreserveFormat:
+    def __init__(self, key: str) -> None:
+        self._key = key
+
+    def __format__(self, format_spec: str) -> str:
+        if format_spec:
+            return f"{{{self._key}:{format_spec}}}"
+        return f"{{{self._key}}}"

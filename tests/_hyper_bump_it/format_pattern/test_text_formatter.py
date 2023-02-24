@@ -3,7 +3,7 @@ import re
 import pytest
 
 from hyper_bump_it._hyper_bump_it.error import FormatKeyError, FormatPatternError
-from hyper_bump_it._hyper_bump_it.text_formatter import (
+from hyper_bump_it._hyper_bump_it.format_pattern import (
     FormatContext,
     TextFormatter,
     keys,
@@ -92,3 +92,20 @@ def test_format__invalid_pattern__error():
 def test_format__invalid_key__error(key_name):
     with pytest.raises(FormatKeyError):
         TEXT_FORMATTER.format(f"--{{{key_name}}}--")
+
+
+@pytest.mark.parametrize(
+    ["key", "format_pattern", "expected_result"],
+    [
+        (keys.VERSION, f"{{{keys.VERSION}}}", True),
+        (keys.TODAY, f"{{{keys.TODAY}}}", True),
+        (keys.TODAY, f"{{{keys.TODAY}:%Y-%m-%d}}", True),
+        (keys.TODAY, f"{{{keys.VERSION}}}", False),
+        (keys.TODAY, "", False),
+        (keys.TODAY, "{}", False),
+        (keys.TODAY, "{0}", False),
+    ],
+)
+def test_is_used___expected_output(key, format_pattern, expected_result):
+    result = TextFormatter.is_used(key, format_pattern)
+    assert result == expected_result

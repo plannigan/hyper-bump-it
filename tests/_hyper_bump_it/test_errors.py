@@ -5,7 +5,7 @@ import pytest
 from pydantic import BaseModel, ValidationError, root_validator
 
 from hyper_bump_it._hyper_bump_it import error, ui
-from hyper_bump_it._hyper_bump_it.text_formatter import keys
+from hyper_bump_it._hyper_bump_it.format_pattern import keys
 from tests._hyper_bump_it import sample_data as sd
 
 SOME_VALID_KEYS = [keys.VERSION, keys.NEW_VERSION]

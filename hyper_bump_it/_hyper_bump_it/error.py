@@ -51,7 +51,7 @@ class FormatKeyError(FormatError):
         Within each of those sections, the order is based on the order of the version parts. Any
         helper keys go after the version part keys.
         """
-        from .text_formatter import keys  # prevents circular import
+        from .format_pattern import keys  # prevents circular import
 
         preferred_order = {
             keys.VERSION: 0,

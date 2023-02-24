@@ -12,7 +12,7 @@ from hyper_bump_it._hyper_bump_it.cli.interactive.file_validation import (
 )
 from hyper_bump_it._hyper_bump_it.cli.interactive.files import FilesMenu
 from hyper_bump_it._hyper_bump_it.config import FileDefinition
-from hyper_bump_it._hyper_bump_it.text_formatter import keys
+from hyper_bump_it._hyper_bump_it.format_pattern import keys
 from tests._hyper_bump_it import sample_data as sd
 from tests.conftest import ForceInput
 

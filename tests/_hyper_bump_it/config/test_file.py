@@ -12,7 +12,7 @@ from hyper_bump_it._hyper_bump_it.error import (
     InvalidConfigurationError,
     SubTableNotExistError,
 )
-from hyper_bump_it._hyper_bump_it.text_formatter import FormatContext, keys
+from hyper_bump_it._hyper_bump_it.format_pattern import FormatContext, keys
 from tests._hyper_bump_it import sample_data as sd
 from tests._hyper_bump_it.git_action_combinations import (
     INVALID_COMBINATIONS,
