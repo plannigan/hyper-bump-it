@@ -46,6 +46,9 @@ SOME_SUB_TABLES = ("some-name", "some-sub-name")
         error.VersionNotFound(
             Path(sd.SOME_DIRECTORY_NAME), sd.SOME_SEARCH_FORMAT_PATTERN
         ),
+        error.SearchTextNotFound(
+            Path(sd.SOME_DIRECTORY_NAME), sd.SOME_SEARCH_FORMAT_PATTERN
+        ),
         error.VersionNotFound(
             Path(sd.SOME_ESCAPE_REQUIRED_TEXT), sd.SOME_ESCAPE_REQUIRED_TEXT
         ),
