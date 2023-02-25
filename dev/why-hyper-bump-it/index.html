@@ -414,6 +414,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#date-support" class="md-nav__link">
+    Date Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#mercurial-support" class="md-nav__link">
     Mercurial Support
   </a>
@@ -532,6 +539,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#date-support" class="md-nav__link">
+    Date Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#mercurial-support" class="md-nav__link">
     Mercurial Support
   </a>
@@ -611,6 +625,12 @@ when dealing with multi-line string and/or strings that contain comment characte
 This can be helpful for dealing with ambiguities in a file that needs to be updated or adding
 multiple lines of text as part of the update.</p>
 <p><code>tbump</code> does not have support for this feature.</p>
+<h3 id="date-support">Date Support</h3>
+<p><code>hyper-bump-it</code> and <code>bump2version</code> support including date information in the search and replacement
+text. However, <code>bump2version</code> will always use the current date when looking in a file for a match.
+This means <code>bump2version</code> is not able to update text containing an older date. In contrast, when
+<code>hyper-bump-it</code> can match on arbitrary dates as part of the search text.</p>
+<p><code>tbump</code> does not have support for this feature.</p>
 <h3 id="mercurial-support">Mercurial Support</h3>
 <p><code>bump2version</code> can work with projects that use Mercurial or Git.</p>
 <p><code>hyper-bump-it</code> and <code>tbump</code> only support Git.</p>
@@ -658,6 +678,12 @@ mean that every file must contain the full version (see <a href="../usage-guide/
 <td><a href="#multiline-search--replacement-patterns">Multiline Search &amp; Replace</a></td>
 <td>Yes</td>
 <td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><a href="#date-support">Date Support</a></td>
+<td>Yes</td>
+<td>Partial (exact match)</td>
 <td>No</td>
 </tr>
 <tr>
