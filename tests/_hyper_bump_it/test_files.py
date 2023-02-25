@@ -7,7 +7,7 @@ import pytest
 from freezegun.api import FrozenDateTimeFactory
 
 from hyper_bump_it._hyper_bump_it import files
-from hyper_bump_it._hyper_bump_it.error import FileGlobError, VersionNotFound
+from hyper_bump_it._hyper_bump_it.error import FileGlobError, SearchTextNotFound
 from hyper_bump_it._hyper_bump_it.files import PlannedChange
 from hyper_bump_it._hyper_bump_it.format_pattern import keys
 from tests._hyper_bump_it import sample_data as sd
@@ -290,11 +290,32 @@ def test_collect_planned_changes__includes_today__matches_any_date(
     assert changes[0].new_content == expected_text
 
 
+def test_collect_planned_changes__replace_matches_search__planned_change_returned(
+    tmp_path: Path,
+):
+    original_text = f"ab {sd.SOME_DATE} cd"
+    some_file = tmp_path / SOME_FILE_NAME
+    some_file.write_text(original_text)
+
+    changes = files.collect_planned_changes(
+        tmp_path,
+        sd.some_file(
+            "*.txt",
+            search_format_pattern=f"{{{keys.TODAY}}}",
+            replace_format_pattern=f"{{{keys.TODAY}}}",
+        ),
+        formatter=sd.some_text_formatter(today=sd.SOME_DATE),
+    )
+
+    assert len(changes) == 1
+    assert changes[0].new_content == original_text
+
+
 def test_collect_planned_changes__version_not_found__error(tmp_path: Path):
     some_file = tmp_path / SOME_FILE_NAME
     some_file.write_text("")
 
-    with pytest.raises(VersionNotFound):
+    with pytest.raises(SearchTextNotFound):
         files.collect_planned_changes(
             tmp_path,
             sd.some_file(some_file.name),

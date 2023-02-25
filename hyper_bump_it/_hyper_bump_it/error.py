@@ -183,6 +183,23 @@ class KeystoneFileGlobError(KeystoneError):
         return message
 
 
+class SearchTextNotFound(KeystoneError):
+    def __init__(self, file: Path, search_pattern: str) -> None:
+        self.file = file
+        self.search_pattern = search_pattern
+        super().__init__(
+            f"The search pattern '{self.search_pattern}' was not found in file '{self.file}'"
+        )
+
+    def __rich__(self) -> Text:
+        message = Text("The search pattern '")
+        message.append(self.search_pattern, style="format.pattern")
+        message.append("' was not found in file '")
+        message.append(str(self.file), style="file.path")
+        message.append("'")
+        return message
+
+
 class VersionNotFound(KeystoneError):
     def __init__(self, file: Path, search_pattern: str) -> None:
         self.file = file

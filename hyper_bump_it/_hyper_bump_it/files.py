@@ -6,7 +6,7 @@ from pathlib import Path
 
 from . import format_pattern
 from .config import File
-from .error import FileGlobError, VersionNotFound
+from .error import FileGlobError, SearchTextNotFound
 from .format_pattern import FormatContext, TextFormatter, keys
 from .planned_changes import PlannedChange
 
@@ -22,7 +22,7 @@ def collect_planned_changes(
     :param formatter: Object that converts format patterns into text.
     :return: Descriptions of the change that would occur.
     :raises FileGlobError: Glob pattern for selecting files did not find any files.
-    :raises VersionNotFound: A file did not contain the produced search text.
+    :raises SearchTextNotFound: A file did not contain the produced search text.
     """
     changes = [
         _planned_change_for(
@@ -58,11 +58,11 @@ def _planned_change_for(
             search_text_maybe, file_text, replace_text
         )
     else:
+        no_replacement = search_text_maybe not in file_text
         updated_text = file_text.replace(search_text_maybe, replace_text)
-        no_replacement = updated_text == file_text
 
     if no_replacement:
-        raise VersionNotFound(file.relative_to(project_root), search_pattern)
+        raise SearchTextNotFound(file.relative_to(project_root), search_pattern)
 
     return PlannedChange(
         file,

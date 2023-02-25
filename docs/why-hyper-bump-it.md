@@ -53,6 +53,16 @@ multiple lines of text as part of the update.
 
 `tbump` does not have support for this feature.
 
+### Date Support
+
+`hyper-bump-it` and `bump2version` support including date information in the search and replacement
+text. However, `bump2version` will always use the current date when looking in a file for a match.
+This means `bump2version` is not able to update text containing an older date. In contrast, when
+`hyper-bump-it` can match on arbitrary dates as part of the search text.
+
+
+`tbump` does not have support for this feature.
+
 ### Mercurial Support
 
 `bump2version` can work with projects that use Mercurial or Git.
@@ -69,16 +79,17 @@ mean that every file must contain the full version (see [Format Patterns][format
 
 ## Table of Differences
 
-| Feature                                  | hyper-bump-it | bump2version | tbump         |
-|------------------------------------------|---------------|--------------|---------------|
-| [VCS Branching][branching]               | Yes           | No           | No            |
-| [VCS Push][pushing]                      | Yes (opt-in)  | No           | Yes (opt-out) |
-| [Current Version from File][keystone]    | Yes           | No           | No            |
-| [Configuration File Format][config-file] | TOML          | INI          | TOML          |
-| [Multiline Search & Replace][multiline]  | Yes           | Yes          | No            |
-| Git                                      | Yes           | Yes          | Yes           |
-| Mercurial                                | No            | Yes          | No            |
-| [Custom Version Schemes][version-scheme] | No            | Yes          | Yes           |
+| Feature                                  | hyper-bump-it | bump2version          | tbump         |
+|------------------------------------------|---------------|-----------------------|---------------|
+| [VCS Branching][branching]               | Yes           | No                    | No            |
+| [VCS Push][pushing]                      | Yes (opt-in)  | No                    | Yes (opt-out) |
+| [Current Version from File][keystone]    | Yes           | No                    | No            |
+| [Configuration File Format][config-file] | TOML          | INI                   | TOML          |
+| [Multiline Search & Replace][multiline]  | Yes           | Yes                   | No            |
+| [Date Support][dates]                    | Yes           | Partial (exact match) | No            |
+| Git                                      | Yes           | Yes                   | Yes           |
+| Mercurial                                | No            | Yes                   | No            |
+| [Custom Version Schemes][version-scheme] | No            | Yes                   | Yes           |
 
 [^1]:
     As of the writing of this page (2023-02-20).
@@ -98,4 +109,5 @@ mean that every file must contain the full version (see [Format Patterns][format
 [keystone]: #current-version-from-file
 [config-file]: #toml-configuration-file
 [multiline]: #multiline-search--replacement-patterns
+[dates]: #date-support
 [version-scheme]: #custom-version-schemes
