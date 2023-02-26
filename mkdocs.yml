@@ -12,6 +12,7 @@ nav:
     - Format Patterns: usage-guide/format-patterns.md
     - Git Integration: usage-guide/git-integration.md
   - Why hyper-bump-it?: why-hyper-bump-it.md
+  - Development Guide: development-guide.md
   - Changelog: changelog.md
 theme:
   name: material
