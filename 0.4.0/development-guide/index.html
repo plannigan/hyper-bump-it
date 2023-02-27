@@ -1,0 +1,977 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://plannigan.github.io/hyper-bump-it/0.4.0/development-guide/">
+      
+      
+        <link rel="prev" href="../why-hyper-bump-it/">
+      
+      
+        <link rel="next" href="../changelog/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15">
+    
+    
+      
+        <title>Development Guide - hyper-bump-it Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.113286f1.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#development-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../..">
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="hyper-bump-it Documentation" class="md-header__button md-logo" aria-label="hyper-bump-it Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            hyper-bump-it Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Development Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/plannigan/hyper-bump-it" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    plannigan/hyper-bump-it
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="hyper-bump-it Documentation" class="md-nav__button md-logo" aria-label="hyper-bump-it Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    hyper-bump-it Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/plannigan/hyper-bump-it" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    plannigan/hyper-bump-it
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Usage Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage Guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage-guide/configuration/" class="md-nav__link">
+        Configuration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage-guide/format-patterns/" class="md-nav__link">
+        Format Patterns
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage-guide/git-integration/" class="md-nav__link">
+        Git Integration
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../why-hyper-bump-it/" class="md-nav__link">
+        Why hyper-bump-it?
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Development Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Development Guide
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-contribute" class="md-nav__link">
+    How to Contribute
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Contribute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-pull-request" class="md-nav__link">
+    Creating a Pull Request
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a Pull Request">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-contributions" class="md-nav__link">
+    Code Contributions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continuous-integration-pipeline" class="md-nav__link">
+    Continuous Integration Pipeline
+  </a>
+  
+    <nav class="md-nav" aria-label="Continuous Integration Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lints" class="md-nav__link">
+    Lints
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    Tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distribution-verification" class="md-nav__link">
+    Distribution Verification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-building" class="md-nav__link">
+    Documentation Building
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renovate-configuration-lint" class="md-nav__link">
+    Renovate Configuration Lint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-development-environment" class="md-nav__link">
+    Local Development Environment
+  </a>
+  
+    <nav class="md-nav" aria-label="Local Development Environment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-pipeline-locally" class="md-nav__link">
+    Running Pipeline Locally
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-fixtures" class="md-nav__link">
+    Testing Fixtures
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-library" class="md-nav__link">
+    Building the Library
+  </a>
+  
+    <nav class="md-nav" aria-label="Building the Library">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publishing-a-new-version" class="md-nav__link">
+    Publishing a New Version
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-contribute" class="md-nav__link">
+    How to Contribute
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Contribute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-pull-request" class="md-nav__link">
+    Creating a Pull Request
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a Pull Request">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-contributions" class="md-nav__link">
+    Code Contributions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continuous-integration-pipeline" class="md-nav__link">
+    Continuous Integration Pipeline
+  </a>
+  
+    <nav class="md-nav" aria-label="Continuous Integration Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lints" class="md-nav__link">
+    Lints
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    Tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distribution-verification" class="md-nav__link">
+    Distribution Verification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-building" class="md-nav__link">
+    Documentation Building
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renovate-configuration-lint" class="md-nav__link">
+    Renovate Configuration Lint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-development-environment" class="md-nav__link">
+    Local Development Environment
+  </a>
+  
+    <nav class="md-nav" aria-label="Local Development Environment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-pipeline-locally" class="md-nav__link">
+    Running Pipeline Locally
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-fixtures" class="md-nav__link">
+    Testing Fixtures
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-library" class="md-nav__link">
+    Building the Library
+  </a>
+  
+    <nav class="md-nav" aria-label="Building the Library">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publishing-a-new-version" class="md-nav__link">
+    Publishing a New Version
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="development-guide">Development Guide</h1>
+<p>Welcome! Thanks for wanting to make the project better. This section provides an overview of
+project structure and how to work with the code base.</p>
+<p>Before diving into this, it is best to read:</p>
+<ul>
+<li>The whole Usage Guide</li>
+<li>The <a href="https://github.com/plannigan/hyper-bump-it/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a></li>
+</ul>
+<h2 id="how-to-contribute">How to Contribute</h2>
+<p>There are lots of ways to contribute to the project.</p>
+<ul>
+<li><a href="https://github.com/plannigan/hyper-bump-it/issues/new?assignees=&amp;labels=bug&amp;template=bug_report.md&amp;title=">Report a bug</a></li>
+<li><a href="https://github.com/plannigan/hyper-bump-it/issues/new?assignees=&amp;labels=enhancement&amp;template=feature_request.md&amp;title=">Request a new feature</a></li>
+<li>Create a pull request that updates the code</li>
+<li>Create a pull request that updates the documentation</li>
+<li>Sponsor development of the project
+    <iframe
+     src="https://github.com/sponsors/plannigan/button"
+     title="Sponsor plannigan"
+     height="32" width="114" style="border: 0; border-radius: 6px; margin-bottom: -11px;">
+    </iframe></li>
+</ul>
+<h3 id="creating-a-pull-request">Creating a Pull Request</h3>
+<p>Before creating a pull request, please first discuss the intended change by creating a new issue or
+commenting on an existing issue.</p>
+<h4 id="code-contributions">Code Contributions</h4>
+<p>Code contributions should include test for the change. For a bug fix, there should be a new test
+case that demonstrates the issue that was reported (which the contribution addresses). For a new
+feature, new test cases should cover the new code, while also and checking for edge cases.
+Generally, the goal is that each change should increase the code coverage rather than decreasing
+it. (<a href="#testing">more details</a>)</p>
+<p>Pull requests will need to pass all tests and linting checks that are part of the <a href="#continuous-integration-pipeline">CI pipeline</a>
+before they can be merged.</p>
+<p>Significant changes should update the <a href="#documentation">documentation</a> with details about how to use
+the provided functionality.</p>
+<p>Changes that affect users of <code>hyper-bump-it</code> must include an entry the <a href="../changelog/">CHANGELOG</a> under
+the <code>[Unrelease]</code> header. Once a new release is ready to be published, a version number will be
+assigned in place of this header (<a href="#publishing-a-new-version">more details</a>). If a logical change is broken into
+multiple pull requests, each pull request does not need to add a new entry. For significant changes
+that affect the development of the project, as apposed to users of <code>hyper-bump-it</code>, the <code>Internal</code>
+section can be used.</p>
+<h2 id="continuous-integration-pipeline">Continuous Integration Pipeline</h2>
+<p>The Continuous Integration (CI) Pipeline runs to confirm that the repository is in a good state. It
+will run when:</p>
+<ul>
+<li>a pull request is created</li>
+<li>new commits are pushed to the branch for an existing pull request</li>
+<li>a maintainer merges a pull request to the default branch</li>
+</ul>
+<p>Pull requests will need to pass all tests and linting checks that are part of the CI pipeline
+before they can be merged.</p>
+<h3 id="lints">Lints</h3>
+<p>The first set of jobs that run as part of the CI pipline are linters that perform static analysis
+on the code. This includes: <a href="https://mypy.readthedocs.io/en/stable/">MyPy</a>, <a href="https://black.readthedocs.io/en/stable/">Black</a>, <a href="https://pycqa.github.io/isort/">Isort</a>,
+<a href="http://flake8.pycqa.org/en/stable/">Flake8</a>, and <a href="https://bandit.readthedocs.io/en/latest/">Bandit</a>.</p>
+<h3 id="tests">Tests</h3>
+<p>The next set of jobs run the unit tests (<a href="#testing">more details</a>). The pipeline runs the tests
+cases across each supported version of Python to ensure compatibility.</p>
+<p>For each run of the test cases, the job will record the test results and code coverage information.
+The pipeline uploads the code coverage information to <a href="https://app.codecov.io/gh/plannigan/hyper-bump-it">CodeCov</a> to ensure that a pull
+request doesn't significantly reduce the total code coverage percentage or introduce a large amount
+of code that is untested.</p>
+<h3 id="distribution-verification">Distribution Verification</h3>
+<p>The next set of jobs perform a basic smoke test  to ensure that the library can be packaged
+correctly and used. The sdist and wheel distributions are built and installs in into a virtual
+environment. Then two checks are performed:</p>
+<ul>
+<li>Run Python and import the library version</li>
+<li>Run <code>hyper-bump-it --help</code></li>
+</ul>
+<p>This is done across each supported version of Python to ensure compatibility.</p>
+<h3 id="documentation-building">Documentation Building</h3>
+<p>When running as part of a pull request, the documentation is build in strict mode so that it will
+fail if there are any errors. The job bundles the generated files into an artifact so that the
+documentation website can be viewed in its rendered form.</p>
+<p>When the pipeline is running as a result of a maintainer merging a pull request to the default
+branch, a job runs that publishes the current state of the documentation to as the <code>dev</code> version.
+This will allow users to view the "in development" state of the documentation with any changed that
+have been made since a maintainer published the <code>latest</code> version.</p>
+<h3 id="renovate-configuration-lint">Renovate Configuration Lint</h3>
+<p><a href="https://docs.renovatebot.com/">Renovate</a> is used to automate the process of keeping project dependencies up to date.
+A small job that confirms that the configuration is valid.</p>
+<h2 id="local-development-environment">Local Development Environment</h2>
+<p>The project includes a Dockerfile in order to make it easy to have a consistent development
+environment. The Docker documentation has details on how to <a href="https://docs.docker.com/install/">install docker</a> on a
+computer.</p>
+<p>Starting the container can be done with:</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>devbox
+</code></pre></div>
+<p>This will present a terminal environment that can be used to experiment with the code. The
+<a href="https://docs.python.org/3/tutorial/interpreter.html">Python interpreter</a> can be started to import <code>hyper-bump-it</code> or any
+dependencies. The container also has <a href="https://github.com/pdbpp/pdbpp#usage">pdb++</a> install that can be used as a debugger
+when running code.</p>
+<p>Contributors are welcome to set up a different development environment &amp; debugger if they would
+like. But, they will need to ensure it stays consistent with the project.</p>
+<h3 id="running-pipeline-locally">Running Pipeline Locally</h3>
+<p>The containerized development environment makes it easy to run the most important checks from the
+CI pipeline locally.</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<p>This will run the same tests (with code coverage) and linting done by the CI pipeline. The only
+difference is that, when run locally, <code>black</code> and <code>isort</code> are configured to automatically correct
+issues they detect.</p>
+<h2 id="testing">Testing</h2>
+<p>The project use <a href="https://docs.pytest.org/en/latest/">pytest</a> as a testing framework. Keeping test coverage high helps
+confirm that the implementation works as expected and refactoring the code doesn't have unintended
+side effects.</p>
+<h3 id="testing-fixtures">Testing Fixtures</h3>
+<p>In addition to the fixtures provided by <code>pytest</code>, the project also utilizes two plugins that
+provide fixtures that integrate other libraries into <code>pytest</code>.</p>
+<ul>
+<li><a href="https://pytest-mock.readthedocs.io">pytest-mock</a> - Exposes <a href="https://docs.python.org/3/library/unittest.mock.html">unitest.mock</a>.</li>
+<li><a href="https://github.com/pytest-dev/pytest-freezer">pytest-freezer</a> - Exposes <a href="https://github.com/spulec/freezegun">freezgun</a> (<code>datetime</code> manipulation).</li>
+</ul>
+<h2 id="documentation">Documentation</h2>
+<p>The project use <a href="https://www.mkdocs.org/">mkdocs</a> as static site generator. The <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs-material</a>
+theme is used to control the look and feel of the website. <a href="https://github.com/jimporter/mike">mike</a> is used to manage
+documentation for each version of <code>hyper-bump-it</code>.</p>
+<p>The documentation can be build locally. The following command will build the documentation and
+start a local server to view the rendered documentation.</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>up<span class="w"> </span>mkdocs
+</code></pre></div>
+<h2 id="building-the-library">Building the Library</h2>
+<p><code>hyper-bump-it</code> is <a href="https://www.python.org/dev/peps/pep-0517">PEP 517</a> compliant. <a href="https://pypa-build.readthedocs.io/">build</a> is used as the frontend tool for
+building the project. <a href="https://setuptools.pypa.io/en/latest/">setuptools</a> is used as the build backend. <code>pyproject.toml</code>
+contains the package metadata. A <code>setup.py</code> is also included to support an editable install while
+developing the project.</p>
+<h3 id="dependencies">Dependencies</h3>
+<p>Other packages that the project directly depends on (<code>hyper-bump-it</code> imports the package or
+development tool used by project) are listed in a few different places.</p>
+<ul>
+<li><strong>pyproject.toml</strong> - List the supported version ranges of all direct dependencies needed to run
+    <code>hyper-bump-it</code>.</li>
+<li><strong>requirements.txt</strong> - Lists all direct dependencies for development and testing.</li>
+<li><strong>requirements-test.txt</strong> - Lists all direct dependencies needed for development. This primarily
+    covers dependencies needed to run the test suite &amp; lints.</li>
+<li><strong>requirements-docs.txt</strong> - Lists all direct dependencies needed for building this documentation
+    content.</li>
+</ul>
+<h2 id="publishing-a-new-version">Publishing a New Version</h2>
+<p>Once the package is ready to be released, there are a few things that need to be done:</p>
+<ol>
+<li>Start with a local clone of the repo on the default branch with a clean working tree.</li>
+<li>
+<p>Run <code>hyper-bump-it</code> on itself with the appropriate part name (<code>major</code>, <code>minor</code>, or <code>patch</code>).
+    Example: <code>python -m hyper_bump_it by minor</code></p>
+<p>This wil create a new branch, updates all affected files with the new version, and commit the
+changes to the branch, &amp; push it.</p>
+</li>
+<li>
+<p>Create a new pull request for the pushed branch.</p>
+</li>
+<li>Get the pull request approved.</li>
+<li>Merge the pull request to the default branch.</li>
+</ol>
+<p>Merging the pull request will trigger a GitHub Action that will create a new release. The creation
+of this new release will trigger a GitHub Action that will to build a wheel &amp; a source
+distributions of the package and push them to <a href="https://pypi.org/project/hyper-bump-it/">PyPI</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The action that uploads the files to PyPI will not run until a repository maintainer
+acknowledges that the job is ready to run. This is to keep the PyPI publishing token secure.
+Otherwise, any job would have access to the token.</p>
+</div>
+<p>In addition to uploading the files to PyPI, the documentation website will be updated to include
+the new version and make it the new <code>latest</code> version.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+      
+    
+  </body>
+</html>
