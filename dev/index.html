@@ -471,18 +471,21 @@
 <a href="https://codecov.io/gh/plannigan/hyper-bump-it"><img alt="codecov" src="https://codecov.io/gh/plannigan/hyper-bump-it/branch/main/graph/badge.svg?token=V4DADJU0BI" /></a>
 <a href="http://mypy-lang.org/"><img alt="Checked with mypy" src="https://img.shields.io/badge/mypy-checked-blue" /></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-black.svg" /></a></p>
-<p>A version bumping tool.</p>
+<p>A command line tool for updating the version in project files needed for the next release.</p>
 <p><code>hyper-bump-it</code>'s features include:</p>
 <ul>
 <li>Updating the version to a new fully specified value</li>
-<li>Increasing the version base on a specific version part</li>
+<li>Increasing the version based on a specific version part</li>
 <li>Optional Git integrations:<ul>
 <li>Commit changes</li>
 <li>Create a new branch or tag</li>
 <li>Push changes to a remote repository</li>
 </ul>
 </li>
-<li>Customizable search and replacement patterns</li>
+<li>Customizable search and replacement patterns<ul>
+<li>Match based on the current version or arbitrary dates</li>
+</ul>
+</li>
 <li>Safe by default, but can be overridden:<ul>
 <li>Request confirmation before editing files</li>
 <li>Explicit configuration need to push changes</li>
