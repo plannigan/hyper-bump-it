@@ -7,16 +7,18 @@
 
 # Hyper Bump It
 
-A version bumping tool.
+A command line tool for updating the version in project files needed for the next release.
 
 `hyper-bump-it`'s features include:
+
 * Updating the version to a new fully specified value
-* Increasing the version base on a specific version part
+* Increasing the version based on a specific version part
 * Optional Git integrations:
     * Commit changes
     * Create a new branch or tag
     * Push changes to a remote repository
 * Customizable search and replacement patterns
+    * Match based on the current version or arbitrary dates
 * Safe by default, but can be overridden:
     * Request confirmation before editing files
     * Explicit configuration need to push changes
