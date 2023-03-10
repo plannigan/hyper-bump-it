@@ -1,7 +1,7 @@
 import dataclasses
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Callable, Iterator, Optional, Union, cast
+from typing import Optional, Union, cast
 
 import tomlkit
 from pydantic import (
@@ -11,6 +11,7 @@ from pydantic import (
     StrictStr,
     ValidationError,
     root_validator,
+    validator,
 )
 from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
@@ -87,27 +88,23 @@ HyperConfigFileValues: TypeAlias = dict[
 ]
 
 
-class ValidVersion(Version):
-    @classmethod
-    def __get_validators__(cls) -> Iterator[Callable[[object], "ValidVersion"]]:
-        yield cls._validate
+class ConfigFile(HyperBaseMode):
+    files: list[File] = Field(..., min_items=1)
+    current_version: Optional[Version] = None
+    show_confirm_prompt: StrictBool = True
+    git: Git = Git()
 
-    @classmethod
-    def _validate(cls, value: object) -> "ValidVersion":
+    @validator("current_version", pre=True)
+    def _check_version(cls, value: Optional[object]) -> Optional[Version]:
+        if value is None:
+            return None
         if isinstance(value, Version):
-            return cast(ValidVersion, dataclasses.replace(value))
+            return dataclasses.replace(value)
         if isinstance(value, str):
-            return cast(ValidVersion, Version.parse(value))
+            return Version.parse(value)
         raise TypeError(
             "Value must be a version or a string that can be parsed into a version"
         )
-
-
-class ConfigFile(HyperBaseMode):
-    files: list[File] = Field(..., min_items=1)
-    current_version: Optional[ValidVersion] = None
-    show_confirm_prompt: StrictBool = True
-    git: Git = Git()
 
     @root_validator(skip_on_failure=True)
     def _check_keystone_files(
