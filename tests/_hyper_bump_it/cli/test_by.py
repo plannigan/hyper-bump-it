@@ -23,7 +23,7 @@ from tests._hyper_bump_it.cli.common import (
         ([sd.SOME_VERSION_STRING], r"Invalid value for 'PART_TO_BUMP"),
         (
             [sd.SOME_BUMP_PART.value, "--current-version", "1"],
-            r"Invalid value for --current-version: '.+?' is not a valid version",
+            r"Invalid value for '--current-version': .+?",
         ),
         (
             [sd.SOME_BUMP_PART.value, "--commit", sd.SOME_NON_GIT_ACTION_STRING],
@@ -43,7 +43,7 @@ def test_by__invalid__error(cli_args: list[str], expected_output_regex):
     result = runner.invoke(cli.app, ["by", *cli_args], catch_exceptions=False)
 
     assert_failure(result, exit_code=2)
-    assert re.search(expected_output_regex, result.output) is not None
+    assert re.search(expected_output_regex, result.output) is not None, result.output
 
 
 def test_by__valid__args_sent_to_config_for_bump_by(mocker):

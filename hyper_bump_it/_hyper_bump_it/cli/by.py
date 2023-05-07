@@ -8,6 +8,7 @@ import typer
 
 from .. import core
 from ..config import BumpByArgs, BumpPart, GitAction, config_for_bump_by
+from ..version import Version
 from . import common
 
 
@@ -26,7 +27,7 @@ def by_command(
         Optional[bool], common.SKIP_CONFIRM_PROMPT
     ] = common.SKIP_CONFIRM_PROMPT_DEFAULT,
     current_version: Annotated[
-        Optional[str], common.CURRENT_VERSION
+        Optional[Version], common.CURRENT_VERSION
     ] = common.CURRENT_VERSION_DEFAULT,
     commit: Annotated[Optional[GitAction], common.commit()] = None,
     branch: Annotated[Optional[GitAction], common.branch()] = None,
@@ -49,8 +50,6 @@ def by_command(
     """
     Bump the version to the next value by a specific version part.
     """
-    current_version_parsed = common.parse_version(current_version, "--current-version")
-
     with common.handle_bump_errors():
         app_config = config_for_bump_by(
             BumpByArgs(
@@ -60,7 +59,7 @@ def by_command(
                 dry_run=dry_run,
                 patch=patch,
                 skip_confirm_prompt=skip_confirm_prompt,
-                current_version=current_version_parsed,
+                current_version=current_version,
                 commit=commit,
                 branch=branch,
                 tag=tag,

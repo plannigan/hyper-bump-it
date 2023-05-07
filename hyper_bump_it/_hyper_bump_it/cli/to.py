@@ -8,12 +8,19 @@ import typer
 
 from .. import core
 from ..config import BumpToArgs, GitAction, config_for_bump_to
+from ..version import Version
 from . import common
 
 
 def to_command(
     new_version: Annotated[
-        str, typer.Argument(..., help="The new version to bump to", show_default=False)
+        Version,
+        typer.Argument(
+            ...,
+            help="The new version to bump to",
+            show_default=False,
+            parser=Version.parse,
+        ),
     ],
     config_file: Annotated[
         Optional[Path], common.CONFIG_FILE
@@ -25,7 +32,7 @@ def to_command(
         Optional[bool], common.SKIP_CONFIRM_PROMPT
     ] = common.SKIP_CONFIRM_PROMPT_DEFAULT,
     current_version: Annotated[
-        Optional[str], common.CURRENT_VERSION
+        Optional[Version], common.CURRENT_VERSION
     ] = common.CURRENT_VERSION_DEFAULT,
     commit: Annotated[Optional[GitAction], common.commit()] = None,
     branch: Annotated[Optional[GitAction], common.branch()] = None,
@@ -48,19 +55,16 @@ def to_command(
     """
     Bump the version to a specific version.
     """
-    new_version_parsed = common.parse_version(new_version, "NEW_VERSION")
-    current_version_parsed = common.parse_version(current_version, "--current-version")
-
     with common.handle_bump_errors():
         app_config = config_for_bump_to(
             BumpToArgs(
-                new_version=new_version_parsed,
+                new_version=new_version,
                 config_file=common.resolve(config_file),
                 project_root=common.resolve(project_root),
                 dry_run=dry_run,
                 patch=patch,
                 skip_confirm_prompt=skip_confirm_prompt,
-                current_version=current_version_parsed,
+                current_version=current_version,
                 commit=commit,
                 branch=branch,
                 tag=tag,

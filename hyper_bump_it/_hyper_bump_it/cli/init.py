@@ -30,6 +30,7 @@ from ..config import (
     GitConfigFile,
 )
 from ..error import ConfigurationFileReadError, first_error_message
+from ..version import Version
 from . import common, interactive
 
 GIT_PANEL_NAME = "Git Configuration Options"
@@ -37,7 +38,12 @@ GIT_PANEL_NAME = "Git Configuration Options"
 
 def init_command(
     current_version: Annotated[
-        str, typer.Argument(help="Current version for the project", show_default=False)
+        Version,
+        typer.Argument(
+            help="Current version for the project",
+            show_default=False,
+            parser=Version.parse,
+        ),
     ],
     config_file_name: Annotated[
         str,
@@ -89,7 +95,6 @@ def init_command(
         bool, common.allow_any_init_branch(GIT_PANEL_NAME)
     ] = False,
 ) -> None:
-    version = common.parse_version(current_version, "CURRENT_VERSION")
     try:
         actions = GitActionsConfigFile(commit=commit, branch=branch, tag=tag)
     except ValidationError as ex:
@@ -100,7 +105,7 @@ def init_command(
 
     project_root = common.resolve(project_root)
     config = ConfigFile(
-        current_version=version,
+        current_version=current_version,
         files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
         git=GitConfigFile(
             remote=remote,

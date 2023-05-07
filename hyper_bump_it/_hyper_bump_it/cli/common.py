@@ -77,8 +77,9 @@ CURRENT_VERSION = typer.Option(
     help="Override the current version",
     show_default=False,
     rich_help_panel=OVERRIDE_PANEL_NAME,
+    parser=Version.parse,
 )
-CURRENT_VERSION_DEFAULT: Optional[str] = None
+CURRENT_VERSION_DEFAULT: Optional[Version] = None
 
 commit = _create_option_factory("Control commit Git action")
 branch = _create_option_factory("Control branch Git action")
@@ -98,28 +99,6 @@ allow_any_init_branch = _create_option_factory(
     "Disable any initial branch restrictions. (takes precedence over --allowed-init-branch)",
     "--allow-any-init-branch",
 )
-
-
-@overload
-def parse_version(version: str, parameter_name: str) -> Version:
-    ...
-
-
-@overload
-def parse_version(version: Optional[str], parameter_name: str) -> Optional[Version]:
-    ...
-
-
-def parse_version(version: Optional[str], parameter_name: str) -> Optional[Version]:
-    if version is None:
-        return None
-    else:
-        try:
-            return Version.parse(version)
-        except ValueError:
-            raise typer.BadParameter(
-                f"'{version}' is not a valid version", param_hint=parameter_name
-            )
 
 
 def allowed_init_branches(
