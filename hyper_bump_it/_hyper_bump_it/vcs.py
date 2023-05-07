@@ -123,7 +123,8 @@ def commit_changes(repo: Repo, commit_message: str) -> None:
         else:
             index.add(diff.a_path)
 
-    index.commit(commit_message)
+    index.write_tree()
+    repo.git.commit(message=commit_message)
 
 
 def create_tag(repo: Repo, tag_name: str, tag_message: str) -> None:

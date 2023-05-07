@@ -201,7 +201,7 @@ def test_commit_change__edited_file__message_from_pattern(tmp_path: Path):
     vcs.commit_changes(repo.repo, sd.SOME_COMMIT_MESSAGE)
 
     commit = repo.repo.head.commit
-    assert commit.message == sd.SOME_COMMIT_MESSAGE
+    assert commit.message.rstrip("\n") == sd.SOME_COMMIT_MESSAGE
 
 
 def test_commit_change__deleted_file__in_commit(tmp_path: Path):
@@ -220,12 +220,25 @@ def test_commit_change__deleted_file__in_commit(tmp_path: Path):
 
 def test_commit_change__new_file__not_in_commit(tmp_path: Path):
     repo = sd.some_git_repo(tmp_path)
+    # edit an existing file for commit
+    repo.committed_file.write_text("new content")
+    # create a new file that should not be included in the commit
     repo.path.joinpath(SOME_OTHER_FILE).write_text("")
 
     vcs.commit_changes(repo.repo, sd.SOME_COMMIT_MESSAGE)
 
     commit_diff = repo.repo.head.commit.diff("HEAD^")
-    assert len(commit_diff) == 0
+    assert len(commit_diff) == 1
+    assert commit_diff[0].a_path == repo.committed_file.name
+
+
+def test_commit_change__configured_to_sign__commit_is_signed(tmp_path: Path):
+    repo = sd.some_git_repo(tmp_path, sign_commits=True)
+    repo.committed_file.write_text("SOME NEW TEXT")
+
+    vcs.commit_changes(repo.repo, sd.SOME_COMMIT_MESSAGE)
+
+    assert repo.repo.head.commit.gpgsig is not None
 
 
 def test_create_tag__repo_tagged_head_commit(tmp_path: Path):
@@ -244,6 +257,16 @@ def test_create_tag__tag_contains_message(tmp_path: Path):
 
     assert sd.SOME_TAG in repo.repo.tags
     assert sd.SOME_TAG_MESSAGE in repo.repo.tags[sd.SOME_TAG].tag.message
+
+
+def test_create_tag__configured_to_sign__tag_is_signed(tmp_path: Path):
+    repo = sd.some_git_repo(tmp_path, sign_tags=True)
+
+    vcs.create_tag(repo.repo, sd.SOME_TAG, sd.SOME_TAG_MESSAGE)
+
+    tag = repo.repo.tags[sd.SOME_TAG].tag
+    # check for marker becuase gitpython doesn't parse out the signature
+    assert "-----BEGIN PGP SIGNATURE-----" in tag.message
 
 
 def test_push_changes__no_branch_no_tag__only_commit_pushed(tmp_path: Path):
