@@ -2,7 +2,7 @@
 Bump to version command.
 """
 from pathlib import Path
-from typing import Optional
+from typing import Annotated, Optional
 
 import typer
 
@@ -12,24 +12,38 @@ from . import common
 
 
 def to_command(
-    new_version: str = typer.Argument(
-        ..., help="The new version to bump to", show_default=False
-    ),
-    config_file: Optional[Path] = common.CONFIG_FILE,
-    project_root: Path = common.PROJECT_ROOT,
-    dry_run: bool = common.DRY_RUN,
-    patch: bool = common.PATCH,
-    skip_confirm_prompt: Optional[bool] = common.SKIP_CONFIRM_PROMPT,
-    current_version: Optional[str] = common.CURRENT_VERSION,
-    commit: Optional[GitAction] = common.commit(),
-    branch: Optional[GitAction] = common.branch(),
-    tag: Optional[GitAction] = common.tag(),
-    remote: Optional[str] = common.remote(),
-    commit_format_pattern: Optional[str] = common.commit_format_pattern(),
-    branch_format_pattern: Optional[str] = common.branch_format_pattern(),
-    tag_format_pattern: Optional[str] = common.tag_format_pattern(),
-    allowed_init_branch: list[str] = common.allowed_init_branch(),
-    allow_any_init_branch: Optional[bool] = common.allow_any_init_branch(),
+    new_version: Annotated[
+        str, typer.Argument(..., help="The new version to bump to", show_default=False)
+    ],
+    config_file: Annotated[
+        Optional[Path], common.CONFIG_FILE
+    ] = common.CONFIG_FILE_DEFAULT,
+    project_root: Annotated[Path, common.PROJECT_ROOT] = common.PROJECT_ROOT_DEFAULT,
+    dry_run: Annotated[bool, common.DRY_RUN] = common.DRY_RUN_DEFAULT,
+    patch: Annotated[bool, common.PATCH] = common.PATCH_DEFAULT,
+    skip_confirm_prompt: Annotated[
+        Optional[bool], common.SKIP_CONFIRM_PROMPT
+    ] = common.SKIP_CONFIRM_PROMPT_DEFAULT,
+    current_version: Annotated[
+        Optional[str], common.CURRENT_VERSION
+    ] = common.CURRENT_VERSION_DEFAULT,
+    commit: Annotated[Optional[GitAction], common.commit()] = None,
+    branch: Annotated[Optional[GitAction], common.branch()] = None,
+    tag: Annotated[Optional[GitAction], common.tag()] = None,
+    remote: Annotated[Optional[str], common.remote()] = None,
+    commit_format_pattern: Annotated[
+        Optional[str], common.commit_format_pattern()
+    ] = None,
+    branch_format_pattern: Annotated[
+        Optional[str], common.branch_format_pattern()
+    ] = None,
+    tag_format_pattern: Annotated[Optional[str], common.tag_format_pattern()] = None,
+    allowed_init_branch: Annotated[
+        Optional[list[str]], common.allowed_init_branch()
+    ] = None,
+    allow_any_init_branch: Annotated[
+        Optional[bool], common.allow_any_init_branch()
+    ] = None,
 ) -> None:
     """
     Bump the version to a specific version.

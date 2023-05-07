@@ -22,20 +22,19 @@ EXAMPLE_FILE_GLOB = "version.txt"
 
 class OptionFactory(Protocol):
     def __call__(  # type: ignore[misc]
-        self, default: object = ..., panel_name: str = ...
+        self, panel_name: str = ..., show_default: bool = ...
     ) -> Any:
         ...
 
 
 def _create_option_factory(description: str, *param_decls: str) -> OptionFactory:
     def _create_option(  # type: ignore[misc]
-        default: object = None, panel_name: str = OVERRIDE_PANEL_NAME
+        panel_name: str = OVERRIDE_PANEL_NAME, show_default: bool = False
     ) -> Any:
         return typer.Option(
-            default,
             *param_decls,
             help=description,
-            show_default=default is not None,
+            show_default=show_default,
             rich_help_panel=panel_name,
         )
 
@@ -43,17 +42,16 @@ def _create_option_factory(description: str, *param_decls: str) -> OptionFactory
 
 
 CONFIG_FILE = typer.Option(
-    None,
     help="Path to dedicated configuration file to use instead of normal file discovery",
     show_default=False,
 )
-PROJECT_ROOT = typer.Option(
-    Path.cwd(),
+CONFIG_FILE_DEFAULT: Optional[Path] = None
+PROJECT_ROOT = typer.Option(  # type: ignore[call-overload]
     help="Path to directory containing the project",
-    show_default="Use current directory",  # type: ignore[arg-type]
+    show_default="Use current directory",
 )
+PROJECT_ROOT_DEFAULT = Path.cwd()
 DRY_RUN = typer.Option(
-    False,
     "--no",
     "-n",
     "--dry-run/--no-dry-run",
@@ -61,25 +59,26 @@ DRY_RUN = typer.Option(
     "Only displaying the operations that would be performed",
     show_default=False,
 )
+DRY_RUN_DEFAULT = False
 PATCH = typer.Option(
-    False,
     "--patch/--no-patch",
     help="Like --dry-run, but only display the unified diff output for the planned changes",
     show_default=False,
 )
+PATCH_DEFAULT = False
 SKIP_CONFIRM_PROMPT = typer.Option(
-    None,
     "--yes/--interactive",
     "-y",
     help="Answer yes to the confirmation prompt and run non-interactively",
     show_default=False,
 )
+SKIP_CONFIRM_PROMPT_DEFAULT: Optional[bool] = None
 CURRENT_VERSION = typer.Option(
-    None,
     help="Override the current version",
     show_default=False,
     rich_help_panel=OVERRIDE_PANEL_NAME,
 )
+CURRENT_VERSION_DEFAULT: Optional[str] = None
 
 commit = _create_option_factory("Control commit Git action")
 branch = _create_option_factory("Control branch Git action")
@@ -124,12 +123,12 @@ def parse_version(version: Optional[str], parameter_name: str) -> Optional[Versi
 
 
 def allowed_init_branches(
-    allowed_branches_arg: list[str],
+    allowed_branches_arg: Optional[list[str]],
     allow_any_init_branch_arg: Optional[bool],
 ) -> Optional[frozenset[str]]:
     if allow_any_init_branch_arg is True:
         return frozenset()
-    if len(allowed_branches_arg) == 0:
+    if allowed_branches_arg is None or len(allowed_branches_arg) == 0:
         return None
 
     unique_names = frozenset(allowed_branches_arg)
