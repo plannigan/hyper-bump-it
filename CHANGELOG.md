@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Internal
+
+* Update `typer` to use custom types and `Annotated` declaration style.
+
 ## [0.4.0] - 2023-02-27
 
 ### Added
