@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Internal
 
 * Update `typer` to use custom types and `Annotated` declaration style.
+* Use OpenID Connect as a [trusted publisher][trusted-publishers] for uploading releases.
 
 ## [0.4.0] - 2023-02-27
 
@@ -84,3 +85,5 @@ First functional release
 ## [0.0.1] - 2022-10-26
 
 Initial Release (not functional yet)
+
+[trusted-publishers]: https://docs.pypi.org/trusted-publishers/
