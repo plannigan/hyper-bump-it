@@ -2,7 +2,7 @@
 Initialize configuration command.
 """
 from pathlib import Path
-from typing import Mapping
+from typing import Annotated, Mapping
 
 import tomlkit
 import typer
@@ -30,50 +30,71 @@ from ..config import (
     GitConfigFile,
 )
 from ..error import ConfigurationFileReadError, first_error_message
+from ..version import Version
 from . import common, interactive
 
 GIT_PANEL_NAME = "Git Configuration Options"
 
 
 def init_command(
-    current_version: str = typer.Argument(
-        ..., help="Current version for the project", show_default=False
-    ),
-    config_file_name: str = typer.Option(
-        HYPER_CONFIG_FILE_NAME,
-        help="Custom file name for dedicated configuration file",
-    ),
-    project_root: Path = common.PROJECT_ROOT,
-    pyproject: bool = typer.Option(
-        False,
-        help=f"Write config to {PYPROJECT_FILE_NAME}",
-        show_default="Use dedicated configuration file",  # type: ignore[arg-type]
-    ),
-    non_interactive: bool = typer.Option(
-        False,
-        "--non-interactive/--interactive",
-        help="Write out a configuration without prompting for additional information "
-        "(will need manual edits)",
-    ),
-    commit: GitAction = common.commit(DEFAULT_COMMIT_ACTION.value, GIT_PANEL_NAME),
-    branch: GitAction = common.branch(DEFAULT_BRANCH_ACTION.value, GIT_PANEL_NAME),
-    tag: GitAction = common.tag(DEFAULT_TAG_ACTION.value, GIT_PANEL_NAME),
-    remote: str = common.remote(DEFAULT_REMOTE, GIT_PANEL_NAME),
-    commit_format_pattern: str = common.commit_format_pattern(
-        DEFAULT_COMMIT_FORMAT_PATTERN, GIT_PANEL_NAME
-    ),
-    branch_format_pattern: str = common.branch_format_pattern(
-        DEFAULT_BRANCH_FORMAT_PATTERN, GIT_PANEL_NAME
-    ),
-    tag_format_pattern: str = common.tag_format_pattern(
-        DEFAULT_TAG_FORMAT_PATTERN, GIT_PANEL_NAME
-    ),
-    allowed_init_branch: list[str] = common.allowed_init_branch(
-        list(DEFAULT_ALLOWED_INITIAL_BRANCHES), GIT_PANEL_NAME
-    ),
-    allow_any_init_branch: bool = common.allow_any_init_branch(False, GIT_PANEL_NAME),
+    current_version: Annotated[
+        Version,
+        typer.Argument(
+            help="Current version for the project",
+            show_default=False,
+            parser=Version.parse,
+        ),
+    ],
+    config_file_name: Annotated[
+        str,
+        typer.Option(
+            help="Custom file name for dedicated configuration file",
+        ),
+    ] = HYPER_CONFIG_FILE_NAME,
+    project_root: Annotated[Path, common.PROJECT_ROOT] = common.PROJECT_ROOT_DEFAULT,
+    pyproject: Annotated[
+        bool,
+        typer.Option(
+            help=f"Write config to {PYPROJECT_FILE_NAME}",
+            show_default="Use dedicated configuration file",
+        ),
+    ] = False,
+    non_interactive: Annotated[
+        bool,
+        typer.Option(
+            "--non-interactive/--interactive",
+            help="Write out a configuration without prompting for additional information "
+            "(will need manual edits)",
+        ),
+    ] = False,
+    commit: Annotated[
+        GitAction, common.commit(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_COMMIT_ACTION,
+    branch: Annotated[
+        GitAction, common.branch(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_BRANCH_ACTION,
+    tag: Annotated[
+        GitAction, common.tag(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_TAG_ACTION,
+    remote: Annotated[
+        str, common.remote(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_REMOTE,
+    commit_format_pattern: Annotated[
+        str, common.commit_format_pattern(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_COMMIT_FORMAT_PATTERN,
+    branch_format_pattern: Annotated[
+        str, common.branch_format_pattern(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_BRANCH_FORMAT_PATTERN,
+    tag_format_pattern: Annotated[
+        str, common.tag_format_pattern(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_TAG_FORMAT_PATTERN,
+    allowed_init_branch: Annotated[
+        list[str], common.allowed_init_branch(GIT_PANEL_NAME, show_default=True)
+    ] = list(DEFAULT_ALLOWED_INITIAL_BRANCHES),
+    allow_any_init_branch: Annotated[
+        bool, common.allow_any_init_branch(GIT_PANEL_NAME)
+    ] = False,
 ) -> None:
-    version = common.parse_version(current_version, "CURRENT_VERSION")
     try:
         actions = GitActionsConfigFile(commit=commit, branch=branch, tag=tag)
     except ValidationError as ex:
@@ -84,7 +105,7 @@ def init_command(
 
     project_root = common.resolve(project_root)
     config = ConfigFile(
-        current_version=version,
+        current_version=current_version,
         files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
         git=GitConfigFile(
             remote=remote,

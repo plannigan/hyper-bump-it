@@ -27,10 +27,10 @@ PYPROJECT_ROOT_TABLE = ".".join(PYPROJECT_SUB_TABLE_KEYS)
     ["cli_args", "expected_output_regex"],
     [
         ([], "Missing argument 'CURRENT_VERSION'"),
-        (["1"], r"Invalid value for CURRENT_VERSION: '.+?' is not a valid version"),
+        (["1"], r"Invalid value for 'CURRENT_VERSION': .+?"),
         (
             [sd.SOME_BUMP_PART.value],
-            r"Invalid value for CURRENT_VERSION: '.+?' is not a valid version",
+            r"Invalid value for 'CURRENT_VERSION': .+?",
         ),
         (
             [sd.SOME_VERSION_STRING, "--commit", sd.SOME_NON_GIT_ACTION_STRING],
@@ -61,7 +61,7 @@ def test_init__invalid__error(cli_args: list[str], expected_output_regex):
     result = runner.invoke(cli.app, ["init", *cli_args], catch_exceptions=False)
 
     assert_failure(result, exit_code=2)
-    assert re.search(expected_output_regex, result.output) is not None
+    assert re.search(expected_output_regex, result.output) is not None, result.output
 
 
 @pytest.mark.parametrize(

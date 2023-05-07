@@ -20,14 +20,14 @@ from tests._hyper_bump_it.cli.common import (
     ["cli_args", "expected_output_regex"],
     [
         ([], "Missing argument 'NEW_VERSION'"),
-        (["1"], r"Invalid value for NEW_VERSION: '.+?' is not a valid version"),
+        (["1"], r"Invalid value for 'NEW_VERSION': .+?"),
         (
             [sd.SOME_BUMP_PART.value],
-            r"Invalid value for NEW_VERSION: '.+?' is not a valid version",
+            r"Invalid value for 'NEW_VERSION': .+?",
         ),
         (
             [sd.SOME_VERSION_STRING, "--current-version", "1"],
-            r"Invalid value for --current-version: '.+?' is not a valid version",
+            r"Invalid value for '--current-version': .+?",
         ),
         (
             [sd.SOME_VERSION_STRING, "--commit", sd.SOME_NON_GIT_ACTION_STRING],
@@ -47,7 +47,7 @@ def test_to__invalid__error(cli_args: list[str], expected_output_regex):
     result = runner.invoke(cli.app, ["to", *cli_args], catch_exceptions=False)
 
     assert_failure(result, exit_code=2)
-    assert re.search(expected_output_regex, result.output) is not None
+    assert re.search(expected_output_regex, result.output) is not None, result.output
 
 
 def test_to__valid__args_sent_to_config_for_bump_to(mocker):
