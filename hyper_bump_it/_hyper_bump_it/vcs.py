@@ -120,8 +120,6 @@ def commit_changes(repo: Repo, commit_message: str) -> None:
             index.remove(diff.a_path)
         else:
             index.add(diff.a_path)
-    for file in repo.untracked_files:
-        index.add(file)
 
     index.commit(commit_message)
 
