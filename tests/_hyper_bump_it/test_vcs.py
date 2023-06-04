@@ -217,15 +217,14 @@ def test_commit_change__deleted_file__in_commit(tmp_path: Path):
     )
 
 
-def test_commit_change__new_file__in_commit(tmp_path: Path):
+def test_commit_change__new_file__not_in_commit(tmp_path: Path):
     repo = sd.some_git_repo(tmp_path)
     repo.path.joinpath(SOME_OTHER_FILE).write_text("")
 
     vcs.commit_changes(repo.repo, sd.SOME_COMMIT_MESSAGE)
 
     commit_diff = repo.repo.head.commit.diff("HEAD^")
-    assert len(commit_diff) == 1
-    assert commit_diff[0].a_path == SOME_OTHER_FILE and commit_diff[0].deleted_file
+    assert len(commit_diff) == 0
 
 
 def test_create_tag__repo_tagged_head_commit(tmp_path: Path):
