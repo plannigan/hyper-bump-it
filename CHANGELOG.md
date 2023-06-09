@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Support for including a message on a tag.
+
 ### Fixed
 
 * Incorrectly adding untracked files when creating a commit.

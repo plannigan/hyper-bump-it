@@ -90,6 +90,9 @@ commit_format_pattern = _create_option_factory(
 )
 branch_format_pattern = _create_option_factory("Format pattern to use for branch name")
 tag_format_pattern = _create_option_factory("Format pattern to use for tag name")
+tag_message_format_pattern = _create_option_factory(
+    "Format pattern to use for tag message"
+)
 # Typer returns an empty tuple even when the default is None and the argument is annotated as Optional[list[str]]
 # https://github.com/tiangolo/typer/issues/170
 allowed_init_branch = _create_option_factory(

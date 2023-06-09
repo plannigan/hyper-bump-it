@@ -510,11 +510,11 @@ def test_commit_changes_action__display__show_commit_message(
 def test_create_tag_action__call__switch_to_called(mocker):
     mock_create_tag = mocker.patch("hyper_bump_it._hyper_bump_it.vcs.create_tag")
     mock_repo = mocker.Mock()
-    action = execution_plan.CreateTagAction(mock_repo, sd.SOME_TAG)
+    action = execution_plan.CreateTagAction(mock_repo, sd.SOME_TAG, sd.SOME_TAG_MESSAGE)
 
     action()
 
-    mock_create_tag.assert_called_once_with(mock_repo, sd.SOME_TAG)
+    mock_create_tag.assert_called_once_with(mock_repo, sd.SOME_TAG, sd.SOME_TAG_MESSAGE)
 
 
 def test_create_tag_action__call_needs_escaping__shows_escaped_text(
@@ -522,20 +522,46 @@ def test_create_tag_action__call_needs_escaping__shows_escaped_text(
 ):
     mocker.patch("hyper_bump_it._hyper_bump_it.vcs.create_tag")
     mock_repo = mocker.Mock()
-    action = execution_plan.CreateTagAction(mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT)
+    action = execution_plan.CreateTagAction(
+        mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT, sd.SOME_ESCAPE_REQUIRED_TEXT
+    )
 
     action()
 
-    assert f"Tagging commit: {sd.SOME_ESCAPE_REQUIRED_TEXT}" in capture_rich.getvalue()
+    assert (
+        f"Tagging commit: {sd.SOME_ESCAPE_REQUIRED_TEXT} - {sd.SOME_ESCAPE_REQUIRED_TEXT}"
+        in capture_rich.getvalue()
+    )
 
 
-def test_create_tag_action__display__show_tag_name(capture_rich: StringIO, mocker):
+def test_create_tag_action__display__show_tag_name_and_message(
+    capture_rich: StringIO, mocker
+):
     mock_repo = mocker.Mock()
-    action = execution_plan.CreateTagAction(mock_repo, sd.SOME_TAG)
+    action = execution_plan.CreateTagAction(mock_repo, sd.SOME_TAG, sd.SOME_TAG_MESSAGE)
 
     action.display_intent()
 
-    assert sd.SOME_TAG in capture_rich.getvalue()
+    assert (
+        f"Tag commit: {sd.SOME_TAG} - {sd.SOME_TAG_MESSAGE}" in capture_rich.getvalue()
+    )
+
+
+def test_create_tag_action__display_needs_escaping__shows_escaped_text(
+    capture_rich: StringIO, mocker
+):
+    mocker.patch("hyper_bump_it._hyper_bump_it.vcs.create_tag")
+    mock_repo = mocker.Mock()
+    action = execution_plan.CreateTagAction(
+        mock_repo, sd.SOME_ESCAPE_REQUIRED_TEXT, sd.SOME_ESCAPE_REQUIRED_TEXT
+    )
+
+    action.display_intent()
+
+    assert (
+        f"Tag commit: {sd.SOME_ESCAPE_REQUIRED_TEXT} - {sd.SOME_ESCAPE_REQUIRED_TEXT}"
+        in capture_rich.getvalue()
+    )
 
 
 def test_push_changes_action__call__switch_to_called(mocker):

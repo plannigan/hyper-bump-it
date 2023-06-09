@@ -20,6 +20,9 @@ RUN mkdir /app && chown ${UID}:${GID} /app
 
 USER ${_USER}
 
+RUN git config --global user.name "${_USER}" && \
+    git config --global user.email "${_USER}@example.com"
+
 COPY --chown=${UID}:${GID} ./requirements*.txt /app/
 WORKDIR /app
 

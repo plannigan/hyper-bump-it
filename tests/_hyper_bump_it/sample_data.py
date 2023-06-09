@@ -94,6 +94,8 @@ SOME_REMOTE = "test-remote"
 SOME_OTHER_REMOTE = "other-test-remote"
 SOME_COMMIT_MESSAGE = "test commit message"
 SOME_OTHER_COMMIT_MESSAGE = "other test commit message"
+SOME_TAG_MESSAGE = "test tag message"
+SOME_OTHER_TAG_MESSAGE = "other test tag message"
 SOME_BRANCH = "test-branch"
 SOME_OTHER_BRANCH = "other-test-branch"
 SOME_ALLOWED_BRANCH = "test-allowed-branch"
@@ -108,6 +110,8 @@ SOME_BRANCH_PATTERN = f"test-branch-{{{keys.NEW_VERSION}}}"
 SOME_OTHER_BRANCH_PATTERN = f"other test-branch-{{{keys.NEW_VERSION}}}"
 SOME_TAG_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
 SOME_OTHER_TAG_PATTERN = f"other-test-tag-{{{keys.NEW_VERSION}}}"
+SOME_TAG_MESSAGE_PATTERN = f"test tag {{{keys.NEW_VERSION}}}"
+SOME_OTHER_MESSAGE_TAG_PATTERN = f"other test tag {{{keys.NEW_VERSION}}}"
 
 SOME_COMMIT_ACTION = GitAction.CreateAndPush
 SOME_BRANCH_ACTION = GitAction.Skip
@@ -174,6 +178,7 @@ def some_git(
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
     tag_format_pattern=SOME_TAG_PATTERN,
+    tag_message_format_pattern=SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches=SOME_ALLOWED_BRANCHES,
     actions=some_git_actions(),
 ) -> Git:
@@ -182,6 +187,7 @@ def some_git(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        tag_message_format_pattern=tag_message_format_pattern,
         allowed_initial_branches=allowed_initial_branches,
         actions=actions,
     )
@@ -260,6 +266,7 @@ def some_git_operations_info(
     commit_message=SOME_COMMIT_MESSAGE,
     branch_name=SOME_BRANCH,
     tag_name=SOME_TAG,
+    tag_message=SOME_TAG_MESSAGE,
     allowed_initial_branches=SOME_ALLOWED_BRANCHES,
     actions=some_git_actions(),
 ) -> GitOperationsInfo:
@@ -268,6 +275,7 @@ def some_git_operations_info(
         commit_message=commit_message,
         branch_name=branch_name,
         tag_name=tag_name,
+        tag_message=tag_message,
         allowed_initial_branches=allowed_initial_branches,
         actions=actions,
     )
@@ -360,6 +368,7 @@ def no_config_override_bump_to_args(
         commit_format_pattern=None,
         branch_format_pattern=None,
         tag_format_pattern=None,
+        tag_message_format_pattern=None,
         allowed_initial_branches=None,
     )
 
@@ -379,6 +388,7 @@ def some_bump_to_args(
     commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
     branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
     tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+    tag_message_format_pattern: Optional[str] = SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches: frozenset[str] = SOME_ALLOWED_BRANCHES,
 ) -> BumpToArgs:
     return BumpToArgs(
@@ -396,6 +406,7 @@ def some_bump_to_args(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        tag_message_format_pattern=tag_message_format_pattern,
         allowed_initial_branches=None
         if allowed_initial_branches is None
         else frozenset(allowed_initial_branches),
@@ -425,6 +436,7 @@ def no_config_override_bump_by_args(
         commit_format_pattern=None,
         branch_format_pattern=None,
         tag_format_pattern=None,
+        tag_message_format_pattern=None,
         allowed_initial_branches=None,
     )
 
@@ -444,6 +456,7 @@ def some_bump_by_args(
     commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
     branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
     tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+    tag_message_format_pattern: Optional[str] = SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches: Union[
         Optional[set[str]], frozenset[str]
     ] = SOME_ALLOWED_BRANCHES,
@@ -463,6 +476,7 @@ def some_bump_by_args(
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
         tag_format_pattern=tag_format_pattern,
+        tag_message_format_pattern=tag_message_format_pattern,
         allowed_initial_branches=None
         if allowed_initial_branches is None
         else frozenset(allowed_initial_branches),
@@ -540,6 +554,7 @@ def some_git_repo(
     remote: Optional[str] = None,
     branch: Optional[str] = None,
     tag: Optional[str] = None,
+    tag_message: str = SOME_TAG_MESSAGE,
     detached: bool = False,
 ) -> InitedRepo:
     """
@@ -573,7 +588,7 @@ def some_git_repo(
         repo.create_head(branch)
 
     if tag is not None:
-        repo.create_tag(tag)
+        repo.create_tag(tag, message=tag_message)
 
     if detached:
         repo.head.reference = repo.commit("HEAD")

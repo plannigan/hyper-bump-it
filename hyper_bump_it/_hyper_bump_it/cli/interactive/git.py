@@ -16,6 +16,7 @@ from ...config import (
     DEFAULT_REMOTE,
     DEFAULT_TAG_ACTION,
     DEFAULT_TAG_FORMAT_PATTERN,
+    DEFAULT_TAG_MESSAGE_FORMAT_PATTERN,
     GitAction,
     GitActionsConfigFile,
     GitConfigFile,
@@ -29,6 +30,7 @@ class GitMenu(Enum):
     CommitFormatPattern = "commit"
     BranchFormatPattern = "branch"
     TagFormatPattern = "tag"
+    TagMessageFormatPattern = "tag-message"
     AllowedBranches = "allowed-branches"
     Actions = "actions"
     Done = "done"
@@ -42,6 +44,7 @@ class GitConfigEditor:
             GitMenu.CommitFormatPattern: self._configure_commit_format_pattern,
             GitMenu.BranchFormatPattern: self._configure_branch_format_pattern,
             GitMenu.TagFormatPattern: self._configure_tag_format_pattern,
+            GitMenu.TagMessageFormatPattern: self._configure_tag_message_format_pattern,
             GitMenu.AllowedBranches: self._configure_allowed_branches,
             GitMenu.Actions: self._configure_actions,
         }
@@ -85,6 +88,14 @@ class GitConfigEditor:
             "tag_format_pattern",
             self._config.tag_format_pattern,
             DEFAULT_TAG_FORMAT_PATTERN,
+        )
+
+    def _configure_tag_message_format_pattern(self) -> None:
+        self._configure_format_pattern(
+            "tag name",
+            "tag_format_message_pattern",
+            self._config.tag_message_format_pattern,
+            DEFAULT_TAG_MESSAGE_FORMAT_PATTERN,
         )
 
     def _configure_allowed_branches(self) -> None:
@@ -161,6 +172,7 @@ def _prompt_git_menu() -> GitMenu:
             GitMenu.CommitFormatPattern: "Format pattern to use for commit message",
             GitMenu.BranchFormatPattern: "Format pattern to use for branch name",
             GitMenu.TagFormatPattern: "Format pattern to use for tag name",
+            GitMenu.TagMessageFormatPattern: "Format pattern to use for tag message",
             GitMenu.AllowedBranches: "Names of allowed initial branches",
             GitMenu.Actions: "Configure what Git actions should be performed",
             GitMenu.Done: "Stop editing the Git integration settings",

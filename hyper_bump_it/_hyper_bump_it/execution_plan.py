@@ -185,16 +185,24 @@ class CommitChangesAction:
 
 
 class CreateTagAction:
-    def __init__(self, repo: Repo, tag_name: str) -> None:
+    def __init__(self, repo: Repo, tag_name: str, tag_message: str) -> None:
         self._repo = repo
         self._tag_name = tag_name
+        self._tag_message = tag_message
 
     def __call__(self) -> None:
-        ui.display(Text("Tagging commit: ").append(self._tag_name, style="vcs.tag"))
-        vcs.create_tag(self._repo, self._tag_name)
+        ui.display(self._action_description(Text("Tagging commit: ")))
+        vcs.create_tag(self._repo, self._tag_name, self._tag_message)
 
     def display_intent(self) -> None:
-        ui.display(Text("Tag commit: ").append(self._tag_name, style="vcs.tag"))
+        ui.display(self._action_description(Text("Tag commit: ")))
+
+    def _action_description(self, prefix: Text) -> Text:
+        return (
+            prefix.append(self._tag_name, style="vcs.tag")
+            .append(" - ")
+            .append(self._tag_message, style="vcs.tag")
+        )
 
 
 class PushChangesAction:
@@ -242,7 +250,11 @@ def git_actions(
             CommitChangesAction(repo, git_operations_info.commit_message)
         )
     if git_operations_info.actions.tag.should_create:
-        final_actions.append(CreateTagAction(repo, git_operations_info.tag_name))
+        final_actions.append(
+            CreateTagAction(
+                repo, git_operations_info.tag_name, git_operations_info.tag_message
+            )
+        )
     if git_operations_info.actions.any_push:
         final_actions.append(PushChangesAction(repo, git_operations_info))
 
