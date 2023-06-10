@@ -15,8 +15,8 @@ from ...config import (
     DEFAULT_COMMIT_FORMAT_PATTERN,
     DEFAULT_REMOTE,
     DEFAULT_TAG_ACTION,
-    DEFAULT_TAG_FORMAT_PATTERN,
     DEFAULT_TAG_MESSAGE_FORMAT_PATTERN,
+    DEFAULT_TAG_NAME_FORMAT_PATTERN,
     GitAction,
     GitActionsConfigFile,
     GitConfigFile,
@@ -29,7 +29,7 @@ class GitMenu(Enum):
     Remote = "remote"
     CommitFormatPattern = "commit"
     BranchFormatPattern = "branch"
-    TagFormatPattern = "tag"
+    TagNameFormatPattern = "tag-name"
     TagMessageFormatPattern = "tag-message"
     AllowedBranches = "allowed-branches"
     Actions = "actions"
@@ -43,7 +43,7 @@ class GitConfigEditor:
             GitMenu.Remote: self._configure_remote,
             GitMenu.CommitFormatPattern: self._configure_commit_format_pattern,
             GitMenu.BranchFormatPattern: self._configure_branch_format_pattern,
-            GitMenu.TagFormatPattern: self._configure_tag_format_pattern,
+            GitMenu.TagNameFormatPattern: self._configure_tag_name_format_pattern,
             GitMenu.TagMessageFormatPattern: self._configure_tag_message_format_pattern,
             GitMenu.AllowedBranches: self._configure_allowed_branches,
             GitMenu.Actions: self._configure_actions,
@@ -82,12 +82,12 @@ class GitConfigEditor:
             DEFAULT_BRANCH_FORMAT_PATTERN,
         )
 
-    def _configure_tag_format_pattern(self) -> None:
+    def _configure_tag_name_format_pattern(self) -> None:
         self._configure_format_pattern(
             "tag name",
-            "tag_format_pattern",
-            self._config.tag_format_pattern,
-            DEFAULT_TAG_FORMAT_PATTERN,
+            "tag_name_format_pattern",
+            self._config.tag_name_format_pattern,
+            DEFAULT_TAG_NAME_FORMAT_PATTERN,
         )
 
     def _configure_tag_message_format_pattern(self) -> None:
@@ -171,7 +171,7 @@ def _prompt_git_menu() -> GitMenu:
             GitMenu.Remote: "Name of remote to use when pushing changes",
             GitMenu.CommitFormatPattern: "Format pattern to use for commit message",
             GitMenu.BranchFormatPattern: "Format pattern to use for branch name",
-            GitMenu.TagFormatPattern: "Format pattern to use for tag name",
+            GitMenu.TagNameFormatPattern: "Format pattern to use for tag name",
             GitMenu.TagMessageFormatPattern: "Format pattern to use for tag message",
             GitMenu.AllowedBranches: "Names of allowed initial branches",
             GitMenu.Actions: "Configure what Git actions should be performed",

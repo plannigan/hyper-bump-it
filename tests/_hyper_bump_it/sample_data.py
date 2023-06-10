@@ -108,7 +108,7 @@ SOME_COMMIT_PATTERN = f"test commit {{{keys.NEW_VERSION}}}"
 SOME_OTHER_COMMIT_PATTERN = f"other test commit {{{keys.NEW_VERSION}}}"
 SOME_BRANCH_PATTERN = f"test-branch-{{{keys.NEW_VERSION}}}"
 SOME_OTHER_BRANCH_PATTERN = f"other test-branch-{{{keys.NEW_VERSION}}}"
-SOME_TAG_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
+SOME_TAG_NAME_PATTERN = f"test-tag-{{{keys.NEW_VERSION}}}"
 SOME_OTHER_TAG_PATTERN = f"other-test-tag-{{{keys.NEW_VERSION}}}"
 SOME_TAG_MESSAGE_PATTERN = f"test tag {{{keys.NEW_VERSION}}}"
 SOME_OTHER_MESSAGE_TAG_PATTERN = f"other test tag {{{keys.NEW_VERSION}}}"
@@ -177,7 +177,7 @@ def some_git(
     remote=SOME_REMOTE,
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
-    tag_format_pattern=SOME_TAG_PATTERN,
+    tag_name_format_pattern=SOME_TAG_NAME_PATTERN,
     tag_message_format_pattern=SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches=SOME_ALLOWED_BRANCHES,
     actions=some_git_actions(),
@@ -186,7 +186,7 @@ def some_git(
         remote=remote,
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
-        tag_format_pattern=tag_format_pattern,
+        tag_name_format_pattern=tag_name_format_pattern,
         tag_message_format_pattern=tag_message_format_pattern,
         allowed_initial_branches=allowed_initial_branches,
         actions=actions,
@@ -205,7 +205,7 @@ def some_git_config_file(
     remote=SOME_REMOTE,
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
-    tag_format_pattern=SOME_TAG_PATTERN,
+    tag_name_format_pattern=SOME_TAG_NAME_PATTERN,
     allowed_initial_branches: Union[frozenset[str], set[str]] = SOME_ALLOWED_BRANCHES,
     extend_allowed_initial_branches: Union[
         frozenset[str], set[str]
@@ -216,7 +216,7 @@ def some_git_config_file(
         remote=remote,
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
-        tag_format_pattern=tag_format_pattern,
+        tag_name_format_pattern=tag_name_format_pattern,
         allowed_initial_branches=frozenset(allowed_initial_branches),
         extend_allowed_initial_branches=frozenset(extend_allowed_initial_branches),
         actions=actions,
@@ -367,7 +367,7 @@ def no_config_override_bump_to_args(
         remote=None,
         commit_format_pattern=None,
         branch_format_pattern=None,
-        tag_format_pattern=None,
+        tag_name_format_pattern=None,
         tag_message_format_pattern=None,
         allowed_initial_branches=None,
     )
@@ -387,7 +387,7 @@ def some_bump_to_args(
     remote: Optional[str] = SOME_REMOTE,
     commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
     branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
-    tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+    tag_name_format_pattern: Optional[str] = SOME_TAG_NAME_PATTERN,
     tag_message_format_pattern: Optional[str] = SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches: frozenset[str] = SOME_ALLOWED_BRANCHES,
 ) -> BumpToArgs:
@@ -405,7 +405,7 @@ def some_bump_to_args(
         remote=remote,
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
-        tag_format_pattern=tag_format_pattern,
+        tag_name_format_pattern=tag_name_format_pattern,
         tag_message_format_pattern=tag_message_format_pattern,
         allowed_initial_branches=None
         if allowed_initial_branches is None
@@ -435,7 +435,7 @@ def no_config_override_bump_by_args(
         remote=None,
         commit_format_pattern=None,
         branch_format_pattern=None,
-        tag_format_pattern=None,
+        tag_name_format_pattern=None,
         tag_message_format_pattern=None,
         allowed_initial_branches=None,
     )
@@ -455,7 +455,7 @@ def some_bump_by_args(
     remote: Optional[str] = SOME_REMOTE,
     commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
     branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
-    tag_format_pattern: Optional[str] = SOME_TAG_PATTERN,
+    tag_name_format_pattern: Optional[str] = SOME_TAG_NAME_PATTERN,
     tag_message_format_pattern: Optional[str] = SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches: Union[
         Optional[set[str]], frozenset[str]
@@ -475,7 +475,7 @@ def some_bump_by_args(
         remote=remote,
         commit_format_pattern=commit_format_pattern,
         branch_format_pattern=branch_format_pattern,
-        tag_format_pattern=tag_format_pattern,
+        tag_name_format_pattern=tag_name_format_pattern,
         tag_message_format_pattern=tag_message_format_pattern,
         allowed_initial_branches=None
         if allowed_initial_branches is None

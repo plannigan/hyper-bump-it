@@ -28,7 +28,7 @@ class BumpToArgs:
     remote: Optional[str]
     commit_format_pattern: Optional[str]
     branch_format_pattern: Optional[str]
-    tag_format_pattern: Optional[str]
+    tag_name_format_pattern: Optional[str]
     tag_message_format_pattern: Optional[str]
     allowed_initial_branches: Optional[frozenset[str]]
 
@@ -48,6 +48,6 @@ class BumpByArgs:
     remote: Optional[str]
     commit_format_pattern: Optional[str]
     branch_format_pattern: Optional[str]
-    tag_format_pattern: Optional[str]
+    tag_name_format_pattern: Optional[str]
     tag_message_format_pattern: Optional[str]
     allowed_initial_branches: Optional[frozenset[str]]

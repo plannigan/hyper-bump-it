@@ -39,7 +39,9 @@ def by_command(
     branch_format_pattern: Annotated[
         Optional[str], common.branch_format_pattern()
     ] = None,
-    tag_format_pattern: Annotated[Optional[str], common.tag_format_pattern()] = None,
+    tag_name_format_pattern: Annotated[
+        Optional[str], common.tag_name_format_pattern()
+    ] = None,
     tag_message_format_pattern: Annotated[
         Optional[str], common.tag_message_format_pattern()
     ] = None,
@@ -69,7 +71,7 @@ def by_command(
                 remote=remote,
                 commit_format_pattern=commit_format_pattern,
                 branch_format_pattern=branch_format_pattern,
-                tag_format_pattern=tag_format_pattern,
+                tag_name_format_pattern=tag_name_format_pattern,
                 tag_message_format_pattern=tag_message_format_pattern,
                 allowed_initial_branches=common.allowed_init_branches(
                     allowed_init_branch, allow_any_init_branch

@@ -86,7 +86,7 @@ def test_git__no_args__valid():
             f"Bump version: {{{keys.CURRENT_VERSION}}} → {{{keys.NEW_VERSION}}}"
         ),
         branch_format_pattern=f"bump_version_to_{{{keys.NEW_VERSION}}}",
-        tag_format_pattern=f"v{{{keys.NEW_VERSION}}}",
+        tag_name_format_pattern=f"v{{{keys.NEW_VERSION}}}",
         actions=file.GitActions(),
     )
 
@@ -104,7 +104,10 @@ def test_git__no_args__valid():
             "branch_format_pattern not a string",
             {"branch_format_pattern": SOME_NON_STRING},
         ),
-        ("tag_format_pattern not a string", {"tag_format_pattern": SOME_NON_STRING}),
+        (
+            "tag_name_format_pattern not a string",
+            {"tag_name_format_pattern": SOME_NON_STRING},
+        ),
         ("actions not an object", {"actions": SOME_NON_OBJECT}),
         (
             "actions is an object with invalid fields",
