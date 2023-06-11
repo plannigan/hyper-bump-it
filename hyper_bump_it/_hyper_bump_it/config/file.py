@@ -35,6 +35,7 @@ from .core import (
     DEFAULT_SEARCH_PATTERN,
     DEFAULT_TAG_ACTION,
     DEFAULT_TAG_FORMAT_PATTERN,
+    DEFAULT_TAG_MESSAGE_FORMAT_PATTERN,
     HYPER_CONFIG_FILE_NAME,
     PYPROJECT_FILE_NAME,
     GitAction,
@@ -71,6 +72,7 @@ class Git(HyperBaseMode):
     commit_format_pattern: StrictStr = DEFAULT_COMMIT_FORMAT_PATTERN
     branch_format_pattern: StrictStr = DEFAULT_BRANCH_FORMAT_PATTERN
     tag_format_pattern: StrictStr = DEFAULT_TAG_FORMAT_PATTERN
+    tag_message_format_pattern: StrictStr = DEFAULT_TAG_MESSAGE_FORMAT_PATTERN
     allowed_initial_branches: frozenset[str] = DEFAULT_ALLOWED_INITIAL_BRANCHES
     extend_allowed_initial_branches: frozenset[str] = frozenset()
     actions: GitActions = GitActions()

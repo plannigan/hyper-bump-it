@@ -32,6 +32,7 @@ def test_from_config__names_formatted_from_pattern():
         commit_message=TEXT_FORMATTER.format(sd.SOME_COMMIT_PATTERN),
         branch_name=TEXT_FORMATTER.format(sd.SOME_BRANCH_PATTERN),
         tag_name=TEXT_FORMATTER.format(sd.SOME_TAG_PATTERN),
+        tag_message=TEXT_FORMATTER.format(sd.SOME_TAG_MESSAGE_PATTERN),
         allowed_initial_branches=sd.SOME_ALLOWED_BRANCHES,
         actions=git_actions,
     )
@@ -230,10 +231,19 @@ def test_commit_change__new_file__not_in_commit(tmp_path: Path):
 def test_create_tag__repo_tagged_head_commit(tmp_path: Path):
     repo = sd.some_git_repo(tmp_path)
 
-    vcs.create_tag(repo.repo, sd.SOME_TAG)
+    vcs.create_tag(repo.repo, sd.SOME_TAG, sd.SOME_TAG_MESSAGE)
 
     assert sd.SOME_TAG in repo.repo.tags
     assert repo.repo.tags[sd.SOME_TAG].commit == repo.repo.active_branch.commit
+
+
+def test_create_tag__tag_contains_message(tmp_path: Path):
+    repo = sd.some_git_repo(tmp_path)
+
+    vcs.create_tag(repo.repo, sd.SOME_TAG, sd.SOME_TAG_MESSAGE)
+
+    assert sd.SOME_TAG in repo.repo.tags
+    assert sd.SOME_TAG_MESSAGE in repo.repo.tags[sd.SOME_TAG].tag.message
 
 
 def test_push_changes__no_branch_no_tag__only_commit_pushed(tmp_path: Path):
@@ -253,7 +263,7 @@ def test_push_changes__no_branch_no_tag__only_commit_pushed(tmp_path: Path):
 
 def test_push_changes__tag_no_push__commit_pushed_but_not_tag(tmp_path: Path):
     repo = sd.some_git_repo(tmp_path, remote=sd.SOME_REMOTE)
-    repo.repo.create_tag(sd.SOME_TAG)
+    repo.repo.create_tag(sd.SOME_TAG, message=sd.SOME_TAG_MESSAGE)
 
     vcs.push_changes(
         repo.repo,
@@ -268,7 +278,7 @@ def test_push_changes__tag_no_push__commit_pushed_but_not_tag(tmp_path: Path):
 
 def test_push_changes__tag_and_push__commit_and_tag_pushed(tmp_path: Path):
     repo = sd.some_git_repo(tmp_path, remote=sd.SOME_REMOTE)
-    repo.repo.create_tag(sd.SOME_TAG)
+    repo.repo.create_tag(sd.SOME_TAG, message=sd.SOME_TAG_MESSAGE)
 
     vcs.push_changes(
         repo.repo,

@@ -17,6 +17,7 @@ from hyper_bump_it._hyper_bump_it.config.core import (
     DEFAULT_SEARCH_PATTERN,
     DEFAULT_TAG_ACTION,
     DEFAULT_TAG_FORMAT_PATTERN,
+    DEFAULT_TAG_MESSAGE_FORMAT_PATTERN,
 )
 from hyper_bump_it._hyper_bump_it.error import KeystoneFileGlobError
 from tests._hyper_bump_it import sample_data as sd
@@ -613,6 +614,7 @@ def _default_git() -> application.Git:
         commit_format_pattern=DEFAULT_COMMIT_FORMAT_PATTERN,
         branch_format_pattern=DEFAULT_BRANCH_FORMAT_PATTERN,
         tag_format_pattern=DEFAULT_TAG_FORMAT_PATTERN,
+        tag_message_format_pattern=DEFAULT_TAG_MESSAGE_FORMAT_PATTERN,
         allowed_initial_branches=DEFAULT_ALLOWED_INITIAL_BRANCHES,
         actions=application.GitActions(
             commit=DEFAULT_COMMIT_ACTION,

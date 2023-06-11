@@ -25,6 +25,7 @@ class GitOperationsInfo:
     commit_message: str
     branch_name: str
     tag_name: str
+    tag_message: str
     allowed_initial_branches: frozenset[str]
     actions: GitActions
 
@@ -43,6 +44,7 @@ class GitOperationsInfo:
             commit_message=formatter.format(config.commit_format_pattern),
             branch_name=formatter.format(config.branch_format_pattern),
             tag_name=formatter.format(config.tag_format_pattern),
+            tag_message=formatter.format(config.tag_message_format_pattern),
             allowed_initial_branches=config.allowed_initial_branches,
             actions=config.actions,
         )
@@ -124,8 +126,8 @@ def commit_changes(repo: Repo, commit_message: str) -> None:
     index.commit(commit_message)
 
 
-def create_tag(repo: Repo, tag_name: str) -> None:
-    repo.create_tag(tag_name)
+def create_tag(repo: Repo, tag_name: str, tag_message: str) -> None:
+    repo.create_tag(tag_name, message=tag_message)
 
 
 def push_changes(repo: Repo, operation_info: GitOperationsInfo) -> None:
