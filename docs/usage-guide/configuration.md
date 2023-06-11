@@ -166,7 +166,7 @@ There are a few fields that can be used to customize how these actions operate.
     `"bump_version_to_{new_version}"` is used.
 * `tag_format_pattern` is a [format pattern][format-patterns] used to produce the name of the tag.
     If not specified, the default value of, the default value of `"v{new_version}"` is used.
-* `tag_messageformat_pattern` is a [format pattern][format-patterns] used to produce the message of
+* `tag_message_format_pattern` is a [format pattern][format-patterns] used to produce the message of
     the tag. If not specified, the default value of, the default value of
     `"Bump version: {current_version} → {new_version}"` is used.
 
