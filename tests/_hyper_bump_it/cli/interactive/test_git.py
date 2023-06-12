@@ -163,29 +163,31 @@ def test_configure__branch_format_pattern_require_escape__values_escaped(
     assert sd.SOME_ESCAPE_REQUIRED_TEXT in capture_rich.getvalue()
 
 
-def test_configure__tag_format_pattern_value__updated_pattern(
+def test_configure__tag_name_format_pattern_value__updated_pattern(
     force_input: ForceInput,
 ):
     force_input(
-        GitMenu.TagFormatPattern.value, sd.SOME_OTHER_TAG_PATTERN, force_input.NO_INPUT
+        GitMenu.TagNameFormatPattern.value,
+        sd.SOME_OTHER_TAG_PATTERN,
+        force_input.NO_INPUT,
     )
     editor = git.GitConfigEditor(sd.some_git_config_file())
 
     result = editor.configure()
 
     assert result == sd.some_git_config_file(
-        tag_format_pattern=sd.SOME_OTHER_TAG_PATTERN
+        tag_name_format_pattern=sd.SOME_OTHER_TAG_PATTERN
     )
 
 
-def test_configure__tag_format_pattern_no_input__unchanged_pattern(
+def test_configure__tag_name_format_pattern_no_input__unchanged_pattern(
     force_input: ForceInput,
 ):
     force_input(
-        GitMenu.TagFormatPattern.value, force_input.NO_INPUT, force_input.NO_INPUT
+        GitMenu.TagNameFormatPattern.value, force_input.NO_INPUT, force_input.NO_INPUT
     )
     initial_config = sd.some_git_config_file(
-        tag_format_pattern=sd.SOME_OTHER_TAG_PATTERN
+        tag_name_format_pattern=sd.SOME_OTHER_TAG_PATTERN
     )
     editor = git.GitConfigEditor(initial_config)
 
@@ -194,16 +196,16 @@ def test_configure__tag_format_pattern_no_input__unchanged_pattern(
     assert result == initial_config
 
 
-def test_configure__tag_format_pattern_require_escape__values_escaped(
+def test_configure__tag_name_format_pattern_require_escape__values_escaped(
     force_input: ForceInput, capture_rich: StringIO
 ):
     force_input(
-        GitMenu.TagFormatPattern.value,
+        GitMenu.TagNameFormatPattern.value,
         force_input.NO_INPUT,
         force_input.NO_INPUT,
     )
     editor = git.GitConfigEditor(
-        sd.some_git_config_file(tag_format_pattern=sd.SOME_ESCAPE_REQUIRED_TEXT)
+        sd.some_git_config_file(tag_name_format_pattern=sd.SOME_ESCAPE_REQUIRED_TEXT)
     )
 
     editor.configure()

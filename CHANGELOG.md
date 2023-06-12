@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Incorrectly adding untracked files when creating a commit.
 
+### Changed
+
+* **BREAKING**: `tag_format_pattern` renamed to `tag_name_format_pattern`.
+
 ## [0.4.1] - 2023-05-07
 
 ### Internal

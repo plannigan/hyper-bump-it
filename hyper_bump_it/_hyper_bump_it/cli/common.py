@@ -89,7 +89,7 @@ commit_format_pattern = _create_option_factory(
     "Format pattern to use for commit message"
 )
 branch_format_pattern = _create_option_factory("Format pattern to use for branch name")
-tag_format_pattern = _create_option_factory("Format pattern to use for tag name")
+tag_name_format_pattern = _create_option_factory("Format pattern to use for tag name")
 tag_message_format_pattern = _create_option_factory(
     "Format pattern to use for tag message"
 )

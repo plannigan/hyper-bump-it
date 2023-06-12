@@ -37,7 +37,7 @@ class Git:
     remote: str
     commit_format_pattern: str
     branch_format_pattern: str
-    tag_format_pattern: str
+    tag_name_format_pattern: str
     tag_message_format_pattern: str
     allowed_initial_branches: frozenset[str]
     actions: GitActions
@@ -170,7 +170,8 @@ def _convert_git(args: Union[BumpToArgs, BumpByArgs], git: file.Git) -> Git:
         remote=args.remote or git.remote,
         commit_format_pattern=args.commit_format_pattern or git.commit_format_pattern,
         branch_format_pattern=args.branch_format_pattern or git.branch_format_pattern,
-        tag_format_pattern=args.tag_format_pattern or git.tag_format_pattern,
+        tag_name_format_pattern=args.tag_name_format_pattern
+        or git.tag_name_format_pattern,
         tag_message_format_pattern=args.tag_message_format_pattern
         or git.tag_message_format_pattern,
         allowed_initial_branches=_merge_allowed_branches(

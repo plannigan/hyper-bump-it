@@ -18,7 +18,7 @@ from ..config import (
     DEFAULT_COMMIT_FORMAT_PATTERN,
     DEFAULT_REMOTE,
     DEFAULT_TAG_ACTION,
-    DEFAULT_TAG_FORMAT_PATTERN,
+    DEFAULT_TAG_NAME_FORMAT_PATTERN,
     HYPER_CONFIG_FILE_NAME,
     PYPROJECT_FILE_NAME,
     PYPROJECT_SUB_TABLE_KEYS,
@@ -85,9 +85,9 @@ def init_command(
     branch_format_pattern: Annotated[
         str, common.branch_format_pattern(GIT_PANEL_NAME, show_default=True)
     ] = DEFAULT_BRANCH_FORMAT_PATTERN,
-    tag_format_pattern: Annotated[
-        str, common.tag_format_pattern(GIT_PANEL_NAME, show_default=True)
-    ] = DEFAULT_TAG_FORMAT_PATTERN,
+    tag_name_format_pattern: Annotated[
+        str, common.tag_name_format_pattern(GIT_PANEL_NAME, show_default=True)
+    ] = DEFAULT_TAG_NAME_FORMAT_PATTERN,
     allowed_init_branch: Annotated[
         list[str], common.allowed_init_branch(GIT_PANEL_NAME, show_default=True)
     ] = list(DEFAULT_ALLOWED_INITIAL_BRANCHES),
@@ -111,7 +111,7 @@ def init_command(
             remote=remote,
             commit_format_pattern=commit_format_pattern,
             branch_format_pattern=branch_format_pattern,
-            tag_format_pattern=tag_format_pattern,
+            tag_name_format_pattern=tag_name_format_pattern,
             allowed_initial_branches=frozenset(allowed_init_branch),
             actions=actions,
         ),

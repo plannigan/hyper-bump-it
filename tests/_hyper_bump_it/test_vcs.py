@@ -31,7 +31,7 @@ def test_from_config__names_formatted_from_pattern():
         remote=sd.SOME_REMOTE,
         commit_message=TEXT_FORMATTER.format(sd.SOME_COMMIT_PATTERN),
         branch_name=TEXT_FORMATTER.format(sd.SOME_BRANCH_PATTERN),
-        tag_name=TEXT_FORMATTER.format(sd.SOME_TAG_PATTERN),
+        tag_name=TEXT_FORMATTER.format(sd.SOME_TAG_NAME_PATTERN),
         tag_message=TEXT_FORMATTER.format(sd.SOME_TAG_MESSAGE_PATTERN),
         allowed_initial_branches=sd.SOME_ALLOWED_BRANCHES,
         actions=git_actions,

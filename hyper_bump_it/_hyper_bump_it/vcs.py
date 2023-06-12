@@ -43,7 +43,7 @@ class GitOperationsInfo:
             remote=config.remote,
             commit_message=formatter.format(config.commit_format_pattern),
             branch_name=formatter.format(config.branch_format_pattern),
-            tag_name=formatter.format(config.tag_format_pattern),
+            tag_name=formatter.format(config.tag_name_format_pattern),
             tag_message=formatter.format(config.tag_message_format_pattern),
             allowed_initial_branches=config.allowed_initial_branches,
             actions=config.actions,
