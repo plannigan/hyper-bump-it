@@ -131,7 +131,7 @@ def test_get_vetted_repo__existing_branch_no_branching__repo_returned(tmp_path: 
 
 
 def test_get_vetted_repo__existing_tag__error(tmp_path: Path):
-    repo = sd.some_git_repo(tmp_path, tag=sd.SOME_TAG)
+    repo = sd.some_git_repo(tmp_path, tag_name=sd.SOME_TAG)
 
     with pytest.raises(AlreadyExistsError, match="tag"):
         vcs.get_vetted_repo(
@@ -148,7 +148,7 @@ def test_get_vetted_repo__existing_tag__error(tmp_path: Path):
 
 
 def test_get_vetted_repo__existing_tag_no_tagging__repo_returned(tmp_path: Path):
-    repo = sd.some_git_repo(tmp_path, tag=sd.SOME_TAG)
+    repo = sd.some_git_repo(tmp_path, tag_name=sd.SOME_TAG)
 
     result = vcs.get_vetted_repo(
         repo.path,
