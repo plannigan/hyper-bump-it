@@ -20,8 +20,12 @@ RUN mkdir /app && chown ${UID}:${GID} /app
 
 USER ${_USER}
 
-RUN git config --global user.name "${_USER}" && \
-    git config --global user.email "${_USER}@example.com"
+RUN git config --global user.name "TESTING-${_USER}" && \
+    git config --global user.email "TESTING-${_USER}@example.com"
+
+# Create a signing certificate to use for testing. Once the certificate exipires, the image will
+# need to be rebuilt.
+RUN gpg --quick-generate-key --batch --passphrase '' "TESTING-${_USER} <TESTING-${_USER}@example.com>" default sign 3m
 
 COPY --chown=${UID}:${GID} ./requirements*.txt /app/
 WORKDIR /app

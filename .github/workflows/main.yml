@@ -124,6 +124,9 @@ jobs:
             git config --global user.name "${GITHUB_ACTOR}"
             git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
 
+        - name: Create an ephemeral signing certificate for testing
+          run: gpg --quick-generate-key --batch --passphrase '' "TESTING-${GITHUB_ACTOR}- <TESTING-${GITHUB_ACTOR}@example.com>" default sign seconds=600
+
         - name: Run pytest
           run: pytest --cov-report xml:coverage-${{ matrix.python-version }}.xml --junitxml=test-results-${{ matrix.python-version }}.xml
 
