@@ -553,7 +553,7 @@ def some_git_repo(
     test_root: Path,
     remote: Optional[str] = None,
     branch: Optional[str] = None,
-    tag: Optional[str] = None,
+    tag_name: Optional[str] = None,
     tag_message: str = SOME_TAG_MESSAGE,
     detached: bool = False,
 ) -> InitedRepo:
@@ -565,8 +565,9 @@ def some_git_repo(
         linked to the primary_repo.
     :param branch: Name to use for an additional branch created on the primary repository. If
         `None`, no branch will be created.
-    :param tag: Name to use for a tag created on the primary repository. If `None`, no tag will be
-        created.
+    :param tag_name: Name to use for a tag created on the primary repository. If `None`, no tag
+        will be created.
+    :param tag_message: Message to use for a tag created on the primary repository.
     :param detached: If `True`, switch from the default branch to a detached HEAD situation that
         only points to the initial commit.
     :return: Data about the initialized repos.
@@ -587,8 +588,8 @@ def some_git_repo(
     if branch is not None:
         repo.create_head(branch)
 
-    if tag is not None:
-        repo.create_tag(tag, message=tag_message)
+    if tag_name is not None:
+        repo.create_tag(tag_name, message=tag_message)
 
     if detached:
         repo.head.reference = repo.commit("HEAD")
