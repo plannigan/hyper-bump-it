@@ -374,6 +374,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#commit-tag-signing" class="md-nav__link">
+    Commit &amp; Tag Signing
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -488,6 +495,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#commit-tag-signing" class="md-nav__link">
+    Commit &amp; Tag Signing
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -551,6 +565,10 @@ was not ready for the public. To help prevent this from occurring, <code>hyper-b
 branch at startup to check that it is an allowed branch. By default, <code>main</code> and <code>master</code> are the only
 allowed initial branches. Additional branches can be added with <code>extend_allowed_initial_branches</code>.
 This functionality can be disabled by setting <code>allowed-initial-branches</code> to an empty list.</p>
+<h2 id="commit-tag-signing">Commit &amp; Tag Signing</h2>
+<p>For users that want to sign commits or tags, this is supported out of the box. Commits created by
+<code>hyper-bump-it</code> will be signed if <code>commit.gpgsign</code> is set to <code>true</code>. Tags created by
+<code>hyper-bump-it</code> will be signed if <code>tag.gpgsign</code> is set to <code>true</code>.</p>
 
 
 
