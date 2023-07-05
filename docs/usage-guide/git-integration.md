@@ -53,4 +53,10 @@ branch at startup to check that it is an allowed branch. By default, `main` and 
 allowed initial branches. Additional branches can be added with `extend_allowed_initial_branches`.
 This functionality can be disabled by setting `allowed-initial-branches` to an empty list.
 
+## Commit & Tag Signing
+
+For users that want to sign commits or tags, this is supported out of the box. Commits created by
+`hyper-bump-it` will be signed if `commit.gpgsign` is set to `true`. Tags created by
+`hyper-bump-it` will be signed if `tag.gpgsign` is set to `true`.
+
 [git-python]: https://gitpython.readthedocs.io/

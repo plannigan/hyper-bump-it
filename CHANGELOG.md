@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Support for signing commits and tags.
 * Support for including a message on a tag.
 
 ### Fixed
