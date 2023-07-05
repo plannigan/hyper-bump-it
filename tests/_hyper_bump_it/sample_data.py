@@ -556,6 +556,8 @@ def some_git_repo(
     tag_name: Optional[str] = None,
     tag_message: str = SOME_TAG_MESSAGE,
     detached: bool = False,
+    sign_commits: bool = False,
+    sign_tags: bool = False,
 ) -> InitedRepo:
     """
     Initialize test repository setup (a primary with a single commit and remote with no commits)
@@ -570,6 +572,8 @@ def some_git_repo(
     :param tag_message: Message to use for a tag created on the primary repository.
     :param detached: If `True`, switch from the default branch to a detached HEAD situation that
         only points to the initial commit.
+    :param sign_commits: If `True`, configure the repository to sign commits.
+    :param sign_tags: If `True`, configure the repository to sign tags.
     :return: Data about the initialized repos.
     """
     repo_dir = test_root / "primary"
@@ -593,5 +597,9 @@ def some_git_repo(
 
     if detached:
         repo.head.reference = repo.commit("HEAD")
+
+    with repo.config_writer() as config_writer:
+        config_writer.add_value("commit", "gpgsign", sign_commits)
+        config_writer.add_value("tag", "gpgsign", sign_tags)
 
     return InitedRepo(repo, repo_dir, remote_repo, file)
