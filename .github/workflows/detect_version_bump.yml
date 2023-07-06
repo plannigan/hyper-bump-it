@@ -18,9 +18,17 @@ jobs:
     steps:
       - name: Get new version
         id: get-new-version
+        env:
+          MERGED_BRANCH_NAME: ${{ github.head_ref }}
         run: |
-          NEW_VERSION=$(echo ${{ github.head_ref }} | cut -d _ -f4 )
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          if [[ "${MERGED_BRANCH_NAME}" =~ ^bump_version_to_([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?)$ ]]; then
+            NEW_VERSION=${BASH_REMATCH[1]}
+            echo "::debug::New version=\"${NEW_VERSION}\""
+            echo "version=${NEW_VERSION}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "::error::New version not found in \"${MERGED_BRANCH_NAME}\""
+            exit 1
+          fi
       - name: Is prerelease?
         id: is-prerelease
         run: |
