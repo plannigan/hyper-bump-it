@@ -7,6 +7,8 @@ on:
     branches:
       - "main"
 
+permissions: {}
+
 jobs:
   trigger-release:
     runs-on: ubuntu-latest
@@ -18,14 +20,22 @@ jobs:
     steps:
       - name: Get new version
         id: get-new-version
+        env:
+          MERGED_BRANCH_NAME: ${{ github.head_ref }}
         run: |
-          NEW_VERSION=$(echo ${{ github.head_ref }} | cut -d _ -f4 )
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          if [[ "${MERGED_BRANCH_NAME}" =~ ^bump_version_to_([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?)$ ]]; then
+            NEW_VERSION=${BASH_REMATCH[1]}
+            echo "::debug::New version=\"${NEW_VERSION}\""
+            echo "version=${NEW_VERSION}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "::error::New version not found in \"${MERGED_BRANCH_NAME}\""
+            exit 1
+          fi
       - name: Is prerelease?
         id: is-prerelease
         run: |
           IS_PRERELEASE=$([[ "${{ steps.get-new-version.outputs.version }}" == *-[a-z]* ]] && echo true || echo false)
-          echo "result=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+          echo "result=${IS_PRERELEASE}" >> "${GITHUB_OUTPUT}"
       - name: Create Release
         uses: ncipollo/release-action@a2e71bdd4e7dab70ca26a852f29600c98b33153e # v1.12.0
         with:
