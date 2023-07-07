@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/plannigan/hyper-bump-it/branch/main/graph/badge.svg?token=V4DADJU0BI)][codecov]
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue)][mypy-home]
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black.svg)][black-home]
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/plannigan/hyper-bump-it/badge)][scorecard]
 
 # Hyper Bump It
 
@@ -131,3 +132,4 @@ Pushing commit to origin with tag v1.3.0
 [codecov]: https://codecov.io/gh/plannigan/hyper-bump-it
 [mypy-home]: http://mypy-lang.org/
 [black-home]: https://github.com/psf/black
+[scorecard]: https://securityscorecards.dev/viewer/?uri=github.com/plannigan/hyper-bump-it
