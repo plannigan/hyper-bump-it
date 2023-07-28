@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Internal
 
 * Update `typer` to use custom types and `Annotated` declaration style.
+* Update to `pydantic` 2.0.
 * Use OpenID Connect as a [trusted publisher][trusted-publishers] for uploading releases.
 
 ## [0.4.0] - 2023-02-27

@@ -1,18 +1,17 @@
-import dataclasses
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional, Union, cast
+from typing import Annotated, Optional, Union, cast
 
 import tomlkit
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
-    StrictBool,
-    StrictStr,
     ValidationError,
-    root_validator,
-    validator,
+    WrapValidator,
+    model_validator,
 )
+from pydantic_core.core_schema import ValidatorFunctionWrapHandler
 from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
@@ -47,78 +46,84 @@ PYPROJECT_SUB_TABLE_KEYS = ("tool", ROOT_TABLE_KEY)
 
 
 class HyperBaseMode(BaseModel):
-    class Config:
-        extra = "forbid"
-        min_anystr_length = 1
-        allow_mutation = False
+    model_config = ConfigDict(
+        extra="forbid", str_min_length=1, frozen=True, strict=True
+    )
+
+
+def _check_action(
+    value: Optional[object], handler: ValidatorFunctionWrapHandler
+) -> GitAction:
+    if isinstance(value, str):
+        for action in GitAction:
+            if value == action.value:
+                return action
+        raise ValueError(f"value must be one of: {', '.join(GitAction)}")
+    return cast(GitAction, handler(value))
+
+
+PossiblyStrGitAction = Annotated[GitAction, WrapValidator(_check_action)]
 
 
 class GitActions(HyperBaseMode):
-    commit: GitAction = DEFAULT_COMMIT_ACTION
-    branch: GitAction = DEFAULT_BRANCH_ACTION
-    tag: GitAction = DEFAULT_TAG_ACTION
+    commit: PossiblyStrGitAction = DEFAULT_COMMIT_ACTION
+    branch: PossiblyStrGitAction = DEFAULT_BRANCH_ACTION
+    tag: PossiblyStrGitAction = DEFAULT_TAG_ACTION
 
-    @root_validator(skip_on_failure=True)
+    @model_validator(mode="after")
     def _check_git_actions(
-        cls,
-        values: dict[str, GitAction],
-    ) -> dict[str, GitAction]:
-        validate_git_action_combination(**values)
-        return values
+        self,
+    ) -> "GitActions":
+        validate_git_action_combination(
+            commit=self.commit, branch=self.branch, tag=self.tag
+        )
+        return self
 
 
 class Git(HyperBaseMode):
-    remote: StrictStr = DEFAULT_REMOTE
-    commit_format_pattern: StrictStr = DEFAULT_COMMIT_FORMAT_PATTERN
-    branch_format_pattern: StrictStr = DEFAULT_BRANCH_FORMAT_PATTERN
-    tag_name_format_pattern: StrictStr = DEFAULT_TAG_NAME_FORMAT_PATTERN
-    tag_message_format_pattern: StrictStr = DEFAULT_TAG_MESSAGE_FORMAT_PATTERN
+    remote: str = DEFAULT_REMOTE
+    commit_format_pattern: str = DEFAULT_COMMIT_FORMAT_PATTERN
+    branch_format_pattern: str = DEFAULT_BRANCH_FORMAT_PATTERN
+    tag_name_format_pattern: str = DEFAULT_TAG_NAME_FORMAT_PATTERN
+    tag_message_format_pattern: str = DEFAULT_TAG_MESSAGE_FORMAT_PATTERN
     allowed_initial_branches: frozenset[str] = DEFAULT_ALLOWED_INITIAL_BRANCHES
     extend_allowed_initial_branches: frozenset[str] = frozenset()
     actions: GitActions = GitActions()
 
 
 class File(HyperBaseMode):
-    file_glob: StrictStr  # relative to project root directory
-    keystone: StrictBool = False
-    search_format_pattern: StrictStr = DEFAULT_SEARCH_PATTERN
-    replace_format_pattern: Optional[StrictStr] = None
+    file_glob: str  # relative to project root directory
+    keystone: bool = False
+    search_format_pattern: str = DEFAULT_SEARCH_PATTERN
+    replace_format_pattern: Optional[str] = None
 
 
-HyperConfigFileValues: TypeAlias = dict[
-    str, Union[list[File], Optional[StrictStr], Git]
-]
+HyperConfigFileValues: TypeAlias = dict[str, Union[list[File], Optional[str], Git]]
+
+
+def _check_version(
+    value: Optional[object], handler: ValidatorFunctionWrapHandler
+) -> Optional[Version]:
+    if isinstance(value, str):
+        return Version.parse(value)
+    return cast(Version, handler(value))
+
+
+OptionalVersion = Annotated[Optional[Version], WrapValidator(_check_version)]
 
 
 class ConfigFile(HyperBaseMode):
-    files: list[File] = Field(..., min_items=1)
-    current_version: Optional[Version] = None
-    show_confirm_prompt: StrictBool = True
+    files: list[File] = Field(..., min_length=1)
+    current_version: OptionalVersion = None
+    show_confirm_prompt: bool = True
     git: Git = Git()
 
-    @validator("current_version", pre=True)
-    def _check_version(cls, value: Optional[object]) -> Optional[Version]:
-        if value is None:
-            return None
-        if isinstance(value, Version):
-            return dataclasses.replace(value)
-        if isinstance(value, str):
-            return Version.parse(value)
-        raise TypeError(
-            "Value must be a version or a string that can be parsed into a version"
-        )
-
-    @root_validator(skip_on_failure=True)
-    def _check_keystone_files(
-        cls,
-        values: HyperConfigFileValues,
-    ) -> HyperConfigFileValues:
-        files = cast(list[File], values["files"])
-        keystone_file_count = sum(1 for file in files if file.keystone)
+    @model_validator(mode="after")
+    def _check_keystone_files(self) -> "ConfigFile":
+        keystone_file_count = sum(1 for file in self.files if file.keystone)
         if keystone_file_count > 1:
             raise ValueError("Only one file is allowed to be a keystone file")
-        current_version = values.get("current_version")
-        if current_version is None:
+        if self.current_version is None:
             if keystone_file_count == 0:
                 raise ValueError(
                     "current_version must be set if there is not a keystone file"
@@ -127,7 +132,7 @@ class ConfigFile(HyperBaseMode):
             raise ValueError(
                 "Configuration can't specify the current_version while also having a keystone file"
             )
-        return values
+        return self
 
     @property
     def keystone_config(self) -> Optional[tuple[str, str]]:

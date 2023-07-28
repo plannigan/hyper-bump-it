@@ -156,7 +156,7 @@ def _write_config(config: Mapping, config_file: Path) -> None:  # type: ignore[t
 
 
 def _config_to_dict(config: ConfigFile) -> dict:  # type: ignore[type-arg]
-    config_dict = config.dict(exclude_defaults=True)
+    config_dict = config.model_dump(exclude_defaults=True)
     if config.current_version is not None:
         config_dict["current_version"] = str(config.current_version)
     _git_branch_set_to_list(config_dict, "allowed_initial_branches")

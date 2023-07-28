@@ -26,7 +26,7 @@ class FilesConfigEditor:
     def __init__(
         self, initial_config: list[FileDefinition], validator: DefinitionValidator
     ) -> None:
-        self._config = [file.copy() for file in initial_config]
+        self._config = [file.model_copy() for file in initial_config]
         self._validator = validator
         self._config_funcs = {
             FilesMenu.Add: self._add_definition,

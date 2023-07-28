@@ -10,7 +10,7 @@ from rich.text import Text
 from . import ui
 
 if TYPE_CHECKING:
-    from pydantic.error_wrappers import ErrorDict
+    from pydantic_core import ErrorDetails
 
 
 class BumpItError(Exception):
@@ -365,8 +365,12 @@ class ConfigurationFileNotFoundError(ConfigurationError):
 
 
 class ConfigurationFileError(ConfigurationError):
-    def __init__(self, file: Path, message_suffix: str) -> None:
+    def __init__(
+        self, file: Path, message_suffix: Union[str, Callable[[], str]]
+    ) -> None:
         self.file = file
+        if not isinstance(message_suffix, str):
+            message_suffix = message_suffix()
         super().__init__(f"The configuration file ({self.file}) {message_suffix}")
 
     @property
@@ -405,26 +409,29 @@ class SubTableNotExistError(ConfigurationFileError):
 class InvalidConfigurationError(ConfigurationFileError):
     def __init__(self, file: Path, cause: ValidationError) -> None:
         self.cause = cause
-        super().__init__(file, f"is not valid: {self.cause}")
+        super().__init__(file, lambda: self._append_message_suffix(Text()).plain)
 
-    # Slightly customized variant of pydantic's __str__() to make it more end user-friendly
-    # and enhanced with rich styles.
     def __rich__(self) -> Text:
+        return self._append_message_suffix(self._message_prefix)
+
+    # Slightly customized variant of pydantic's ValidationError.__str__() to make it more end-user
+    # friendly and enhanced with rich styles.
+    def _append_message_suffix(self, initial_text: Text) -> Text:
         errors = self.cause.errors()
         num_errors = len(errors)
 
-        message = self._message_prefix.append("is not valid:\n")
+        message = initial_text.append("is not valid:\n")
         message.append(f"{num_errors} validation error")
         if num_errors != 1:
             message.append("s")
         message.append(" for ")
-        message.append(self.cause.model.__name__, style="emphasis")
+        message.append(self.cause.title, style="emphasis")
         message.append("\n")
-        message.append(InvalidConfigurationError.display_errors(errors))
+        message.append(InvalidConfigurationError._display_errors(errors))
         return message
 
     @staticmethod
-    def display_errors(errors: list["ErrorDict"]) -> Text:
+    def _display_errors(errors: list["ErrorDetails"]) -> Text:
         return Text("\n").join(
             InvalidConfigurationError._display_error_loc(e)
             .append("  ")
@@ -433,18 +440,21 @@ class InvalidConfigurationError(ConfigurationFileError):
         )
 
     @staticmethod
-    def _display_error_loc(error: "ErrorDict") -> Text:
-        if len(error["loc"]) == 1 and error["loc"][0] == "__root__":
+    def _display_error_loc(error: "ErrorDetails") -> Text:
+        if len(error["loc"]) == 0:
             return Text("")
         return (
-            Text(" -> ")
+            Text(".")
             .join(Text(str(e), style="error.loc") for e in error["loc"])
             .append("\n")
         )
 
 
 def first_error_message(ex: ValidationError) -> str:
-    return ex.errors()[0]["msg"]
+    first_error = ex.errors(include_context=True)[0]
+    if (ctx_error := first_error["ctx"].get("error")) is not None:
+        return str(ctx_error)
+    return first_error["msg"]
 
 
 TValue = TypeVar("TValue")
