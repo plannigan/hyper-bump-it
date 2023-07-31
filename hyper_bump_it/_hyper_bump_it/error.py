@@ -452,8 +452,9 @@ class InvalidConfigurationError(ConfigurationFileError):
 
 def first_error_message(ex: ValidationError) -> str:
     first_error = ex.errors(include_context=True)[0]
-    if (ctx_error := first_error["ctx"].get("error")) is not None:
-        return str(ctx_error)
+    if (ctx := first_error.get("ctx")) is not None:
+        if (ctx_error := ctx.get("error")) is not None:
+            return str(ctx_error)
     return first_error["msg"]
 
 
