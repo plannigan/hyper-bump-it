@@ -38,7 +38,7 @@ class GitMenu(Enum):
 
 class GitConfigEditor:
     def __init__(self, initial_config: GitConfigFile) -> None:
-        self._config: GitConfigFile = initial_config.copy(deep=True)
+        self._config: GitConfigFile = initial_config.model_copy(deep=True)
         self._config_funcs = {
             GitMenu.Remote: self._configure_remote,
             GitMenu.CommitFormatPattern: self._configure_commit_format_pattern,
@@ -102,7 +102,7 @@ class GitConfigEditor:
         allowed_branches, extend_overload_branches = AllowedBranchEditor(
             self._config.allowed_initial_branches
         ).configure()
-        self._config = self._config.copy(
+        self._config = self._config.model_copy(
             update={
                 "allowed_initial_branches": allowed_branches,
                 "extend_allowed_initial_branches": extend_overload_branches,
@@ -121,7 +121,7 @@ class GitConfigEditor:
         self, config_name: str, value: Union[Optional[str], frozenset[str]]
     ) -> None:
         if value is not None:
-            self._config = self._config.copy(update={config_name: value})
+            self._config = self._config.model_copy(update={config_name: value})
 
     def _configure_actions(self) -> None:
         ui.display("There are three Git actions: create, branch, tag")
@@ -160,7 +160,7 @@ class GitConfigEditor:
                     .append(first_error_message(ex))
                 )
 
-        self._config = self._config.copy(update={"actions": actions})
+        self._config = self._config.model_copy(update={"actions": actions})
         ui.blank_line()
 
 

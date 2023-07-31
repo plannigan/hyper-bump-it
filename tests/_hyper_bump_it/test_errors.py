@@ -1,8 +1,9 @@
 from io import StringIO
 from pathlib import Path
+from typing import Literal
 
 import pytest
-from pydantic import BaseModel, ValidationError, root_validator
+from pydantic import BaseModel, ValidationError, model_validator
 
 from hyper_bump_it._hyper_bump_it import error, ui
 from hyper_bump_it._hyper_bump_it.format_pattern import keys
@@ -10,7 +11,8 @@ from tests._hyper_bump_it import sample_data as sd
 
 SOME_VALID_KEYS = [keys.VERSION, keys.NEW_VERSION]
 SOME_ERROR_MESSAGE = "test error message"
-SOME_REF_TYPE = "branch"
+SOME_VALIDATION_ERROR_MESSAGE = "foo is not allowed to equal bazz"
+SOME_REF_TYPE: Literal["branch"] = "branch"
 SOME_SUB_TABLES = ("some-name", "some-sub-name")
 
 
@@ -121,36 +123,35 @@ def test_errors__rich_output__equivalent_to_str_representation(
         (
             "single error, includes error type",
             {"foo": 1},
-            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid: "
+            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "1 validation error for SomeModel\n"
             "bar\n"
-            "  field required (type=value_error.missing)",
+            "  Field required",
         ),
         (
             "multiple errors, list each",
             {},
-            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid: "
+            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "2 validation errors for SomeModel\n"
             "foo\n"
-            "  field required (type=value_error.missing)\n"
+            "  Field required\n"
             "bar\n"
-            "  field required (type=value_error.missing)",
+            "  Field required",
         ),
         (
             "error below the top level object",
             {"foo": 1, "bar": {}},
-            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid: "
+            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "1 validation error for SomeModel\n"
-            "bar -> bazz\n"
-            "  field required (type=value_error.missing)",
+            "bar.bazz\n"
+            "  Field required",
         ),
         (
             "error at root level, location is displayed",
             {"foo": 1, "bar": {"bazz": 1}},
-            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid: "
+            f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "1 validation error for SomeModel\n"
-            "__root__\n"
-            "  foo is not allowed to equal bazz (type=value_error)",
+            f"  Value error, {SOME_VALIDATION_ERROR_MESSAGE}",
         ),
     ],
 )
@@ -166,7 +167,7 @@ def test_invalid_configuration_error__str_output__expected_text(
 
     content = str(exception)
 
-    assert expected_content == content
+    assert content == expected_content
 
 
 @pytest.mark.parametrize(
@@ -178,7 +179,7 @@ def test_invalid_configuration_error__str_output__expected_text(
             f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "1 validation error for SomeModel\n"
             "bar\n"
-            "  field required\n",
+            "  Field required\n",
         ),
         (
             "multiple errors, list each",
@@ -186,24 +187,24 @@ def test_invalid_configuration_error__str_output__expected_text(
             f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "2 validation errors for SomeModel\n"
             "foo\n"
-            "  field required\n"
+            "  Field required\n"
             "bar\n"
-            "  field required\n",
+            "  Field required\n",
         ),
         (
             "error below the top level object",
             {"foo": 1, "bar": {}},
             f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "1 validation error for SomeModel\n"
-            "bar -> bazz\n"
-            "  field required\n",
+            "bar.bazz\n"
+            "  Field required\n",
         ),
         (
             "error at root level, location not displayed",
             {"foo": 1, "bar": {"bazz": 1}},
             f"The configuration file ({sd.SOME_CONFIG_FILE_NAME}) is not valid:\n"
             "1 validation error for SomeModel\n"
-            "  foo is not allowed to equal bazz\n",
+            f"  Value error, {SOME_VALIDATION_ERROR_MESSAGE}\n",
         ),
     ],
 )
@@ -239,9 +240,25 @@ def test_invalid_configuration_error__rich_output_escape_required__expected_text
         f"The configuration file ({sd.SOME_ESCAPE_REQUIRED_TEXT}) is not valid:\n"
         "1 validation error for SomeModel\n"
         "bar\n"
-        "  field required\n"
+        "  Field required\n"
     )
     assert expected_content == rich_content
+
+
+@pytest.mark.parametrize(
+    ["args", "expected_message"],
+    [
+        # no context for pydantic native validation
+        ({"foo": 1}, "Field required"),
+        # context for custom validation
+        ({"foo": 1, "bar": {"bazz": 1}}, SOME_VALIDATION_ERROR_MESSAGE),
+    ],
+)
+def test_first_error__context_exists__exception_message(args, expected_message):
+    validation_error = _some_validation_error(args)
+
+    message = error.first_error_message(validation_error)
+    assert message == expected_message
 
 
 class SomeSubModel(BaseModel):
@@ -252,14 +269,14 @@ class SomeModel(BaseModel):
     foo: int
     bar: SomeSubModel
 
-    @root_validator(skip_on_failure=True)
-    def check_foo_value(cls, values):
-        if values["foo"] == values["bar"].bazz:
-            raise ValueError("foo is not allowed to equal bazz")
-        return values
+    @model_validator(mode="after")
+    def check_foo_value(self) -> "SomeModel":
+        if self.foo == self.bar.bazz:
+            raise ValueError(SOME_VALIDATION_ERROR_MESSAGE)
+        return self
 
 
-def _some_validation_error(kwargs) -> ValidationError:
+def _some_validation_error(kwargs: dict[str, object]) -> ValidationError:
     try:
         SomeModel(**kwargs)
     except ValidationError as ex:

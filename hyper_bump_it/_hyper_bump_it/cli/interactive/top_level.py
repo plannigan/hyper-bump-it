@@ -34,7 +34,7 @@ class InteractiveConfigEditor:
                 "The current version of the initial config must not be None."
             )
         self._current_version: Version = initial_config.current_version
-        self._config: ConfigFile = initial_config.copy(deep=True)
+        self._config: ConfigFile = initial_config.model_copy(deep=True)
         self._pyproject = pyproject
         self._project_root = project_root
         self._was_configured: Set[TopMenu] = set()
@@ -64,7 +64,7 @@ class InteractiveConfigEditor:
         ui.blank_line()
         self._pyproject = _prompt_pyproject(self._pyproject)
         ui.blank_line()
-        self._config = self._config.copy(
+        self._config = self._config.model_copy(
             update={"show_confirm_prompt": show_confirm_prompt}
         )
 
@@ -75,13 +75,13 @@ class InteractiveConfigEditor:
         )
         file_config, has_keystone = editor.configure()
         current_version = None if has_keystone else self._current_version
-        self._config = self._config.copy(
+        self._config = self._config.model_copy(
             update={"files": file_config, "current_version": current_version}
         )
 
     def _configure_git(self) -> None:
         editor = GitConfigEditor(self._config.git)
-        self._config = self._config.copy(update={"git": editor.configure()})
+        self._config = self._config.model_copy(update={"git": editor.configure()})
 
 
 def _prompt_top_level_menu() -> TopMenu:
