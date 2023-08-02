@@ -5,7 +5,7 @@
   "useBaseBranchConfig": "merge",
 
   "extends": [
-    "config:base",
+    "config:recommended",
     "helpers:pinGitHubActionDigests"
   ],
 
