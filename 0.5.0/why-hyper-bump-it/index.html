@@ -1,0 +1,777 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://plannigan.github.io/hyper-bump-it/0.5.0/why-hyper-bump-it/">
+      
+      
+        <link rel="prev" href="../usage-guide/git-integration/">
+      
+      
+        <link rel="next" href="../development-guide/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
+    
+    
+      
+        <title>Why hyper-bump-it? - hyper-bump-it Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#why-hyper-bump-it" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../..">
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="hyper-bump-it Documentation" class="md-header__button md-logo" aria-label="hyper-bump-it Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            hyper-bump-it Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Why hyper-bump-it?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/plannigan/hyper-bump-it" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    plannigan/hyper-bump-it
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="hyper-bump-it Documentation" class="md-nav__button md-logo" aria-label="hyper-bump-it Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    hyper-bump-it Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/plannigan/hyper-bump-it" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    plannigan/hyper-bump-it
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Usage Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage Guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage-guide/configuration/" class="md-nav__link">
+        Configuration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage-guide/format-patterns/" class="md-nav__link">
+        Format Patterns
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage-guide/git-integration/" class="md-nav__link">
+        Git Integration
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Why hyper-bump-it?
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Why hyper-bump-it?
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-differences" class="md-nav__link">
+    Key Differences
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Differences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#branch-version-control-support" class="md-nav__link">
+    Branch Version Control Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#push-version-control-support" class="md-nav__link">
+    Push Version Control Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current-version-from-file" class="md-nav__link">
+    Current Version from File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toml-configuration-file" class="md-nav__link">
+    TOML Configuration File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiline-search-replacement-patterns" class="md-nav__link">
+    Multiline Search &amp; Replacement Patterns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date-support" class="md-nav__link">
+    Date Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mercurial-support" class="md-nav__link">
+    Mercurial Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-version-schemes" class="md-nav__link">
+    Custom Version Schemes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-differences" class="md-nav__link">
+    Table of Differences
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development-guide/" class="md-nav__link">
+        Development Guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-differences" class="md-nav__link">
+    Key Differences
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Differences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#branch-version-control-support" class="md-nav__link">
+    Branch Version Control Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#push-version-control-support" class="md-nav__link">
+    Push Version Control Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current-version-from-file" class="md-nav__link">
+    Current Version from File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toml-configuration-file" class="md-nav__link">
+    TOML Configuration File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiline-search-replacement-patterns" class="md-nav__link">
+    Multiline Search &amp; Replacement Patterns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date-support" class="md-nav__link">
+    Date Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mercurial-support" class="md-nav__link">
+    Mercurial Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-version-schemes" class="md-nav__link">
+    Custom Version Schemes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-differences" class="md-nav__link">
+    Table of Differences
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="why-hyper-bump-it">Why hyper-bump-it?</h1>
+<p>There are multiple other version bumping tools available. Before creating <code>hyper-bump-it</code>, I had
+used <a href="https://github.com/c4urself/bump2version">bump2version</a> and <a href="https://github.com/your-tools/tbump">tbump</a>. However, each time I would end up writing a
+script to wrap the tool to get the full functionality I desired.</p>
+<p>This page covers some of the more significant differences between <code>hyper-bump-it</code>, <code>bump2version</code>,
+and <code>tbump</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>. This includes some things that are not supported by <code>hyper-bump-it</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.</p>
+<h2 id="key-differences">Key Differences</h2>
+<h3 id="branch-version-control-support">Branch Version Control Support</h3>
+<p>Both <code>bump2version</code> and <code>tbump</code> support committing and tagging the change in the local repository.
+However, it is common to not allow pushing directly to the default branch of a repository.</p>
+<p><code>hyper-bump-it</code> can be used to create a branch for the commit that updates the version. This branch
+can then be push and merged as part of a pull request.</p>
+<h3 id="push-version-control-support">Push Version Control Support</h3>
+<p><code>bump2version</code> can only make changes to the local repository. <code>tbump</code> can push changes to the
+remote repository (and will do that by default).</p>
+<p><code>hyper-bump-it</code> can push changes to the remote repository, but will only do that when configured to
+do so.</p>
+<h3 id="current-version-from-file">Current Version from File</h3>
+<p>Most software build/release tools already have an authoritative place for the version to be stored.
+<code>hyper-bump-it</code> can be configured to extract the current version for that file (see
+<a href="../usage-guide/configuration/#current-version">Current Version</a>). This has the added benefit of the configuration file not being
+edited every time version is updated.</p>
+<p>This functionality is optional. Explicitly listing the current version in the configuration file
+is supported in the same way as done in <code>bump2version</code> and <code>tbump</code>.</p>
+<h3 id="toml-configuration-file">TOML Configuration File</h3>
+<p><code>bump2version</code> uses an <a href="https://en.wikipedia.org/wiki/INI_file">INI configuration file</a>. However, that file format does not have a
+standard specification and different implementation have varying support for some features.</p>
+<p><code>hyper-bump-it</code> and <code>tbump</code> use a <a href="https://toml.io/">TOML</a> configuration files. The specification of this
+file format ensures that there are no ambiguities. It is straight forward for people to read and
+programs to parse. The requirement for quoting strings resolves potential issues that can arise
+when dealing with multi-line string and/or strings that contain comment characters.</p>
+<h3 id="multiline-search-replacement-patterns">Multiline Search &amp; Replacement Patterns</h3>
+<p><code>hyper-bump-it</code> and <code>bump2version</code> support search or replacement patterns that span multiple lines.
+This can be helpful for dealing with ambiguities in a file that needs to be updated or adding
+multiple lines of text as part of the update.</p>
+<p><code>tbump</code> does not have support for this feature.</p>
+<h3 id="date-support">Date Support</h3>
+<p><code>hyper-bump-it</code> and <code>bump2version</code> support including date information in the search and replacement
+text. However, <code>bump2version</code> will always use the current date when looking in a file for a match.
+This means <code>bump2version</code> is not able to update text containing an older date. In contrast, when
+<code>hyper-bump-it</code> can match on arbitrary dates as part of the search text.</p>
+<p><code>tbump</code> does not have support for this feature.</p>
+<h3 id="mercurial-support">Mercurial Support</h3>
+<p><code>bump2version</code> can work with projects that use Mercurial or Git.</p>
+<p><code>hyper-bump-it</code> and <code>tbump</code> only support Git.</p>
+<h3 id="custom-version-schemes">Custom Version Schemes</h3>
+<p><code>hyper-bump-it</code> assumes that the full version is compatible with the <a href="https://semver.org/">semantic versioning</a>
+specification.</p>
+<p><code>bump2version</code> and <code>tbump</code> allow for fully customized version. However, this doesn't
+mean that every file must contain the full version (see <a href="../usage-guide/format-patterns/">Format Patterns</a>).</p>
+<h2 id="table-of-differences">Table of Differences</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>hyper-bump-it</th>
+<th>bump2version</th>
+<th>tbump</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#branch-version-control-support">VCS Branching</a></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><a href="#push-version-control-support">VCS Push</a></td>
+<td>Yes (opt-in)</td>
+<td>No</td>
+<td>Yes (opt-out)</td>
+</tr>
+<tr>
+<td><a href="#current-version-from-file">Current Version from File</a></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><a href="#toml-configuration-file">Configuration File Format</a></td>
+<td>TOML</td>
+<td>INI</td>
+<td>TOML</td>
+</tr>
+<tr>
+<td><a href="#multiline-search--replacement-patterns">Multiline Search &amp; Replace</a></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><a href="#date-support">Date Support</a></td>
+<td>Yes</td>
+<td>Partial (exact match)</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Mercurial</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><a href="#custom-version-schemes">Custom Version Schemes</a></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>As of the writing of this page (2023-02-20).&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Support for these feature could be added in the future.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+    
+  </body>
+</html>
