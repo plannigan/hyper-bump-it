@@ -34,6 +34,7 @@ authors = [
 homepage = "https://github.com/plannigan/hyper-bump-it"
 changelog = "https://github.com/plannigan/hyper-bump-it/blob/main/CHANGELOG.md"
 issues = "https://github.com/plannigan/hyper-bump-it/issues"
+documentation = "https://plannigan.github.io/hyper-bump-it"
 
 [project.scripts]
 hyper-bump-it = "hyper_bump_it._hyper_bump_it.cli:app"
