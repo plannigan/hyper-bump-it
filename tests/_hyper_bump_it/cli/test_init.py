@@ -16,9 +16,11 @@ from hyper_bump_it._hyper_bump_it.config import (
     ConfigFile,
     FileDefinition,
     GitAction,
+    file,
 )
 from tests._hyper_bump_it import sample_data as sd
 from tests._hyper_bump_it.cli.common import assert_failure, assert_success, runner
+from tests.conftest import ForceInput
 
 PYPROJECT_ROOT_TABLE = ".".join(PYPROJECT_SUB_TABLE_KEYS)
 
@@ -299,6 +301,158 @@ def test_init__interactive__write_out_result(
     assert_success(result)
     assert config_file.is_file()
     assert config_file.read_text() == expected_text
+
+
+@pytest.mark.parametrize(
+    ["file_name", "root_table_key", "cli_args"],
+    [
+        (HYPER_CONFIG_FILE_NAME, file.ROOT_TABLE_KEY, []),
+        (PYPROJECT_FILE_NAME, PYPROJECT_ROOT_TABLE, ["--pyproject"]),
+    ],
+)
+def test_init__config_exists_non_interactive__fail_without_editing_file(
+    file_name: str,
+    root_table_key: str,
+    cli_args: list["str"],
+    tmp_path: Path,
+):
+    config_file = tmp_path / file_name
+    file_text = sd.some_minimal_config_text(root_table_key, sd.SOME_VERSION_STRING)
+    config_file.write_text(file_text)
+
+    result = _run_non_interactive(tmp_path, *cli_args)
+
+    assert_failure(result)
+    assert config_file.read_text() == file_text
+
+
+@pytest.mark.parametrize(
+    ["file_name", "root_table_key", "cli_args", "inputs"],
+    [
+        (HYPER_CONFIG_FILE_NAME, file.ROOT_TABLE_KEY, [], [ForceInput.NO_INPUT, "n"]),
+        (
+            PYPROJECT_FILE_NAME,
+            PYPROJECT_ROOT_TABLE,
+            ["--pyproject"],
+            [ForceInput.NO_INPUT, "n"],
+        ),
+    ],
+)
+def test_init__config_exists_interactive_no_overwrite__fail_without_editing_file(
+    file_name: str,
+    root_table_key: str,
+    cli_args: list[str],
+    inputs: list[str],
+    force_input: ForceInput,
+    tmp_path: Path,
+):
+    force_input(*inputs)
+    config_file = tmp_path / file_name
+    file_text = sd.some_minimal_config_text(root_table_key, sd.SOME_VERSION_STRING)
+    config_file.write_text(file_text)
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "init",
+            "--interactive",
+            "--project-root",
+            str(tmp_path),
+            *cli_args,
+            sd.SOME_VERSION_STRING,
+        ],
+        catch_exceptions=False,
+    )
+
+    assert_failure(result)
+    assert config_file.read_text() == file_text
+
+
+def test_init__dedicated_config_exists_interactive_overwrite__file_updated(
+    force_input: ForceInput,
+    tmp_path: Path,
+    mocker,
+):
+    force_input("y")
+    mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.interactive.config_update",
+        return_value=(
+            ConfigFile(
+                current_version=sd.SOME_VERSION,
+                files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
+            ),
+            False,
+        ),
+    )
+    config_file = tmp_path / HYPER_CONFIG_FILE_NAME
+    file_text = sd.some_minimal_config_text(
+        ROOT_TABLE_KEY, sd.SOME_OTHER_VERSION_STRING
+    )
+    config_file.write_text(file_text)
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "init",
+            "--interactive",
+            "--project-root",
+            str(tmp_path),
+            sd.SOME_VERSION_STRING,
+        ],
+        catch_exceptions=False,
+    )
+
+    assert_success(result)
+    assert config_file.read_text() == sd.some_minimal_config_text(
+        ROOT_TABLE_KEY,
+        sd.SOME_VERSION_STRING,
+        file_glob=common.EXAMPLE_FILE_GLOB,
+        trim_empty_lines=True,
+    )
+
+
+def test_init__pyproject_config_exists_interactive_overwrite__file_updated(
+    force_input: ForceInput,
+    tmp_path: Path,
+    mocker,
+):
+    force_input("y")
+    mocker.patch(
+        "hyper_bump_it._hyper_bump_it.cli.interactive.config_update",
+        return_value=(
+            ConfigFile(
+                current_version=sd.SOME_VERSION,
+                files=[FileDefinition(file_glob=common.EXAMPLE_FILE_GLOB)],
+            ),
+            True,
+        ),
+    )
+    config_file = tmp_path / PYPROJECT_FILE_NAME
+    file_text = sd.some_minimal_config_text(
+        PYPROJECT_ROOT_TABLE, sd.SOME_OTHER_VERSION_STRING
+    )
+    config_file.write_text(file_text)
+
+    result = runner.invoke(
+        cli.app,
+        [
+            "init",
+            "--interactive",
+            "--project-root",
+            str(tmp_path),
+            "--pyproject",
+            sd.SOME_VERSION_STRING,
+        ],
+        catch_exceptions=False,
+    )
+
+    assert_success(result)
+    assert config_file.read_text() == sd.some_minimal_config_text(
+        PYPROJECT_ROOT_TABLE,
+        sd.SOME_VERSION_STRING,
+        file_glob=common.EXAMPLE_FILE_GLOB,
+        trim_empty_lines=True,
+    )
 
 
 def _run_non_interactive(project_root: Path, *cli_args) -> Result:

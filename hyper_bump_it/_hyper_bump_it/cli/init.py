@@ -7,6 +7,7 @@ from typing import Annotated, Mapping
 import tomlkit
 import typer
 from pydantic import ValidationError
+from rich.text import Text
 from tomlkit.exceptions import TOMLKitError
 
 from .. import ui
@@ -29,7 +30,11 @@ from ..config import (
     GitActionsConfigFile,
     GitConfigFile,
 )
-from ..error import ConfigurationFileReadError, first_error_message
+from ..error import (
+    ConfigurationAlreadyExistsError,
+    ConfigurationFileReadError,
+    first_error_message,
+)
 from ..version import Version
 from . import common, interactive
 
@@ -127,35 +132,84 @@ def init_command(
                 config, pyproject, project_root
             )
 
-        if pyproject:
-            _write_pyproject_config(config, project_root)
-        else:
-            _write_dedicated_config(config, project_root / config_file_name)
-
-
-def _write_pyproject_config(config: ConfigFile, project_root: Path) -> None:
-    config_file = project_root / PYPROJECT_FILE_NAME
-    if config_file.exists():
         try:
-            full_document = tomlkit.parse(config_file.read_text())
-        except (OSError, TOMLKitError) as ex:
-            raise ConfigurationFileReadError(config_file, ex) from ex
-    else:
+            if pyproject:
+                _maybe_write_pyproject_config(config, project_root, non_interactive)
+            else:
+                _maybe_write_dedicated_config(
+                    config, project_root / config_file_name, non_interactive
+                )
+        except ConfigurationAlreadyExistsError as ex:
+            common.display_and_exit(ex)
+
+
+def _maybe_write_pyproject_config(
+    config: ConfigFile, project_root: Path, non_interactive: bool
+) -> None:
+    config_file = project_root / PYPROJECT_FILE_NAME
+    if not config_file.exists():
+        # no need to existing config check
         full_document = tomlkit.TOMLDocument()
+        _write_pyproject_config(config, config_file, full_document)
+        return
+
+    try:
+        full_document = tomlkit.parse(config_file.read_text())
+    except (OSError, TOMLKitError) as ex:
+        raise ConfigurationFileReadError(config_file, ex) from ex
+
+    if _pyproject_has_config(full_document):
+        if non_interactive:
+            raise ConfigurationAlreadyExistsError(config_file)
+
+        if not _confirm_overwrite(config_file, "already has a"):
+            raise ConfigurationAlreadyExistsError(config_file)
+
+    _write_pyproject_config(config, config_file, full_document)
+
+
+def _pyproject_has_config(pyproject_config: tomlkit.TOMLDocument) -> bool:
+    tool_table = pyproject_config.get(PYPROJECT_SUB_TABLE_KEYS[0])
+    return tool_table is not None and tool_table.get(ROOT_TABLE_KEY) is not None
+
+
+def _write_pyproject_config(
+    config: ConfigFile, config_file: Path, full_document: tomlkit.TOMLDocument
+) -> None:
+    # ensure tool table exists
     tool_table = full_document.setdefault(PYPROJECT_SUB_TABLE_KEYS[0], tomlkit.table())
     tool_table.update(_config_to_dict(config))
     _write_config(full_document, config_file)
 
 
-def _write_dedicated_config(config: ConfigFile, config_file: Path) -> None:
+def _maybe_write_dedicated_config(
+    config: ConfigFile, config_file: Path, non_interactive: bool
+) -> None:
+    if config_file.exists():
+        if non_interactive:
+            raise ConfigurationAlreadyExistsError(config_file)
+        if not _confirm_overwrite(config_file, "already exists as a"):
+            raise ConfigurationAlreadyExistsError(config_file)
+
     _write_config(_config_to_dict(config), config_file)
 
 
-def _write_config(config: Mapping, config_file: Path) -> None:  # type: ignore[type-arg]
+def _confirm_overwrite(config_file: Path, issue_message: str) -> bool:
+    return ui.confirm(
+        Text()
+        .append(str(config_file), style="file.path")
+        .append(f" {issue_message} ")
+        .append("hyper-bump-it", style="app")
+        .append(" configuration. Do you want to overwrite it?"),
+        default=False,
+    )
+
+
+def _write_config(config: Mapping[str, object], config_file: Path) -> None:
     config_file.write_text(tomlkit.dumps(config))
 
 
-def _config_to_dict(config: ConfigFile) -> dict:  # type: ignore[type-arg]
+def _config_to_dict(config: ConfigFile) -> Mapping[str, object]:
     config_dict = config.model_dump(exclude_defaults=True)
     if config.current_version is not None:
         config_dict["current_version"] = str(config.current_version)

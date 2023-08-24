@@ -364,6 +364,17 @@ class ConfigurationFileNotFoundError(ConfigurationError):
         )
 
 
+class ConfigurationAlreadyExistsError(ConfigurationError):
+    def __init__(self, config_file: Path) -> None:
+        self.config_file = config_file
+        super().__init__(f"A configuration already exist in {self.config_file}")
+
+    def __rich__(self) -> Text:
+        return Text("A configuration already exist in ").append(
+            str(self.config_file), style="file.path"
+        )
+
+
 class ConfigurationFileError(ConfigurationError):
     def __init__(
         self, file: Path, message_suffix: Union[str, Callable[[], str]]
