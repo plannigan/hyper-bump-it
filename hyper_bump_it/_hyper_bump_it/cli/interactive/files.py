@@ -136,12 +136,12 @@ def _prompt_definition(
             current_search_pattern = current.search_format_pattern
             current_replace_pattern = current.replace_format_pattern
 
-        search_format_pattern = _prompt_format_pattern(
-            "search", current_search_pattern, new=new
+        search_format_pattern = _prompt_search_format_pattern(
+            current_search_pattern, new=new
         )
         ui.blank_line()
         replace_format_pattern = _prompt_replace_format_pattern(
-            current_replace_pattern, current_search_pattern, new
+            current_replace_pattern, search_format_pattern
         )
         ui.blank_line()
         keystone = _keystone_selection(
@@ -190,38 +190,54 @@ def _prompt_keystone(default: bool) -> bool:
     )
 
 
-def _prompt_format_pattern(name: str, current: str, new: bool) -> str:
-    description = "default" if new else "current"
-    message = Text("The ")
-    message.append(description)
-    message.append(" ")
-    message.append(name)
-    message.append(" format pattern is '")
-    message.append(_newline_display(current), style="format.pattern")
-    message.append("'.\nEnter a new format pattern or leave it blank to keep the ")
-    message.append(description)
-    message.append(" format pattern")
+def _prompt_format_pattern(
+    message: Text, default_behavior_description: str, current: str
+) -> str:
+    message.append("'.\nEnter a new format pattern or leave it blank to ")
+    message.append(default_behavior_description)
     return ui.ask(
         message,
         default=current,
     ).replace("\\n", "\n")
 
 
+def _prompt_search_format_pattern(current: str, new: bool) -> str:
+    description = "default" if new else "current"
+    message = Text("The ")
+    message.append(description)
+    message.append(" search format pattern is '")
+    message.append(_newline_display(current), style="format.pattern")
+    return _prompt_format_pattern(
+        message, f"keep the {description} format pattern", current
+    )
+
+
 def _prompt_replace_format_pattern(
-    current: Optional[str], search_pattern: str, new: bool
+    current: Optional[str], search_pattern: str
 ) -> Optional[str]:
     use_search_pattern = ui.confirm(
         "The replace format pattern can be omitted. In this case, the search format pattern value "
         "is used.\n"
         "Do you want omit the replace format pattern?",
-        default=new or current is None,
+        default=current is None,
     )
     ui.blank_line()
     if use_search_pattern:
         return None
-    return _prompt_format_pattern(
-        "replace", search_pattern if current is None else current, new
-    )
+
+    if current is None:
+        message = Text(
+            "There currently is no replace format pattern. The current search pattern is '"
+        )
+        message.append(_newline_display(search_pattern), style="format.pattern")
+        default = search_pattern
+        default_behavior_description = "explicitly use the search format pattern"
+    else:
+        message = Text("The current replace format pattern is '")
+        message.append(_newline_display(current), style="format.pattern")
+        default = current
+        default_behavior_description = "keep the current format pattern"
+    return _prompt_format_pattern(message, default_behavior_description, default)
 
 
 def _prompt_select_definition(

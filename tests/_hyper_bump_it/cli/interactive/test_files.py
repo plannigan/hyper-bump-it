@@ -606,3 +606,84 @@ def test_configure__replace_slash_n_pattern__convert_to_multiline_pattern(
         )
     ]
     assert result_has_keystone is False
+
+
+def test_configure__add_invalid_search_omit_replace__replace_prompts_with_new_search(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.Add.value,
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_INVALID_FORMAT_PATTERN,
+        "y",  # yes, omit replace format pattern
+        "n",  # no, keystone
+        # start again
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "n",  # no, explicit replace format pattern
+        sd.SOME_REPLACE_FORMAT_PATTERN,
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(
+        [sd.some_file_definition()], create_invalid_first()
+    )
+
+    editor.configure()
+
+    assert (
+        f"There currently is no replace format pattern. The current search pattern is '{sd.SOME_SEARCH_FORMAT_PATTERN}'."
+        in capture_rich.getvalue()
+    )
+
+
+def test_configure__add_search_no_omit_replace__replace_prompts_with_search(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.Add.value,
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "n",  # no, explicit replace format pattern
+        sd.SOME_REPLACE_FORMAT_PATTERN,
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor([sd.some_file_definition()], ALWAYS_VALID)
+
+    editor.configure()
+
+    assert (
+        f"There currently is no replace format pattern. The current search pattern is '{sd.SOME_SEARCH_FORMAT_PATTERN}'."
+        in capture_rich.getvalue()
+    )
+
+
+def test_configure__replace_invalid__again_replace_prompts_with_previous_replace(
+    force_input: ForceInput, capture_rich: StringIO
+):
+    force_input(
+        FilesMenu.Add.value,
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "n",  # no, explicit replace format pattern
+        sd.SOME_INVALID_FORMAT_PATTERN,
+        "n",  # no, keystone
+        # start again
+        sd.SOME_OTHER_FILE_GLOB,
+        sd.SOME_SEARCH_FORMAT_PATTERN,
+        "n",  # no, explicit replace format pattern
+        sd.SOME_REPLACE_FORMAT_PATTERN,
+        "n",  # no, keystone
+        force_input.NO_INPUT,
+    )
+    editor = files.FilesConfigEditor(
+        [sd.some_file_definition()], create_invalid_first()
+    )
+
+    editor.configure()
+
+    assert (
+        f"The current replace format pattern is '{sd.SOME_INVALID_FORMAT_PATTERN}'."
+        in capture_rich.getvalue()
+    )

@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Warning before replacing an existing configuration with project initialization.
+* Interactive project initialization more clearly describes explict replace format pattern.
+* Interactive project initialization now shows recently provided search pattern when addressing
+    issues with a file definition that omitted the replace format pattern.
 * Update development status classifier.
 
 ## [0.5.0] - 2023-08-04
