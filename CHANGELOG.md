@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     issues with a file definition that omitted the replace format pattern.
 * Update development status classifier.
 
+### Changed
+
+* Minimum version of `GitPython` raised to `3.1.34` to address [security issue][gitpython-security].
+
 ## [0.5.0] - 2023-08-04
 
 ### Added
@@ -118,3 +122,4 @@ First functional release
 Initial Release (not functional yet)
 
 [trusted-publishers]: https://docs.pypi.org/trusted-publishers/
+[gitpython-security]: https://github.com/gitpython-developers/GitPython/security/advisories/GHSA-wfm5-v35h-vwf4
