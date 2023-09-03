@@ -6,7 +6,7 @@ from pathlib import Path
 
 from . import format_pattern
 from .config import File
-from .error import FileGlobError, SearchTextNotFound
+from .error import FileGlobError, PathTraversalError, SearchTextNotFound
 from .format_pattern import FormatContext, TextFormatter, keys
 from .planned_changes import PlannedChange
 
@@ -26,11 +26,12 @@ def collect_planned_changes(
     """
     changes = [
         _planned_change_for(
-            file,
+            file.resolve(),
             config.search_format_pattern,
             config.replace_format_pattern,
             formatter,
             project_root,
+            config.file_glob,
         )
         for file in project_root.glob(config.file_glob)
     ]
@@ -45,7 +46,11 @@ def _planned_change_for(
     replace_pattern: str,
     formatter: TextFormatter,
     project_root: Path,
+    file_glob: str,
 ) -> PlannedChange:
+    if not is_contained_within(file, project_root):
+        raise PathTraversalError(project_root, file_glob, file)
+
     file_data = file.read_bytes()
     file_text = file_data.decode()
 
@@ -93,3 +98,7 @@ def perform_change(change: PlannedChange) -> None:
         raise ValueError(
             f"Given file '{change.file}' does not exist. PlannedChange is not valid."
         )
+
+
+def is_contained_within(file: Path, project_root: Path) -> bool:
+    return file.resolve().is_relative_to(project_root.resolve())

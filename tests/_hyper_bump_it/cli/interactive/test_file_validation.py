@@ -126,3 +126,19 @@ def test_validation__search_text_found__no_failure(
     result = validator(definition)
 
     assert result is None
+
+
+def test_validation__file_definition_traverses_above_project_root__failure(
+    tmp_path: Path,
+):
+    traversal_file_glob = f"../{sd.SOME_FILE_GLOB}"
+    tmp_path.joinpath(sd.SOME_GLOB_MATCHED_FILE_NAME).touch()
+    project_root = tmp_path / sd.SOME_DIRECTORY_NAME
+    project_root.mkdir()
+    validator = DefinitionValidator(sd.SOME_VERSION, project_root=project_root)
+    definition = sd.some_file_definition(file_glob=traversal_file_glob)
+
+    result = validator(definition)
+
+    assert result.failure_type == FailureType.ProjectRootTraversal
+    assert traversal_file_glob in result.description
