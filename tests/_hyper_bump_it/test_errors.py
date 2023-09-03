@@ -36,6 +36,16 @@ SOME_SUB_TABLES = ("some-name", "some-sub-name")
         error.FileGlobError(
             Path(sd.SOME_ESCAPE_REQUIRED_TEXT), sd.SOME_ESCAPE_REQUIRED_TEXT
         ),
+        error.PathTraversalError(
+            Path(sd.SOME_DIRECTORY_NAME),
+            sd.SOME_FILE_GLOB,
+            Path(sd.SOME_GLOB_MATCHED_FILE_NAME),
+        ),
+        error.PathTraversalError(
+            Path(sd.SOME_ESCAPE_REQUIRED_TEXT),
+            sd.SOME_ESCAPE_REQUIRED_TEXT,
+            Path(sd.SOME_ESCAPE_REQUIRED_TEXT),
+        ),
         error.KeystoneFileGlobError(sd.SOME_FILE_GLOB, []),
         error.KeystoneFileGlobError(
             sd.SOME_FILE_GLOB,

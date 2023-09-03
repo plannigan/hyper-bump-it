@@ -8,7 +8,7 @@ from typing import Optional
 
 from rich.text import Text
 
-from ... import ui
+from ... import files, ui
 from ...config import FileDefinition
 from ...error import FormatError
 from ...format_pattern import FormatContext, TextFormatter
@@ -23,6 +23,7 @@ class FailureType(Enum):
     BadSearchPattern = auto()
     BadReplacePattern = auto()
     SearchPatternNotFound = auto()
+    ProjectRootTraversal = auto()
 
 
 @dataclass
@@ -41,7 +42,9 @@ class DefinitionValidator:
     def __call__(self, definition: FileDefinition) -> Optional[ValidationFailure]:
         matched_files = list(self._project_root.glob(definition.file_glob))
         if (
-            result := self._validate_matched_files(definition, matched_files)
+            result := self._validate_matched_files(
+                definition, matched_files, self._project_root
+            )
         ) is not None:
             return result
 
@@ -62,7 +65,7 @@ class DefinitionValidator:
         return self._check_file_contents(search_text, matched_files)
 
     def _validate_matched_files(
-        self, definition: FileDefinition, matched_files: list[Path]
+        self, definition: FileDefinition, matched_files: list[Path], project_root: Path
     ) -> Optional[ValidationFailure]:
         if len(matched_files) == 0:
             return ValidationFailure(
@@ -87,6 +90,14 @@ class DefinitionValidator:
                 )
             )
             return ValidationFailure(FailureType.KeystoneMultipleFiles, message)
+        for file in matched_files:
+            if not files.is_contained_within(file, project_root):
+                message = Text("Matched files must be within the project root. '")
+                message.append(definition.file_glob, style="file.glob")
+                message.append("' matched: '")
+                message.append(str(file), style="file.path")
+                message.append("'")
+                return ValidationFailure(FailureType.ProjectRootTraversal, message)
         return None
 
     @staticmethod

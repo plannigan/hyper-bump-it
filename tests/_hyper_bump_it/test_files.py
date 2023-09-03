@@ -7,13 +7,19 @@ import pytest
 from freezegun.api import FrozenDateTimeFactory
 
 from hyper_bump_it._hyper_bump_it import files
-from hyper_bump_it._hyper_bump_it.error import FileGlobError, SearchTextNotFound
+from hyper_bump_it._hyper_bump_it.error import (
+    FileGlobError,
+    PathTraversalError,
+    SearchTextNotFound,
+)
 from hyper_bump_it._hyper_bump_it.files import PlannedChange
 from hyper_bump_it._hyper_bump_it.format_pattern import keys
 from tests._hyper_bump_it import sample_data as sd
 
 SOME_FILE_NAME = "foo.txt"
 SOME_OTHER_FILE_NAME = "bar.txt"
+SOME_DIRECTORY_NAME = "some_directory"
+SOME_PROJECT_ROOT = Path("some_root_dir")
 
 TEXT_FORMATTER = sd.some_text_formatter()
 
@@ -377,4 +383,44 @@ def test_perform_change__invalid_file__error(tmp_path: Path):
                 new_content=f"--{sd.SOME_OTHER_VERSION}--",
                 newline="\n",
             )
+        )
+
+
+@pytest.mark.parametrize(
+    ["description", "file", "expected_result"],
+    [
+        ("file explicitly in project root", SOME_PROJECT_ROOT / SOME_FILE_NAME, True),
+        (
+            "file explicitly in directory under project root",
+            SOME_PROJECT_ROOT / SOME_DIRECTORY_NAME / SOME_FILE_NAME,
+            True,
+        ),
+        ("file at same level as project root", Path(SOME_FILE_NAME), False),
+        (
+            "file that traverses above project root",
+            SOME_PROJECT_ROOT / ".." / ".." / SOME_FILE_NAME,
+            False,
+        ),
+    ],
+)
+def test_is_contained_within__expected_result(
+    file: Path, expected_result: bool, description: str
+):
+    assert files.is_contained_within(file, SOME_PROJECT_ROOT) == expected_result
+
+
+def test_collect_planned_changes_file_traverses_above_project_root__error(
+    tmp_path: Path,
+):
+    traversal_file_glob = f"../{sd.SOME_FILE_GLOB}"
+    matched_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
+    matched_file.touch()
+    project_root = tmp_path / sd.SOME_DIRECTORY_NAME
+    project_root.mkdir()
+
+    file_config = sd.some_file(file_glob=traversal_file_glob)
+
+    with pytest.raises(PathTraversalError):
+        files.collect_planned_changes(
+            project_root, file_config, sd.some_text_formatter()
         )

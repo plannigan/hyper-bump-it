@@ -147,6 +147,26 @@ class FileGlobError(BumpItError):
         return message
 
 
+class PathTraversalError(BumpItError):
+    def __init__(self, project_root: Path, file_glob: str, matched_file: Path) -> None:
+        self.project_root = project_root
+        self.file_glob = file_glob
+        self.matched_file = matched_file
+        super().__init__(
+            f"Matched files must be within the project root ({self.project_root}). '{self.file_glob}' matched: '{self.matched_file}'"
+        )
+
+    def __rich__(self) -> Text:
+        message = Text("Matched files must be within the project root (")
+        message.append(str(self.project_root), style="file.path")
+        message.append("). '")
+        message.append(self.file_glob, style="file.glob")
+        message.append("' matched: '")
+        message.append(str(self.matched_file), style="file.path")
+        message.append("'")
+        return message
+
+
 class KeystoneError(BumpItError):
     """Base for keystone file errors"""
 
