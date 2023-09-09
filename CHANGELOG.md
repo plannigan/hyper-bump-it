@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2023-09-09
+
 ### Changed
 
 * Minimum version of `GitPython` raised to `3.1.35` to address a [security issue][gitpython-security-2].
