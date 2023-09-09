@@ -397,8 +397,13 @@ def test_perform_change__invalid_file__error(tmp_path: Path):
         ),
         ("file at same level as project root", Path(SOME_FILE_NAME), False),
         (
-            "file that traverses above project root",
+            "file that traverses above project root (relative)",
             SOME_PROJECT_ROOT / ".." / ".." / SOME_FILE_NAME,
+            False,
+        ),
+        (
+            "file explicitly outside the project root (absolute)",
+            Path("/") / SOME_FILE_NAME,
             False,
         ),
     ],
