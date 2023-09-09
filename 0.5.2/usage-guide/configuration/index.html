@@ -1,0 +1,946 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://plannigan.github.io/hyper-bump-it/0.5.2/usage-guide/configuration/">
+      
+      
+        <link rel="prev" href="../../getting-started/">
+      
+      
+        <link rel="next" href="../format-patterns/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.8">
+    
+    
+      
+        <title>Configuration - hyper-bump-it Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.046329b4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../../..">
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="hyper-bump-it Documentation" class="md-header__button md-logo" aria-label="hyper-bump-it Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            hyper-bump-it Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/plannigan/hyper-bump-it" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    plannigan/hyper-bump-it
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="hyper-bump-it Documentation" class="md-nav__button md-logo" aria-label="hyper-bump-it Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    hyper-bump-it Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/plannigan/hyper-bump-it" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    plannigan/hyper-bump-it
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Usage Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Usage Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-file" class="md-nav__link">
+    Configuration File
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#top-level-table" class="md-nav__link">
+    Top Level Table
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files" class="md-nav__link">
+    Files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    Git
+  </a>
+  
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-initial-branches" class="md-nav__link">
+    Allowed Initial Branches
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-operations" class="md-nav__link">
+    Customize Operations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current-version" class="md-nav__link">
+    Current Version
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../format-patterns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Format Patterns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Git Integration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../why-hyper-bump-it/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Why hyper-bump-it?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-file" class="md-nav__link">
+    Configuration File
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#top-level-table" class="md-nav__link">
+    Top Level Table
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files" class="md-nav__link">
+    Files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    Git
+  </a>
+  
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowed-initial-branches" class="md-nav__link">
+    Allowed Initial Branches
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customize-operations" class="md-nav__link">
+    Customize Operations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current-version" class="md-nav__link">
+    Current Version
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="configuration">Configuration</h1>
+<p><code>hyper-bump-it</code> is configured using a file in the <a href="https://toml.io/">TOML format</a>. The default name for this
+file is <code>hyper-bump-it.toml</code> and it is expected to be in the root directory of the project. The
+command line interface (CLI) allows specifying an alternate path for this file.</p>
+<div class="admonition note">
+<p class="admonition-title">pyproject.toml Support</p>
+<p>For Python projects, <code>pyproject.toml</code> is a standard file that can contain configuration
+information for multiple different tools. <code>hyper-bump-it</code> also supports reading the
+configuration from this file. This will only be checked for if <code>hyper-bump-it.toml</code> is not
+found and the CLI did not specify an alternate path.</p>
+</div>
+<h2 id="configuration-file">Configuration File</h2>
+<p>All configuration sections are rooted under the <code>hyper-bump-it</code> table. Most settings have
+reasonable defaults, so the following is a functional configuration.</p>
+<div class="admonition note">
+<p class="admonition-title">pyproject.toml Support</p>
+<p>When using <code>pyproject.toml</code>, configuration sections are rooted under the <code>tool.hyper-bump-it</code>
+table instead of simply <code>hyper-bump-it</code>.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">hyper-bump-it.toml</label><label for="__tabbed_1_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="top-level-table">Top Level Table</h3>
+<p>There are a few fields that can be specified as part of the top level table.</p>
+<p>The most common is the <code>current_version</code> field, which contains the current version. How this is
+used and the alternative option are discussed in a <a href="#current-version">latter section</a>.</p>
+<p>The other optional field is <code>show_confirm_prompt</code>. If this field is not specified (default) or set
+to <code>true</code>, <code>hyper-bump-it</code> will prompt the user to confirm the changes described in the execution
+plan before performing the actions. When set to <code>false</code>, the prompt will <strong>not</strong> be displayed.
+Instead, the actions will be immediately performed.</p>
+<p>The following is an example configuration which disables the confirmation prompt.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">hyper-bump-it.toml</label><label for="__tabbed_2_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+<span class="n">show_confirm_prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+<span class="n">show_confirm_prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="files">Files</h3>
+<p>The most important part of the configuration is the list of file definitions. This is how
+<code>hyper-bump-it</code> knows which files should be updated and how that update process should operate.
+There <strong>must</strong> be at least one file definition.</p>
+<p>The only field that each file definition is required to have is that <code>file_glob</code> field. This tells
+<code>hyper-bump-it</code> which files should be updated. This can be an explicit file name, but
+<a href="https://docs.python.org/3/library/glob.html">glob patterns</a> are also supported. Using a glob pattern allows for a single file definition
+to be used to specify how multiple files should be updated. These file paths should be relative to
+the project root.</p>
+<p>In addition, <code>search_format_pattern</code> and <code>replace_format_pattern</code> fields can be included in a file
+definition. The <code>search_format_pattern</code> specifies the text to look for in each file matched by
+<code>file_glob</code>. While the <code>replace_format_pattern</code> specifies the text to write back to the file
+in place of the text that was searched for. There is a dedicated page that discusses
+<a href="../format-patterns/">format patterns</a> in more detail.</p>
+<p>If <code>search_format_pattern</code> is not specified, the default value of <code>"{version}"</code> is used. If
+<code>replace_format_pattern</code> is not specified, the value of <code>search_format_pattern</code> is used.</p>
+<p>There is an additional optional field named <code>keystone</code>, this is discussed in a
+<a href="#current-version">latter section</a>.</p>
+<p>The following is an example configuration which has two file definitions that both customize the
+<code>search_format_pattern</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">hyper-bump-it.toml</label><label for="__tabbed_3_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version={version}&quot;</span>
+
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;index.md&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My Project - {major}.{minor}&quot;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version={version}&quot;</span>
+
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;index.md&quot;</span>
+<span class="n">search_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;My Project - {major}.{minor}&quot;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="git">Git</h3>
+<p>The <a href="../git-integration/"><code>git</code> integration</a> is configured within the dedicated sub-tables, but they
+are completely optional.</p>
+<h4 id="actions">Actions</h4>
+<p>There are three types of <code>git</code> actions that can be performed: <code>commit</code>, <code>branch</code>, and <code>tag</code>.
+Each of these fields can have one of three values: <code>"skip"</code>, <code>"create"</code>, or <code>"create-and-push"</code>.
+There is a dedicated section that discusses these <a href="../git-integration/#actions">git actions</a> in more detail.</p>
+<p>To ensure changes are not accidentally published, none of the fields default to
+<code>"create-and-push"</code>. If <code>commit</code> is not specified, the default value of <code>"create"</code> is used. If
+<code>brnach</code> is not specified, the default value of <code>"skip"</code> is used. If <code>tag</code> is not specified, the
+default value of <code>"skip"</code> is used.</p>
+<h4 id="allowed-initial-branches">Allowed Initial Branches</h4>
+<p>Further safety concerns can be addressed by limiting which branches <code>hypber-bump-it</code> will
+execute on. By default, only <code>main</code> and <code>master</code> are allowed. <code>allowed_initial_branches</code>can be
+used to customize the set of allowed branches. Explicitly using an empty list will disable this
+functionality. If you want to allow additional branches in addition to the defaults,
+<code>extend_allowed_initial_branches</code> can be used without needing to explicitly re-list the defaults.</p>
+<h4 id="customize-operations">Customize Operations</h4>
+<p>There are a few fields that can be used to customize how these actions operate.</p>
+<ul>
+<li><code>remote</code> specifies the name of remote repository to use as the destination for push operations.
+    If not specified, the default value of <code>"origin"</code> is used.</li>
+<li><code>commit_format_pattern</code> is a <a href="../format-patterns/">format pattern</a> used to produce the message for
+    the commit. If not specified, the default value of
+    <code>"Bump version: {current_version} → {new_version}"</code> is used.</li>
+<li><code>branch_format_pattern</code> is a <a href="../format-patterns/">format pattern</a> used to produce the name of the
+    branch. If not specified, the default value of, the default value of
+    <code>"bump_version_to_{new_version}"</code> is used.</li>
+<li><code>tag_name_format_pattern</code> is a <a href="../format-patterns/">format pattern</a> used to produce the name of the
+    tag. If not specified, the default value of, the default value of <code>"v{new_version}"</code> is used.</li>
+<li><code>tag_message_format_pattern</code> is a <a href="../format-patterns/">format pattern</a> used to produce the message
+    of the tag. If not specified, the default value of, the default value of
+    <code>"Bump version: {current_version} → {new_version}"</code> is used.</li>
+</ul>
+<h4 id="example">Example</h4>
+<p>The following is an example configuration which creates a commit on a new branch that is pushed to
+the "upstream" remote. Additionally, the format patterns for the commit message and branch names
+are customized.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">hyper-bump-it.toml</label><label for="__tabbed_4_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+
+<span class="k">[hyper-bump-it.git]</span>
+<span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;upstream&quot;</span>
+<span class="n">commit_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bump version to {new_version}&quot;</span>
+<span class="n">branch_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bump_to_{new_version}&quot;</span>
+
+<span class="k">[hyper-bump-it.git.actions]</span>
+<span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
+<span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
+
+<span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[tool.hyper-bump-it]</span>
+<span class="n">current_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+
+<span class="k">[tool.hyper-bump-it.git]</span>
+<span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;upstream&quot;</span>
+<span class="n">commit_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bump version to {new_version}&quot;</span>
+<span class="n">branch_format_pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bump_to_{new_version}&quot;</span>
+
+<span class="k">[tool.hyper-bump-it.git.actions]</span>
+<span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
+<span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;create-and-push&quot;</span>
+
+<span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;*.txt&quot;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="current-version">Current Version</h3>
+<p>By default, the current version is explicitly recorded in the configuration file using the
+<code>current_version</code> field. As a result, this means that each time <code>hyper-bump-it</code> is used to change
+the version number, that configuration file will also change.</p>
+<p>For some, this behavior might not be desirable. Most projects already have a that acts as the
+authoritative source for the software version when the release artifact is generated.
+<code>hyper-bump-it</code> allows projects to indicate this file with the <code>keystone</code> setting as part of a file
+table.</p>
+<p>The following is an example configuration has a single file definitions, which is a keystone file.
+Default values are used for all other fields.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">hyper-bump-it.toml</label><label for="__tabbed_5_2">pyproject.toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[[hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span>
+<span class="n">keystone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[[tool.hyper-bump-it.files]]</span>
+<span class="n">file_glob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;version.txt&quot;</span>
+<span class="n">keystone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since <code>current_version</code> is not used when using a keystone file, the top level table can be 
+omitted.</p>
+</div>
+<p>The <code>search_format_pattern</code> will be used to parse the specified file to discover the current
+version.</p>
+<p>With this functionality enabled, there are a few restrictions:</p>
+<ul>
+<li>The configuration file <strong>must not</strong> specify the <code>current_version</code> field.</li>
+<li>Specifying a glob pattern instead of an explicit file name for <code>file_glob</code> is still supported.
+    However, it <strong>must</strong> only match a single file.</li>
+<li>The <code>search_format_pattern</code> can contain any of the <a href="../format-patterns/#supported-keys">supported keys</a>. However,
+    it is important to <a href="../format-patterns/#keystone-file-considerations">understand how the pattern is processed</a>.</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.tabs.link"], "search": "../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+    
+  </body>
+</html>
