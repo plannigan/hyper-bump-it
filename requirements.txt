@@ -1,4 +1,4 @@
-GitPython==3.1.35
+GitPython==3.1.36
 tomlkit==0.12.1
 pydantic==2.3.0
 typing-extensions>=4.4.0,<5; python_version < '3.11'
