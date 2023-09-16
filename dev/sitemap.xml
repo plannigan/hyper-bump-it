@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/changelog/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/development-guide/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/getting-started/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/why-hyper-bump-it/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/usage-guide/configuration/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/usage-guide/format-patterns/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://plannigan.github.io/hyper-bump-it/dev/usage-guide/git-integration/</loc>
-         <lastmod>2023-09-10</lastmod>
+         <lastmod>2023-09-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
