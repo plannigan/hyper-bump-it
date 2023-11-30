@@ -7,4 +7,4 @@ setuptools==68.2.2
 
 markdown-include==0.8.1
 mkdocs==1.5.3
-mkdocs-material==9.4.12
+mkdocs-material==9.4.14
