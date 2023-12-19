@@ -176,6 +176,13 @@ jobs:
           package-import-name: "hyper_bump_it"
           script-command: "hyper-bump-it --help"
 
+  build-devbox-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Build devbox image
+        run: docker-compose build devbox
 
   build-docs:
     runs-on: ubuntu-latest
