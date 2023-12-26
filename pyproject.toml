@@ -1,3 +1,8 @@
+[build-system]
+requires = ["hatchling==1.21.0"]
+build-backend = "hatchling.build"
+
+
 [project]
 name = "hyper-bump-it"
 version = "0.5.2"
@@ -40,15 +45,10 @@ documentation = "https://plannigan.github.io/hyper-bump-it"
 [project.scripts]
 hyper-bump-it = "hyper_bump_it._hyper_bump_it.cli:app"
 
-[build-system]
-requires = ["setuptools >= 61.0.0"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
-
-[tool.setuptools.package-data]
-hyper_bump_it = ["py.typed"]
+[tool.hatch.build.targets.sdist]
+include = [
+    "/hyper_bump_it",
+]
 
 # type checking
 [tool.mypy]
