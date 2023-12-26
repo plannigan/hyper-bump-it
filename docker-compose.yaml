@@ -15,7 +15,7 @@ services:
   # - black & isort will format code to address issues
   test:
     <<: *devbox
-    command: docker/run_tests.sh --format-code
+    command: ["hatch", "run", "check"]
 
   # generate and serve the project documentation locally
   mkdocs: &mkdocs
@@ -23,9 +23,9 @@ services:
     entrypoint: "mkdocs"
     ports:
       - "8000:8000"
-    command: ["serve", "--dev-addr=0.0.0.0:8000"]
+    command: ["hatch", "run", "docs:serve"]
 
   mike:
     <<: *mkdocs
-    entrypoint: "mike"
+    entrypoint: ["hatch", "run", "docs:mike"]
 
