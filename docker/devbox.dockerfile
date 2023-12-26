@@ -27,9 +27,13 @@ RUN git config --global user.name "TESTING-${_USER}" && \
 # need to be rebuilt.
 RUN gpg --quick-generate-key --batch --passphrase '' "TESTING-${_USER} <TESTING-${_USER}@example.com>" default sign 3m
 
-COPY --chown=${UID}:${GID} ./requirements*.txt /app/
+COPY --chown=${UID}:${GID} ./requirements-bootstrap.txt ./pyproject.toml /app/
 WORKDIR /app
 
-RUN pip install -r requirements.txt -r requirements-test.txt -r requirements-docs.txt
+RUN pip install -r requirements-bootstrap.txt
+COPY --chown=${UID}:${GID} . /app/
+RUN hatch --verbose env create && \
+    hatch --verbose env create bump && \
+    hatch --verbose env create docs
 
 CMD bash
