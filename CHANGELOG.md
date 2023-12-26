@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Python version `3.12` tested during CI
 * Python version `3.12` added to package classifiers
 
+### Internal
+
+- Use [hatch][hatch] for build backend.
+
 ## [0.5.2] - 2023-09-09
 
 ### Changed
@@ -138,3 +142,4 @@ Initial Release (not functional yet)
 [trusted-publishers]: https://docs.pypi.org/trusted-publishers/
 [gitpython-security-1]: https://github.com/advisories/GHSA-wfm5-v35h-vwf4
 [gitpython-security-2]: https://github.com/advisories/GHSA-cwvm-v4w8-q58c
+[hatch]: https://hatch.pypa.io/latest/
