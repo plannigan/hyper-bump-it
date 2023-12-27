@@ -22,13 +22,11 @@ jobs:
       - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
-        with:
-          test-requirements: "true"
+      - name: Initialize Hatch
+        uses: ./.github/actions/initialize-hatch
 
       - name: Run bandit
-        run: bandit --ini .bandit -r .
+        run: hatch run bandit-ci
 
   black:
     runs-on: ubuntu-latest
@@ -39,13 +37,11 @@ jobs:
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
-        with:
-          test-requirements: "true"
+      - name: Initialize Hatch
+        uses: ./.github/actions/initialize-hatch
 
       - name: Run black
-        run: black --check .
+        run: hatch run black-check
 
   flake8:
     runs-on: ubuntu-latest
@@ -55,13 +51,11 @@ jobs:
         - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
           with:
             python-version: ${{ env.PYTHON_VERSION }}
-        - name: Install dependencies
-          uses: ./.github/actions/install-dependencies
-          with:
-            test-requirements: "true"
+        - name: Initialize Hatch
+          uses: ./.github/actions/initialize-hatch
 
         - name: Run flake8
-          run: flake8
+          run: hatch run flake8-check
 
   isort:
     runs-on: ubuntu-latest
@@ -71,14 +65,11 @@ jobs:
       - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
-        with:
-          requirements: "true"
-          test-requirements: "true"
+      - name: Initialize Hatch
+        uses: ./.github/actions/initialize-hatch
 
       - name: Run isort
-        run: isort --check-only .
+        run: hatch run isort-check
 
   mypy:
     runs-on: ubuntu-latest
@@ -88,14 +79,11 @@ jobs:
         - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
           with:
             python-version: ${{ env.PYTHON_VERSION }}
-        - name: Install dependencies
-          uses: ./.github/actions/install-dependencies
-          with:
-            requirements: "true"
-            test-requirements: "true"
+        - name: Initialize Hatch
+          uses: ./.github/actions/initialize-hatch
 
         - name: Run mypy
-          run: mypy
+          run: hatch run typing
 
   renovate:
     runs-on: ubuntu-latest
@@ -117,11 +105,8 @@ jobs:
         - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
           with:
             python-version: ${{ matrix.python-version }}
-        - name: Install dependencies
-          uses: ./.github/actions/install-dependencies
-          with:
-            requirements: "true"
-            test-requirements: "true"
+        - name: Initialize Hatch
+          uses: ./.github/actions/initialize-hatch
 
         - name: Configure git user
           run: |
@@ -132,7 +117,7 @@ jobs:
           run: gpg --quick-generate-key --batch --passphrase '' "TESTING-${GITHUB_ACTOR} <TESTING-${GITHUB_ACTOR}@example.com>" default sign seconds=600
 
         - name: Run pytest
-          run: pytest --cov-report xml:coverage-${{ matrix.python-version }}.xml --junitxml=test-results-${{ matrix.python-version }}.xml
+          run: hatch run test-ci --cov-report xml:coverage-${{ matrix.python-version }}.xml --junitxml=test-results-${{ matrix.python-version }}.xml
 
         - name: Upload pytest test results artifact
           uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
@@ -195,14 +180,13 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
+      - name: Initialize Hatch
+        uses: ./.github/actions/initialize-hatch
         with:
-          requirements: "true"
-          docs-requirements: "true"
+          environment-name: "docs"
 
       - name: Build Docs
-        run: mkdocs build --strict
+        run: hatch run docs:build
 
       - name: Upload coverage results artifact
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
@@ -223,11 +207,11 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
+      - name: Initialize Hatch
+        uses: ./.github/actions/initialize-hatch
         with:
-          requirements: "true"
-          docs-requirements: "true"
+          environment-name: "docs"
+          activate: "true"
 
       - name: Push documentation changes
         uses: ./.github/actions/publish-docs-with-mike
