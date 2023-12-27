@@ -1,0 +1,31 @@
+name: "Initialize Hatch"
+description: "Install hatch & create an environment"
+inputs:
+  environment-name:
+    description: "Which environment to create"
+    default: "default"
+    required: false
+  activate:
+    description: "If the environment should be activated after creation"
+    default: "false"
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: "Install hatch"
+      run: "pip install -r requirements-bootstrap.txt"
+      shell: "bash"
+    - name: "Create environment"
+      env:
+        ENVIRONMENT_NAME: "${{ inputs.environment-name }}"
+      run: 'hatch --verbose env create "${ENVIRONMENT_NAME}"'
+      shell: "bash"
+    - name: "Activate environment"
+      if: "${{ inputs.activate == 'true' }}"
+      env:
+        ENVIRONMENT_NAME: "${{ inputs.environment-name }}"
+      run: |
+        source $(hatch env find "${ENVIRONMENT_NAME}")/bin/activate
+        echo "VIRTUAL_ENV=${VIRTUAL_ENV}" >> "${GITHUB_ENV}"
+        echo "${VIRTUAL_ENV}/bin" >> "${GITHUB_PATH}"
+      shell: "bash"
