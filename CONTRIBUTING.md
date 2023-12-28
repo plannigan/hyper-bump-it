@@ -1,6 +1,6 @@
 # Contributing
 
-The short version is appears here. However, please review the [development guide][dev-guide] for
+The short version appears here. However, please review the [development guide][dev-guide] for
 more details on expectation and how to work with the project.
 
 * Follow the [code of conduct][code-of-conduct] in all your interactions with the project.
