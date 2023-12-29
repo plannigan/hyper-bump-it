@@ -5,7 +5,7 @@ WHEEL_LOCATION=$2
 SCRIPT_COMMAND=$3
 
 echo "Ensuring pip is up to date"
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip==23.3.2
 
 APP_DIR=$(pwd)
 
