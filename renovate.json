@@ -13,14 +13,25 @@
     "docker-compose",
     "github-actions",
     "pip_requirements",
-    "pep621"
+    "pep621",
+    "custom.regex"
   ],
 
   "schedule": [
     "before 4am"
   ],
 
-  "pip_requirements": {
-    "fileMatch": ["(^|/)([\\w-]*)requirements[-\\w]*\\.(txt|pip)$"]
-  }
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "\\.github\/(?:workflows|actions)\/.+\\.sh"
+      ],
+      "matchStringsStrategy": "any",
+      "matchStrings": [
+        "pip\\s+install(\\s+--upgrade)?\\s+(?<depName>[^\\s]+?)==(?<currentValue>.+?)\\s"
+      ],
+      "datasourceTemplate": "pypi"
+    }
+  ]
 }
