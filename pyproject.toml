@@ -60,7 +60,7 @@ dependencies = [
     "flake8==7.0.0",
     "isort==5.13.2",
     "mypy==1.8.0",
-    "pytest==7.4.4",
+    "pytest==8.0.0",
     "pytest-cov==4.1.0",
     "pytest-freezer==0.4.8",
     "pytest-mock==3.12.0",
@@ -147,8 +147,9 @@ warn_required_dynamic_aliases = true
 
 # testing
 [tool.pytest.ini_options]
-addopts = "--verbose --cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
+addopts = "--cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
 testpaths = ["tests"]
+verbosity_assertions = 2
 
 [tool.coverage.run]
 branch = true
