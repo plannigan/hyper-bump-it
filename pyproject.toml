@@ -147,8 +147,9 @@ warn_required_dynamic_aliases = true
 
 # testing
 [tool.pytest.ini_options]
-addopts = "--verbose --cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
+addopts = "--cov=hyper_bump_it --cov-report xml:/tmp/coverage.xml --cov-report term-missing:skip-covered"
 testpaths = ["tests"]
+verbosity_assertions = 2
 
 [tool.coverage.run]
 branch = true
