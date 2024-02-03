@@ -1,6 +1,7 @@
 """
 Semantic version parsing and data structure.
 """
+
 import re
 from dataclasses import dataclass
 from functools import cached_property, total_ordering

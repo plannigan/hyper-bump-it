@@ -1,6 +1,7 @@
 """
 Central place for performing text formatting.
 """
+
 from datetime import date
 from enum import Enum, auto
 from string import Formatter

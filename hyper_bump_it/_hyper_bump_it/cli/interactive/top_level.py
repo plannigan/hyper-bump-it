@@ -1,6 +1,7 @@
 """
 Go through a series of prompts to construct a custom configuration.
 """
+
 from enum import Enum
 from pathlib import Path
 from typing import Set

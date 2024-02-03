@@ -2,6 +2,7 @@
 Use format patterns to produce regular expression matching patterns to determine the current
 version from a keystone file.
 """
+
 from pathlib import Path
 from re import Match
 from typing import Optional

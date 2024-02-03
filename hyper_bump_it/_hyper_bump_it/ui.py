@@ -1,6 +1,7 @@
 """
 Display interface for working with rich.
 """
+
 from collections.abc import Iterable, Mapping
 from enum import Enum
 from typing import Optional, TypeVar, Union, cast, overload
@@ -72,13 +73,11 @@ def panel(
 
 
 @overload
-def ask(message: TextType, *, default: str = ...) -> str:
-    ...
+def ask(message: TextType, *, default: str = ...) -> str: ...
 
 
 @overload
-def ask(message: TextType, *, default: None) -> Optional[str]:
-    ...
+def ask(message: TextType, *, default: None) -> Optional[str]: ...
 
 
 def ask(message: TextType, *, default: Optional[str] = None) -> Optional[str]:
@@ -102,15 +101,13 @@ _NOT_GIVEN = _Sentinel.A
 @overload
 def choice(
     message: Text, *, choices: list[str], default: str = ..., show_choices: bool = False
-) -> str:
-    ...
+) -> str: ...
 
 
 @overload
 def choice(
     message: Text, *, choices: list[str], default: None, show_choices: bool = False
-) -> Optional[str]:
-    ...
+) -> Optional[str]: ...
 
 
 def choice(

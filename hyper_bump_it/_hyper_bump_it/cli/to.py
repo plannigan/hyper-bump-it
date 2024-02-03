@@ -1,6 +1,7 @@
 """
 Bump to version command.
 """
+
 from pathlib import Path
 from typing import Annotated, Optional
 

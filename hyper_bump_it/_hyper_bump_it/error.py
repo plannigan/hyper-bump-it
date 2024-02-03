@@ -1,6 +1,7 @@
 """
 Errors raised by the library.
 """
+
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Collection, Literal, TypeVar, Union
 

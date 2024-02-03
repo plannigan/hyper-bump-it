@@ -1,6 +1,7 @@
 """
 Common command line functionality.
 """
+
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator, NoReturn, Optional, Protocol, overload
@@ -23,8 +24,7 @@ EXAMPLE_FILE_GLOB = "version.txt"
 class OptionFactory(Protocol):
     def __call__(  # type: ignore[misc]
         self, panel_name: str = ..., show_default: bool = ...
-    ) -> Any:
-        ...
+    ) -> Any: ...
 
 
 def _create_option_factory(description: str, *param_decls: str) -> OptionFactory:
@@ -144,13 +144,11 @@ def display_and_exit(message: ui.PanelMessage, exit_code: int = 1) -> NoReturn:
 
 
 @overload
-def resolve(path: Path) -> Path:
-    ...
+def resolve(path: Path) -> Path: ...
 
 
 @overload
-def resolve(path: Optional[Path]) -> Optional[Path]:
-    ...
+def resolve(path: Optional[Path]) -> Optional[Path]: ...
 
 
 def resolve(path: Optional[Path]) -> Optional[Path]:

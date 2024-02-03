@@ -1,6 +1,7 @@
 """
 Convert a search pattern into a regex pattern.
 """
+
 import re
 from re import Pattern
 from string import Formatter, Template

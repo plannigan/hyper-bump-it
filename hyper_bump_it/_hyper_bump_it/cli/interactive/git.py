@@ -1,6 +1,7 @@
 """
 Go through a series of prompts to construct a custom Git integration configuration.
 """
+
 from enum import Enum
 from typing import Optional, TypeVar, Union
 

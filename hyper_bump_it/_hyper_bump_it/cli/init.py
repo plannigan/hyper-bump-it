@@ -1,6 +1,7 @@
 """
 Initialize configuration command.
 """
+
 from pathlib import Path
 from typing import Annotated, Mapping
 

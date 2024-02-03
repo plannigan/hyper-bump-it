@@ -1,6 +1,7 @@
 """
 Common test data that can be used across multiple test cases.
 """
+
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -407,9 +408,11 @@ def some_bump_to_args(
         branch_format_pattern=branch_format_pattern,
         tag_name_format_pattern=tag_name_format_pattern,
         tag_message_format_pattern=tag_message_format_pattern,
-        allowed_initial_branches=None
-        if allowed_initial_branches is None
-        else frozenset(allowed_initial_branches),
+        allowed_initial_branches=(
+            None
+            if allowed_initial_branches is None
+            else frozenset(allowed_initial_branches)
+        ),
     )
 
 
@@ -477,9 +480,11 @@ def some_bump_by_args(
         branch_format_pattern=branch_format_pattern,
         tag_name_format_pattern=tag_name_format_pattern,
         tag_message_format_pattern=tag_message_format_pattern,
-        allowed_initial_branches=None
-        if allowed_initial_branches is None
-        else frozenset(allowed_initial_branches),
+        allowed_initial_branches=(
+            None
+            if allowed_initial_branches is None
+            else frozenset(allowed_initial_branches)
+        ),
     )
 
 
