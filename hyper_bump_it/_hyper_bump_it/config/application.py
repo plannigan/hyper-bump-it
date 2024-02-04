@@ -1,6 +1,7 @@
 """
 Program configuration
 """
+
 from dataclasses import astuple, dataclass
 from pathlib import Path
 from typing import Callable, Optional, Union, cast

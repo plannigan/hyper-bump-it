@@ -4,6 +4,7 @@ Structured plan of what operations will be performed.
 The plan is created before performing any operations so that the user can confirm the changes
 to be made before files are edited.
 """
+
 from typing import Optional, Protocol, TypeVar
 
 from git import Repo

@@ -1,6 +1,7 @@
 """
 Low level primitives for file interactions.
 """
+
 import difflib
 from dataclasses import InitVar, dataclass, field
 from functools import cached_property

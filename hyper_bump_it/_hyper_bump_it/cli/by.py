@@ -1,6 +1,7 @@
 """
 Bump version by part command.
 """
+
 from pathlib import Path
 from typing import Annotated, Optional
 

@@ -1,6 +1,7 @@
 """
 Consolidate Python version compatibility code.
 """
+
 import sys
 
 # flake8: noqa: F401

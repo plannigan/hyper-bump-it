@@ -1,6 +1,7 @@
 """
 Operation on git repositories.
 """
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -133,9 +134,11 @@ def create_tag(repo: Repo, tag_name: str, tag_message: str) -> None:
 
 def push_changes(repo: Repo, operation_info: GitOperationsInfo) -> None:
     to_push = [
-        operation_info.branch_name
-        if operation_info.actions.branch == GitAction.CreateAndPush
-        else repo.active_branch.name
+        (
+            operation_info.branch_name
+            if operation_info.actions.branch == GitAction.CreateAndPush
+            else repo.active_branch.name
+        )
     ]
     if operation_info.actions.tag == GitAction.CreateAndPush:
         to_push.append(operation_info.tag_name)

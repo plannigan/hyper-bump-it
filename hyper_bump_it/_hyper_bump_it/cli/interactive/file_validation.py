@@ -1,6 +1,7 @@
 """
 Validate a file definition to see if it could be used for a specific project.
 """
+
 from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
