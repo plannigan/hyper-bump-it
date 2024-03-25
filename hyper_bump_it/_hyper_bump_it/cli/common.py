@@ -46,7 +46,7 @@ CONFIG_FILE = typer.Option(
     show_default=False,
 )
 CONFIG_FILE_DEFAULT: Optional[Path] = None
-PROJECT_ROOT = typer.Option(  # type: ignore[call-overload]
+PROJECT_ROOT = typer.Option(
     help="Path to directory containing the project",
     show_default="Use current directory",
 )
