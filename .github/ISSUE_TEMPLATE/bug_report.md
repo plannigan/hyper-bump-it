@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add output from `hyper-bump-it` (text is preferred over screenshots).
 
 **Environment information:**
- - `hyper-bump-it` Version [e.g. 0.5.2]
+ - `hyper-bump-it` Version [e.g. 0.5.3]
  - OS: [e.g. Linux]
  - Python Version [e.g. 3.11.1]
  - Git Version [e.g. 2.39.0]
