@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Python version `3.12` tested during CI
 * Python version `3.12` added to package classifiers
 
+### Fixed
+
+* Explicit coerce configuration file lists to sets.
+
 ### Internal
 
 - Use [hatch][hatch] for build backend.

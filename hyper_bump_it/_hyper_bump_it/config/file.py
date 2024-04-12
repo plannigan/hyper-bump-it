@@ -80,14 +80,25 @@ class GitActions(HyperBaseMode):
         return self
 
 
+def _check_branches(
+    value: Optional[object], handler: ValidatorFunctionWrapHandler
+) -> frozenset[str]:
+    if isinstance(value, list):
+        value = frozenset(value)
+    return cast(frozenset[str], handler(value))
+
+
+PossiblyListBranches = Annotated[frozenset[str], WrapValidator(_check_branches)]
+
+
 class Git(HyperBaseMode):
     remote: str = DEFAULT_REMOTE
     commit_format_pattern: str = DEFAULT_COMMIT_FORMAT_PATTERN
     branch_format_pattern: str = DEFAULT_BRANCH_FORMAT_PATTERN
     tag_name_format_pattern: str = DEFAULT_TAG_NAME_FORMAT_PATTERN
     tag_message_format_pattern: str = DEFAULT_TAG_MESSAGE_FORMAT_PATTERN
-    allowed_initial_branches: frozenset[str] = DEFAULT_ALLOWED_INITIAL_BRANCHES
-    extend_allowed_initial_branches: frozenset[str] = frozenset()
+    allowed_initial_branches: PossiblyListBranches = DEFAULT_ALLOWED_INITIAL_BRANCHES
+    extend_allowed_initial_branches: PossiblyListBranches = frozenset()
     actions: GitActions = GitActions()
 
 
