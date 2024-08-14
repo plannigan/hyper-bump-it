@@ -55,7 +55,7 @@ include = [
 description = "Test and lint the project code"
 dependencies = [
     "bandit==1.7.9",
-    "black==24.4.2",
+    "black==24.8.0",
     "coverage==7.6.1",
     "flake8==7.1.0",
     "isort==5.13.2",
