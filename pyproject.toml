@@ -54,7 +54,7 @@ include = [
 [tool.hatch.envs.default]
 description = "Test and lint the project code"
 dependencies = [
-    "bandit==1.7.9",
+    "bandit==1.7.10",
     "black==24.8.0",
     "coverage==7.6.1",
     "flake8==7.1.1",
