@@ -119,18 +119,14 @@ def switch_to(repo: Repo, branch_name: str) -> None:
 def commit_changes(repo: Repo, commit_message: str) -> None:
     index = repo.index
     for diff in index.diff(None):
-        if diff.new_file or diff.a_path is None:
-            # don't process records for new files
-            # this full check isn't strictly necessary but helps typing since the type system doesn't know that:
-            # * a_path is only None for new file entries
-            # * the program won't create new files and untracked files need to be explicitly added, so there should
-            #   never be a new file entry
-            continue
-
+        # The type system knows that a_path can be None, but doesn't understand what situations cause that to occur.
+        # a_path is only None for new file entries and the program won't create new files. Additionally, untracked files
+        # need to be explicitly added, so there should never be a new file entry.
+        effected_file: str = diff.a_path  # type: ignore[assignment]
         if diff.deleted_file:
-            index.remove(diff.a_path)
+            index.remove(effected_file)
         else:
-            index.add(diff.a_path)
+            index.add(effected_file)
 
     index.write_tree()
     repo.git.commit(message=commit_message)
