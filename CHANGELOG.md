@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Internal
 
 - Address type issue related to GitPython library
+- Use license expression metadata ([PEP 639][pep-639])
 
 ## [0.5.3] - 2024-04-12
 
@@ -149,6 +150,7 @@ First functional release
 
 Initial Release (not functional yet)
 
+[pep-639]: https://peps.python.org/pep-0639/
 [trusted-publishers]: https://docs.pypi.org/trusted-publishers/
 [gitpython-security-1]: https://github.com/advisories/GHSA-wfm5-v35h-vwf4
 [gitpython-security-2]: https://github.com/advisories/GHSA-cwvm-v4w8-q58c
