@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Initialize Hatch
@@ -34,7 +34,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Initialize Hatch
@@ -48,7 +48,7 @@ jobs:
     steps:
         - name: Check out code
           uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
           with:
             python-version: ${{ env.PYTHON_VERSION }}
         - name: Initialize Hatch
@@ -62,7 +62,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Initialize Hatch
@@ -76,7 +76,7 @@ jobs:
     steps:
         - name: Check out code
           uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
           with:
             python-version: ${{ env.PYTHON_VERSION }}
         - name: Initialize Hatch
@@ -102,7 +102,7 @@ jobs:
     steps:
         - name: Check out code
           uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
           with:
             python-version: ${{ matrix.python-version }}
         - name: Initialize Hatch
@@ -150,7 +150,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Build wheel
@@ -176,7 +176,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -203,7 +203,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
