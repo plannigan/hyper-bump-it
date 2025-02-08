@@ -22,13 +22,11 @@ EXAMPLE_FILE_GLOB = "version.txt"
 
 
 class OptionFactory(Protocol):
-    def __call__(  # type: ignore[misc]
-        self, panel_name: str = ..., show_default: bool = ...
-    ) -> Any: ...
+    def __call__(self, panel_name: str = ..., show_default: bool = ...) -> Any: ...  # type: ignore[explicit-any]
 
 
 def _create_option_factory(description: str, *param_decls: str) -> OptionFactory:
-    def _create_option(  # type: ignore[misc]
+    def _create_option(  # type: ignore[explicit-any]
         panel_name: str = OVERRIDE_PANEL_NAME, show_default: bool = False
     ) -> Any:
         return typer.Option(
