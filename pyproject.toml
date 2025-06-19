@@ -62,7 +62,7 @@ dependencies = [
     "pytest==8.4.1",
     "pytest-cov==6.2.1",
     "pytest-freezer==0.4.9",
-    "pytest-mock==3.14.0",
+    "pytest-mock==3.14.1",
     "pdbpp==0.11.6",
 ]
 [tool.hatch.envs.default.scripts]
