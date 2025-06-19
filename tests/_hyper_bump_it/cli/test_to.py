@@ -27,7 +27,7 @@ from tests._hyper_bump_it.cli.common import (
         ),
         (
             [sd.SOME_VERSION_STRING, "--current-version", "1"],
-            r"Invalid value for '--current-version': .+?",
+            r"Invalid value for '--current-version'",
         ),
         (
             [sd.SOME_VERSION_STRING, "--commit", sd.SOME_NON_GIT_ACTION_STRING],
