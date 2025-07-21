@@ -63,7 +63,7 @@ dependencies = [
     "pytest-cov==6.2.1",
     "pytest-freezer==0.4.9",
     "pytest-mock==3.14.1",
-    "pdbpp==0.11.6",
+    "pdbpp==0.11.7",
 ]
 [tool.hatch.envs.default.scripts]
 test-no-cov = "pytest --no-cov {args}"
