@@ -5,9 +5,7 @@ Semantic version parsing and data structure.
 import re
 from dataclasses import dataclass
 from functools import cached_property, total_ordering
-from typing import Union
-
-from .compat import TypeAlias
+from typing import TypeAlias, Union
 
 # Implementation based on python-semanticverison, which is distributed under two-clause BSD license.
 

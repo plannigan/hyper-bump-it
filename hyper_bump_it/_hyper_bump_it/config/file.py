@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Annotated, Optional, Union, cast
+from typing import Annotated, Optional, TypeAlias, Union, cast
 
 import tomlkit
 from pydantic import (
@@ -15,7 +15,6 @@ from pydantic_core.core_schema import ValidatorFunctionWrapHandler
 from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
-from ..compat import TypeAlias
 from ..error import (
     ConfigurationFileNotFoundError,
     ConfigurationFileReadError,

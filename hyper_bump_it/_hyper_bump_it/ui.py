@@ -4,7 +4,7 @@ Display interface for working with rich.
 
 from collections.abc import Iterable, Mapping
 from enum import Enum
-from typing import Optional, TypeVar, Union, cast, overload
+from typing import Optional, TypeAlias, TypeVar, Union, cast, overload
 
 from rich import prompt
 from rich.align import AlignMethod
@@ -16,7 +16,7 @@ from rich.syntax import Syntax
 from rich.text import Text
 from rich.theme import Theme
 
-from .compat import LiteralString, TypeAlias
+from .compat import LiteralString
 
 TextType: TypeAlias = Union[Text, LiteralString]
 PanelMessage: TypeAlias = Union[RichCast, str]
