@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Support for Python `3.13` & `3.14` 
+
 ### Internal
 
 - Address type issue related to GitPython library
@@ -13,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Support for Python 3.9
+- Support for Python `3.9`
 
 ## [0.5.3] - 2024-04-12
 
