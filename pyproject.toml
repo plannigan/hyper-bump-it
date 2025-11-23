@@ -114,7 +114,7 @@ dependencies = [
     "mike==2.1.3",
     "markdown-include==0.8.1",
     "mkdocs==1.6.1",
-    "mkdocs-material==9.6.23",
+    "mkdocs-material==9.7.0",
 ]
 [tool.hatch.envs.docs.scripts]
 build = "mkdocs build --strict"
