@@ -30,26 +30,22 @@ TEXT_FORMATTER = sd.some_text_formatter()
         (
             sd.SOME_OLD_LINE,
             sd.SOME_NEW_LINE,
-            dedent(
-                f"""\
+            dedent(f"""\
     --- {sd.SOME_GLOB_MATCHED_FILE_NAME}
     +++ {sd.SOME_GLOB_MATCHED_FILE_NAME}
     @@ -1 +1 @@
-    -start text+updated text"""
-            ),
+    -start text+updated text"""),
         ),
         (
             sd.SOME_FILE_CONTENT,
             sd.SOME_OTHER_FILE_CONTENT,
-            dedent(
-                f"""\
+            dedent(f"""\
     --- {sd.SOME_GLOB_MATCHED_FILE_NAME}
     +++ {sd.SOME_GLOB_MATCHED_FILE_NAME}
     @@ -1,2 +1,2 @@
     ---1.2.3-11.22+b123.321--
     +--4.5.6-33.44+b456.654--
-     abc"""
-            ),
+     abc"""),
         ),
     ],
 )
