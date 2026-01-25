@@ -387,13 +387,9 @@ def test_read_pyproject_config__sub_table_missing__error(tmp_path: Path):
 def test_read_pyproject_config__configuration_invalid__error(tmp_path: Path):
     config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
-    config_file.write_text(
-        dedent(
-            f"""\
+    config_file.write_text(dedent(f"""\
         [{PYPROJECT_ROOT_TABLE}]
-"""
-        )
-    )
+"""))
 
     with pytest.raises(InvalidConfigurationError):
         file.read_pyproject_config(config_file, sd.SOME_PROJECT_ROOT)
@@ -497,13 +493,9 @@ def test_read_hyper_config__sub_table_missing__error(tmp_path: Path):
 def test_read_hyper_config__configuration_invalid__error(tmp_path: Path):
     config_file = tmp_path / sd.SOME_CONFIG_FILE_NAME
 
-    config_file.write_text(
-        dedent(
-            f"""\
+    config_file.write_text(dedent(f"""\
         [{file.ROOT_TABLE_KEY}]
-"""
-        )
-    )
+"""))
 
     with pytest.raises(InvalidConfigurationError):
         file.read_hyper_config(config_file, sd.SOME_PROJECT_ROOT)

@@ -327,16 +327,14 @@ def some_minimal_config_text(
     )
     if not include_empty_tables and version is None and show_confirm_prompt is None:
         root_table_header = ""
-    content = dedent(
-        f"""\
+    content = dedent(f"""\
         {root_table_header}
         {current_version}
         {show_confirm_prompt_text}
         [[{table_root}.files]]
         file_glob = "{file_glob}"
         {keystone}
-"""
-    )
+""")
     if trim_empty_lines:
         content = "\n".join(line for line in content.splitlines() if line != "") + "\n"
 
