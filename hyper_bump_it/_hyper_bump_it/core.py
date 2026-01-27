@@ -1,5 +1,3 @@
-from typing import Optional
-
 from git import Repo
 
 from . import execution_plan, files, ui, vcs
@@ -55,8 +53,8 @@ def _construct_plan(
     new_version: Version,
     planned_changes: list[PlannedChange],
     git_operations_info: GitOperationsInfo,
-    repo: Optional[Repo],
-    config_version_updater: Optional[ConfigVersionUpdater],
+    repo: Repo | None,
+    config_version_updater: ConfigVersionUpdater | None,
 ) -> execution_plan.ExecutionPlan:
     plan = execution_plan.ExecutionPlan()
     git_actions: list[execution_plan.Action] = []
@@ -77,7 +75,7 @@ def _construct_plan(
 def _construct_patch_plan(
     new_version: Version,
     planned_changes: list[PlannedChange],
-    config_version_updater: Optional[ConfigVersionUpdater],
+    config_version_updater: ConfigVersionUpdater | None,
 ) -> execution_plan.ExecutionPlan:
     plan = execution_plan.ExecutionPlan()
     if config_version_updater is not None:

@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional
 
 import pytest
 from freezegun.api import FrozenDateTimeFactory
@@ -226,7 +225,7 @@ def test_collect_planned_changes__multiline_search_replace__planned_change_with_
     ],
 )
 def test_collect_planned_changes__detect_line_ending__expected_ending(
-    text: str, expected_line_ending: Optional[str], tmp_path: Path
+    text: str, expected_line_ending: str | None, tmp_path: Path
 ):
     some_file = tmp_path / SOME_FILE_NAME
     some_file.write_bytes(text.encode())
@@ -346,7 +345,7 @@ def test_collect_planned_changes__no_files_matched__error(tmp_path: Path):
     ],
 )
 def test_perform_change__file_updated_proper_end(
-    newline: Optional[str], expected_newline: str, tmp_path: Path
+    newline: str | None, expected_newline: str, tmp_path: Path
 ):
     original_text = f"--{sd.SOME_VERSION}--\n"
     replacement_text = f"--{sd.SOME_OTHER_VERSION}--\n"

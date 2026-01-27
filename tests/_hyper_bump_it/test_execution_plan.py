@@ -1,7 +1,6 @@
 from datetime import datetime
 from io import StringIO
 from itertools import zip_longest
-from typing import Type
 
 import pytest
 
@@ -744,8 +743,8 @@ def test_push_changes__display_needs_escaping__show_description(
 )
 def test_git_actions__some_git_actions__expected_action_lists(
     actions,
-    expected_initial_actions: list[Type],
-    expected_final_actions: list[Type],
+    expected_initial_actions: list[type],
+    expected_final_actions: list[type],
     mocker,
 ):
     initial_actions, final_actions = execution_plan.git_actions(

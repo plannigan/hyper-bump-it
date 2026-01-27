@@ -5,7 +5,7 @@ Semantic version parsing and data structure.
 import re
 from dataclasses import dataclass
 from functools import cached_property, total_ordering
-from typing import TypeAlias, Union
+from typing import TypeAlias
 
 # Implementation based on python-semanticverison, which is distributed under two-clause BSD license.
 
@@ -53,7 +53,7 @@ class _Alpha:
         return NotImplemented
 
 
-OrderingValue: TypeAlias = Union[int, _Max, _Numeric, _Alpha]
+OrderingValue: TypeAlias = int | _Max | _Numeric | _Alpha
 
 
 @total_ordering

@@ -5,7 +5,6 @@ Validate a file definition to see if it could be used for a specific project.
 from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
-from typing import Optional
 
 from rich.text import Text
 
@@ -40,7 +39,7 @@ class DefinitionValidator:
             current_version=current_version, new_version=_FAKE_NEXT_VERSION
         )
 
-    def __call__(self, definition: FileDefinition) -> Optional[ValidationFailure]:
+    def __call__(self, definition: FileDefinition) -> ValidationFailure | None:
         matched_files = list(self._project_root.glob(definition.file_glob))
         if (
             result := self._validate_matched_files(
@@ -67,7 +66,7 @@ class DefinitionValidator:
 
     def _validate_matched_files(
         self, definition: FileDefinition, matched_files: list[Path], project_root: Path
-    ) -> Optional[ValidationFailure]:
+    ) -> ValidationFailure | None:
         if len(matched_files) == 0:
             return ValidationFailure(
                 FailureType.NoFiles,
@@ -104,7 +103,7 @@ class DefinitionValidator:
     @staticmethod
     def _check_file_contents(
         search_text: str, matched_files: list[Path]
-    ) -> Optional[ValidationFailure]:
+    ) -> ValidationFailure | None:
         for file in matched_files:
             if search_text not in file.read_text():
                 return ValidationFailure(

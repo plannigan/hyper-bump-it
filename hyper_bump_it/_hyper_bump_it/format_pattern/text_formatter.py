@@ -5,7 +5,6 @@ Central place for performing text formatting.
 from datetime import date
 from enum import Enum, auto
 from string import Formatter
-from typing import Optional
 
 from ..error import FormatKeyError, FormatPatternError
 from ..version import Version
@@ -22,7 +21,7 @@ class TextFormatter:
         self,
         current_version: Version,
         new_version: Version,
-        today: Optional[date] = None,
+        today: date | None = None,
     ) -> None:
         """
         Initialize an instance.
@@ -35,9 +34,7 @@ class TextFormatter:
         self._new_version = new_version
         self._today = today or date.today()
 
-    def format(
-        self, format_pattern: str, context: Optional[FormatContext] = None
-    ) -> str:
+    def format(self, format_pattern: str, context: FormatContext | None = None) -> str:
         """
         Perform string formatting on the given pattern.
 

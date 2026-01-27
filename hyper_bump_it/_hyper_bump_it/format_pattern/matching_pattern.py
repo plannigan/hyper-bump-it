@@ -5,7 +5,6 @@ Convert a search pattern into a regex pattern.
 import re
 from re import Pattern
 from string import Formatter, Template
-from typing import Optional
 
 from ..error import FormatKeyError, FormatPatternError, TodayFormatKeyError
 from . import keys
@@ -108,7 +107,7 @@ class KeystoneFormatter(Formatter):
             raise TodayFormatKeyError(format_spec, _TODAY_REPLACEMENT_REGEX.keys())
         return f"(?P<{keys.TODAY}>{result})"
 
-    def convert_field(self, value: str, conversion: Optional[str]) -> str:
+    def convert_field(self, value: str, conversion: str | None) -> str:
         # don't preform any conversion operations
         return value
 

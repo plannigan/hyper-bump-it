@@ -4,7 +4,6 @@ Go through a series of prompts to construct a custom configuration.
 
 from enum import Enum
 from pathlib import Path
-from typing import Set
 
 from rich.text import Text
 
@@ -38,7 +37,7 @@ class InteractiveConfigEditor:
         self._config: ConfigFile = initial_config.model_copy(deep=True)
         self._pyproject = pyproject
         self._project_root = project_root
-        self._was_configured: Set[TopMenu] = set()
+        self._was_configured: set[TopMenu] = set()
         self._config_funcs = {
             TopMenu.General: self._configure_general,
             TopMenu.Files: self._configure_files,

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
 from ..version import Version
 from .core import GitAction
@@ -16,38 +15,38 @@ class BumpPart(str, Enum):
 @dataclass
 class BumpToArgs:
     new_version: Version
-    config_file: Optional[Path]  # absolute resolved path
+    config_file: Path | None  # absolute resolved path
     project_root: Path  # absolute resolved path
     dry_run: bool
     patch: bool
-    skip_confirm_prompt: Optional[bool]
-    current_version: Optional[Version]
-    commit: Optional[GitAction]
-    branch: Optional[GitAction]
-    tag: Optional[GitAction]
-    remote: Optional[str]
-    commit_format_pattern: Optional[str]
-    branch_format_pattern: Optional[str]
-    tag_name_format_pattern: Optional[str]
-    tag_message_format_pattern: Optional[str]
-    allowed_initial_branches: Optional[frozenset[str]]
+    skip_confirm_prompt: bool | None
+    current_version: Version | None
+    commit: GitAction | None
+    branch: GitAction | None
+    tag: GitAction | None
+    remote: str | None
+    commit_format_pattern: str | None
+    branch_format_pattern: str | None
+    tag_name_format_pattern: str | None
+    tag_message_format_pattern: str | None
+    allowed_initial_branches: frozenset[str] | None
 
 
 @dataclass
 class BumpByArgs:
     part_to_bump: BumpPart
-    config_file: Optional[Path]  # absolute resolved path
+    config_file: Path | None  # absolute resolved path
     project_root: Path  # absolute resolved path
     dry_run: bool
     patch: bool
-    skip_confirm_prompt: Optional[bool]
-    current_version: Optional[Version]
-    commit: Optional[GitAction]
-    branch: Optional[GitAction]
-    tag: Optional[GitAction]
-    remote: Optional[str]
-    commit_format_pattern: Optional[str]
-    branch_format_pattern: Optional[str]
-    tag_name_format_pattern: Optional[str]
-    tag_message_format_pattern: Optional[str]
-    allowed_initial_branches: Optional[frozenset[str]]
+    skip_confirm_prompt: bool | None
+    current_version: Version | None
+    commit: GitAction | None
+    branch: GitAction | None
+    tag: GitAction | None
+    remote: str | None
+    commit_format_pattern: str | None
+    branch_format_pattern: str | None
+    tag_name_format_pattern: str | None
+    tag_message_format_pattern: str | None
+    allowed_initial_branches: frozenset[str] | None

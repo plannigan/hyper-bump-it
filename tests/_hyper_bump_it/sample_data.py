@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional, Union
 
 from git import Repo
 from tomlkit import TOMLDocument
@@ -207,10 +206,8 @@ def some_git_config_file(
     commit_format_pattern=SOME_COMMIT_PATTERN,
     branch_format_pattern=SOME_BRANCH_PATTERN,
     tag_name_format_pattern=SOME_TAG_NAME_PATTERN,
-    allowed_initial_branches: Union[frozenset[str], set[str]] = SOME_ALLOWED_BRANCHES,
-    extend_allowed_initial_branches: Union[
-        frozenset[str], set[str]
-    ] = SOME_ALLOWED_BRANCHES,
+    allowed_initial_branches: frozenset[str] | set[str] = SOME_ALLOWED_BRANCHES,
+    extend_allowed_initial_branches: frozenset[str] | set[str] = SOME_ALLOWED_BRANCHES,
     actions=some_git_actions_config_file(),
 ) -> GitConfigFile:
     return GitConfigFile(
@@ -287,9 +284,9 @@ SOME_PYPROJECT = False
 
 
 def some_config_file(
-    current_version: Optional[Version] = SOME_VERSION,
+    current_version: Version | None = SOME_VERSION,
     show_confirm_prompt: bool = SOME_SHOW_CONFIRM_PROMPT,
-    files: Union[list[FileDefinition], FileDefinition] = some_file_definition(),
+    files: list[FileDefinition] | FileDefinition = some_file_definition(),
     git: GitConfigFile = some_git_config_file(),
 ) -> ConfigFile:
     if isinstance(files, FileDefinition):
@@ -305,9 +302,9 @@ def some_config_file(
 
 def some_minimal_config_text(
     table_root: str,
-    version: Optional[str],
-    file_glob: Optional[str] = SOME_FILE_GLOB,
-    show_confirm_prompt: Optional[bool] = None,
+    version: str | None,
+    file_glob: str | None = SOME_FILE_GLOB,
+    show_confirm_prompt: bool | None = None,
     trim_empty_lines: bool = False,
     include_empty_tables: bool = True,
     *,
@@ -347,10 +344,10 @@ def some_minimal_config_text(
 def no_config_override_bump_to_args(
     project_root: Path,
     new_version: Version = SOME_OTHER_VERSION,
-    config_file: Optional[Path] = None,
+    config_file: Path | None = None,
     dry_run: bool = False,
     patch: bool = False,
-    skip_confirm_prompt: Optional[bool] = None,
+    skip_confirm_prompt: bool | None = None,
 ) -> BumpToArgs:
     return BumpToArgs(
         new_version=new_version,
@@ -375,19 +372,19 @@ def no_config_override_bump_to_args(
 def some_bump_to_args(
     project_root: Path,
     new_version: Version = SOME_OTHER_VERSION,
-    config_file: Optional[Path] = None,
+    config_file: Path | None = None,
     dry_run: bool = False,
     patch: bool = False,
-    skip_confirm_prompt: Optional[bool] = None,
-    current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
-    commit: Optional[GitAction] = SOME_COMMIT_ACTION,
-    branch: Optional[GitAction] = SOME_BRANCH_ACTION,
-    tag: Optional[GitAction] = SOME_TAG_ACTION,
-    remote: Optional[str] = SOME_REMOTE,
-    commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
-    branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
-    tag_name_format_pattern: Optional[str] = SOME_TAG_NAME_PATTERN,
-    tag_message_format_pattern: Optional[str] = SOME_TAG_MESSAGE_PATTERN,
+    skip_confirm_prompt: bool | None = None,
+    current_version: Version | None = SOME_OTHER_PARTIAL_VERSION,
+    commit: GitAction | None = SOME_COMMIT_ACTION,
+    branch: GitAction | None = SOME_BRANCH_ACTION,
+    tag: GitAction | None = SOME_TAG_ACTION,
+    remote: str | None = SOME_REMOTE,
+    commit_format_pattern: str | None = SOME_COMMIT_PATTERN,
+    branch_format_pattern: str | None = SOME_BRANCH_PATTERN,
+    tag_name_format_pattern: str | None = SOME_TAG_NAME_PATTERN,
+    tag_message_format_pattern: str | None = SOME_TAG_MESSAGE_PATTERN,
     allowed_initial_branches: frozenset[str] = SOME_ALLOWED_BRANCHES,
 ) -> BumpToArgs:
     return BumpToArgs(
@@ -417,10 +414,10 @@ def some_bump_to_args(
 def no_config_override_bump_by_args(
     project_root: Path,
     part_to_bump: BumpPart = SOME_BUMP_PART,
-    config_file: Optional[Path] = None,
+    config_file: Path | None = None,
     dry_run: bool = False,
     patch: bool = False,
-    skip_confirm_prompt: Optional[bool] = None,
+    skip_confirm_prompt: bool | None = None,
 ) -> BumpByArgs:
     return BumpByArgs(
         part_to_bump=part_to_bump,
@@ -445,22 +442,20 @@ def no_config_override_bump_by_args(
 def some_bump_by_args(
     project_root: Path,
     part_to_bump: BumpPart = SOME_BUMP_PART,
-    config_file: Optional[Path] = None,
+    config_file: Path | None = None,
     dry_run: bool = False,
     patch: bool = False,
-    skip_confirm_prompt: Optional[bool] = None,
-    current_version: Optional[Version] = SOME_OTHER_PARTIAL_VERSION,
-    commit: Optional[GitAction] = SOME_COMMIT_ACTION,
-    branch: Optional[GitAction] = SOME_BRANCH_ACTION,
-    tag: Optional[GitAction] = SOME_TAG_ACTION,
-    remote: Optional[str] = SOME_REMOTE,
-    commit_format_pattern: Optional[str] = SOME_COMMIT_PATTERN,
-    branch_format_pattern: Optional[str] = SOME_BRANCH_PATTERN,
-    tag_name_format_pattern: Optional[str] = SOME_TAG_NAME_PATTERN,
-    tag_message_format_pattern: Optional[str] = SOME_TAG_MESSAGE_PATTERN,
-    allowed_initial_branches: Union[
-        Optional[set[str]], frozenset[str]
-    ] = SOME_ALLOWED_BRANCHES,
+    skip_confirm_prompt: bool | None = None,
+    current_version: Version | None = SOME_OTHER_PARTIAL_VERSION,
+    commit: GitAction | None = SOME_COMMIT_ACTION,
+    branch: GitAction | None = SOME_BRANCH_ACTION,
+    tag: GitAction | None = SOME_TAG_ACTION,
+    remote: str | None = SOME_REMOTE,
+    commit_format_pattern: str | None = SOME_COMMIT_PATTERN,
+    branch_format_pattern: str | None = SOME_BRANCH_PATTERN,
+    tag_name_format_pattern: str | None = SOME_TAG_NAME_PATTERN,
+    tag_message_format_pattern: str | None = SOME_TAG_MESSAGE_PATTERN,
+    allowed_initial_branches: set[str] | None | frozenset[str] = SOME_ALLOWED_BRANCHES,
 ) -> BumpByArgs:
     return BumpByArgs(
         part_to_bump=part_to_bump,
@@ -506,12 +501,12 @@ def some_application_config(
     project_root: Path,
     current_version: Version = SOME_VERSION,
     new_version: Version = SOME_OTHER_VERSION,
-    files: Optional[list[File]] = None,
+    files: list[File] | None = None,
     git: Git = some_git(),
     dry_run: bool = False,
     patch: bool = False,
     show_confirm_prompt: bool = True,
-    config_version_updater: Optional[ConfigVersionUpdater] = AnyConfigVersionUpdater(),
+    config_version_updater: ConfigVersionUpdater | None = AnyConfigVersionUpdater(),
 ) -> Config:
     if files is None:
         files = [some_file()]
@@ -533,7 +528,7 @@ def some_planned_change(
     project_root=SOME_ABSOLUTE_DIRECTORY,
     old_content=SOME_FILE_CONTENT,
     new_content=SOME_OTHER_FILE_CONTENT,
-    newline: Optional[str] = "\n",
+    newline: str | None = "\n",
 ) -> PlannedChange:
     return PlannedChange(
         file=file,
@@ -554,9 +549,9 @@ class InitedRepo:
 
 def some_git_repo(
     test_root: Path,
-    remote: Optional[str] = None,
-    branch: Optional[str] = None,
-    tag_name: Optional[str] = None,
+    remote: str | None = None,
+    branch: str | None = None,
+    tag_name: str | None = None,
     tag_message: str = SOME_TAG_MESSAGE,
     detached: bool = False,
     sign_commits: bool = False,

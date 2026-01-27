@@ -4,7 +4,7 @@ Display interface for working with rich.
 
 from collections.abc import Iterable, Mapping
 from enum import Enum
-from typing import Optional, TypeAlias, TypeVar, Union, cast, overload
+from typing import TypeAlias, TypeVar, cast, overload
 
 from rich import prompt
 from rich.align import AlignMethod
@@ -18,8 +18,8 @@ from rich.theme import Theme
 
 from .compat import LiteralString
 
-TextType: TypeAlias = Union[Text, LiteralString]
-PanelMessage: TypeAlias = Union[RichCast, str]
+TextType: TypeAlias = Text | LiteralString
+PanelMessage: TypeAlias = RichCast | str
 
 _DISPLAY_THEME = Theme(
     styles={
@@ -53,7 +53,7 @@ def blank_line() -> None:
     _CONSOLE.print()
 
 
-def display(message: Optional[TextType]) -> None:
+def display(message: TextType | None) -> None:
     _CONSOLE.print(message)
 
 
@@ -64,7 +64,7 @@ def rule(message: TextType) -> None:
 def panel(
     message: PanelMessage,
     border_style: StyleType,
-    title: Optional[TextType],
+    title: TextType | None,
     title_align: AlignMethod = "left",
 ) -> None:
     _CONSOLE.print(
@@ -77,10 +77,10 @@ def ask(message: TextType, *, default: str = ...) -> str: ...
 
 
 @overload
-def ask(message: TextType, *, default: None) -> Optional[str]: ...
+def ask(message: TextType, *, default: None) -> str | None: ...
 
 
-def ask(message: TextType, *, default: Optional[str] = None) -> Optional[str]:
+def ask(message: TextType, *, default: str | None = None) -> str | None:
     return prompt.Prompt.ask(
         message, default=default, show_default=False, console=_CONSOLE
     )
@@ -107,16 +107,16 @@ def choice(
 @overload
 def choice(
     message: Text, *, choices: list[str], default: None, show_choices: bool = False
-) -> Optional[str]: ...
+) -> str | None: ...
 
 
 def choice(
     message: Text,
     *,
     choices: list[str],
-    default: Union[Optional[str], _Sentinel] = _NOT_GIVEN,
+    default: str | None | _Sentinel = _NOT_GIVEN,
     show_choices: bool = False,
-) -> Optional[str]:
+) -> str | None:
     if isinstance(default, _Sentinel):
         return prompt.Prompt.ask(
             message,
@@ -193,7 +193,7 @@ def display_diff(diff_text: str) -> None:
 
 def list_options(
     option_descriptions: Mapping[str, TextType],
-    default: Optional[str] = None,
+    default: str | None = None,
 ) -> Text:
     """
     Write the list of options and descriptions to the given text instance.

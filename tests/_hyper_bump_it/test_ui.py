@@ -24,7 +24,7 @@ SOME_NON_OPTION_VALUE = "not an option value"
 def test_blank_line__newline(capture_rich: StringIO):
     ui.blank_line()
 
-    assert "\n" == capture_rich.getvalue()
+    assert capture_rich.getvalue() == "\n"
 
 
 def test_enum_prompt__no_response__default(force_input: ForceInput):

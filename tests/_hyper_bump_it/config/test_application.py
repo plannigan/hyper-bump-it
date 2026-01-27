@@ -1,6 +1,5 @@
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional
 
 import pytest
 import tomlkit
@@ -156,9 +155,11 @@ def test_config_for_bump_to__keystone_version__expected_result(tmp_path: Path):
         sd.some_minimal_config_text(file.ROOT_TABLE_KEY, version=None)
     )
     keystone_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
-    keystone_file.write_text(dedent(f"""\
+    keystone_file.write_text(
+        dedent(f"""\
     version: {sd.SOME_VERSION_STRING}
-    """))
+    """)
+    )
 
     config = application.config_for_bump_to(
         sd.no_config_override_bump_to_args(
@@ -182,9 +183,11 @@ def test_config_for_bump_to__cli_overrides__values_from_cli_not_config_fie(
         sd.some_minimal_config_text(file.ROOT_TABLE_KEY, version=None)
     )
     keystone_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
-    keystone_file.write_text(dedent(f"""\
+    keystone_file.write_text(
+        dedent(f"""\
     version: {sd.SOME_VERSION_STRING}
-    """))
+    """)
+    )
 
     config = application.config_for_bump_to(
         sd.some_bump_to_args(config_file=config_file, project_root=tmp_path)
@@ -293,9 +296,11 @@ def test_config_for_bump_to__keystone_glob_multi_match__error(tmp_path: Path):
         sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME,
     ):
         keystone_file = tmp_path / keystone_file_name
-        keystone_file.write_text(dedent(f"""\
+        keystone_file.write_text(
+            dedent(f"""\
         version: {sd.SOME_VERSION_STRING}
-        """))
+        """)
+        )
 
     with pytest.raises(KeystoneFileGlobError, match="Matched: "):
         application.config_for_bump_to(
@@ -333,9 +338,11 @@ def test_config_for_bump_by__keystone_version__expected_result(tmp_path: Path):
         sd.some_minimal_config_text(file.ROOT_TABLE_KEY, version=None)
     )
     keystone_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
-    keystone_file.write_text(dedent(f"""\
+    keystone_file.write_text(
+        dedent(f"""\
     version: {sd.SOME_VERSION_STRING}
-    """))
+    """)
+    )
 
     config = application.config_for_bump_by(
         sd.no_config_override_bump_by_args(
@@ -360,9 +367,11 @@ def test_config_for_bump_by__cli_overrides__values_from_cli_not_config_fie(
         sd.some_minimal_config_text(file.ROOT_TABLE_KEY, version=None)
     )
     keystone_file = tmp_path / sd.SOME_GLOB_MATCHED_FILE_NAME
-    keystone_file.write_text(dedent(f"""\
+    keystone_file.write_text(
+        dedent(f"""\
     version: {sd.SOME_VERSION_STRING}
-    """))
+    """)
+    )
 
     config = application.config_for_bump_by(
         sd.some_bump_by_args(config_file=config_file, project_root=tmp_path)
@@ -477,9 +486,11 @@ def test_config_for_bump_by__keystone_glob_multi_match__error(tmp_path: Path):
         sd.SOME_OTHER_GLOB_MATCHED_FILE_NAME,
     ):
         keystone_file = tmp_path / keystone_file_name
-        keystone_file.write_text(dedent(f"""\
+        keystone_file.write_text(
+            dedent(f"""\
         version: {sd.SOME_VERSION_STRING}
-        """))
+        """)
+        )
 
     with pytest.raises(KeystoneFileGlobError, match="Matched: "):
         application.config_for_bump_by(
@@ -545,7 +556,7 @@ def test_config_for_bump_by__keystone_glob_multi_match__error(tmp_path: Path):
 def test_config_for_bump_by__allowed_initial_branches__expected_result(
     file_allowed_branches: set[str],
     file_extend_allowed_branches: set[str],
-    cli_allowed_branches: Optional[set[str]],
+    cli_allowed_branches: set[str] | None,
     expected_branches: set[str],
     tmp_path: Path,
 ):

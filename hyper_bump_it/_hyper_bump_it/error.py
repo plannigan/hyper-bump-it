@@ -2,8 +2,9 @@
 Errors raised by the library.
 """
 
+from collections.abc import Callable, Collection
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Collection, Literal, TypeVar, Union
+from typing import TYPE_CHECKING, Literal, TypeVar
 
 from pydantic import ValidationError
 from rich.text import Text
@@ -347,7 +348,7 @@ class DisallowedInitialBranchError(GitError):
 class AlreadyExistsError(GitError):
     def __init__(
         self,
-        ref_type: Union[Literal["branch"], Literal["tag"]],
+        ref_type: Literal["branch"] | Literal["tag"],
         name: str,
         project_root: Path,
     ) -> None:
@@ -397,9 +398,7 @@ class ConfigurationAlreadyExistsError(ConfigurationError):
 
 
 class ConfigurationFileError(ConfigurationError):
-    def __init__(
-        self, file: Path, message_suffix: Union[str, Callable[[], str]]
-    ) -> None:
+    def __init__(self, file: Path, message_suffix: str | Callable[[], str]) -> None:
         self.file = file
         if not isinstance(message_suffix, str):
             message_suffix = message_suffix()
