@@ -69,7 +69,7 @@ def test_init__invalid__error(cli_args: list[str], expected_output_regex):
 @pytest.mark.parametrize(
     "args",
     [
-        tuple(),
+        (),
         ("--allowed-init-branch", sd.SOME_ALLOWED_BRANCH),
     ],
 )

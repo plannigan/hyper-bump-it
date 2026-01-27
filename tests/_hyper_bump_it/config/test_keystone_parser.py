@@ -103,9 +103,9 @@ def test_find_current_version__valid_pattern_match__found(
     file = tmp_path / SOME_FILE
     file.write_text(file_content)
 
-    assert (
-        keystone_parser.find_current_version(file, pattern) == expected_version
-    ), description
+    assert keystone_parser.find_current_version(file, pattern) == expected_version, (
+        description
+    )
 
 
 @pytest.mark.parametrize(

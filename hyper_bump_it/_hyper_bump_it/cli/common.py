@@ -2,9 +2,10 @@
 Common command line functionality.
 """
 
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterator, NoReturn, Optional, Protocol, overload
+from typing import Any, NoReturn, Protocol, overload
 
 import typer
 from rich.align import AlignMethod
@@ -43,7 +44,7 @@ CONFIG_FILE = typer.Option(
     help="Path to dedicated configuration file to use instead of normal file discovery",
     show_default=False,
 )
-CONFIG_FILE_DEFAULT: Optional[Path] = None
+CONFIG_FILE_DEFAULT: Path | None = None
 PROJECT_ROOT = typer.Option(
     help="Path to directory containing the project",
     show_default="Use current directory",
@@ -70,14 +71,14 @@ SKIP_CONFIRM_PROMPT = typer.Option(
     help="Answer yes to the confirmation prompt and run non-interactively",
     show_default=False,
 )
-SKIP_CONFIRM_PROMPT_DEFAULT: Optional[bool] = None
+SKIP_CONFIRM_PROMPT_DEFAULT: bool | None = None
 CURRENT_VERSION = typer.Option(
     help="Override the current version",
     show_default=False,
     rich_help_panel=OVERRIDE_PANEL_NAME,
     parser=Version.parse,
 )
-CURRENT_VERSION_DEFAULT: Optional[Version] = None
+CURRENT_VERSION_DEFAULT: Version | None = None
 
 commit = _create_option_factory("Control commit Git action")
 branch = _create_option_factory("Control branch Git action")
@@ -103,9 +104,9 @@ allow_any_init_branch = _create_option_factory(
 
 
 def allowed_init_branches(
-    allowed_branches_arg: Optional[list[str]],
-    allow_any_init_branch_arg: Optional[bool],
-) -> Optional[frozenset[str]]:
+    allowed_branches_arg: list[str] | None,
+    allow_any_init_branch_arg: bool | None,
+) -> frozenset[str] | None:
     if allow_any_init_branch_arg is True:
         return frozenset()
     if allowed_branches_arg is None or len(allowed_branches_arg) == 0:
@@ -146,8 +147,8 @@ def resolve(path: Path) -> Path: ...
 
 
 @overload
-def resolve(path: Optional[Path]) -> Optional[Path]: ...
+def resolve(path: Path | None) -> Path | None: ...
 
 
-def resolve(path: Optional[Path]) -> Optional[Path]:
+def resolve(path: Path | None) -> Path | None:
     return None if path is None else path.resolve()

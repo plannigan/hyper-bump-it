@@ -3,7 +3,7 @@ Go through a series of prompts to construct a custom Git integration configurati
 """
 
 from enum import Enum
-from typing import Optional, TypeVar, Union
+from typing import TypeVar
 
 from pydantic import ValidationError
 from rich.text import Text
@@ -119,7 +119,7 @@ class GitConfigEditor:
         ui.blank_line()
 
     def _store_update(
-        self, config_name: str, value: Union[Optional[str], frozenset[str]]
+        self, config_name: str, value: str | None | frozenset[str]
     ) -> None:
         if value is not None:
             self._config = self._config.model_copy(update={config_name: value})
@@ -182,7 +182,7 @@ def _prompt_git_menu() -> GitMenu:
     )
 
 
-def _prompt_remote(current_remote: str) -> Optional[str]:
+def _prompt_remote(current_remote: str) -> str | None:
     message = Text("When an action is set to '")
     message.append("create-and-push", style="vcs.action")
     message.append(
@@ -194,9 +194,7 @@ def _prompt_remote(current_remote: str) -> Optional[str]:
     return ui.ask(message, default=None)
 
 
-def _prompt_format_pattern(
-    name: str, current_pattern: str, default: str
-) -> Optional[str]:
+def _prompt_format_pattern(name: str, current_pattern: str, default: str) -> str | None:
     message = Text("Format patterns are used to generate text. ")
     message.append("The format pattern for ")
     message.append(name)
@@ -339,7 +337,7 @@ def _display_branch_list(config: frozenset[str]) -> None:
         ui.display(message)
 
 
-def _prompt_add_branch() -> Optional[str]:
+def _prompt_add_branch() -> str | None:
     return ui.ask(
         "Enter the name of the branch that will be allowed as the initial branch when executing",
     )

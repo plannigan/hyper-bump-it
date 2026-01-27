@@ -5,7 +5,7 @@ The plan is created before performing any operations so that the user can confir
 to be made before files are edited.
 """
 
-from typing import Optional, Protocol, TypeVar
+from typing import Protocol, TypeVar
 
 from git import Repo
 from rich.text import Text
@@ -236,7 +236,7 @@ def git_actions(
 ) -> tuple[list[Action], list[Action]]:
     initial_actions: list[Action] = []
     final_actions: list[Action] = []
-    switch_back: Optional[Action] = None
+    switch_back: Action | None = None
     if git_operations_info.actions.branch.should_create:
         initial_actions.append(
             CreateBranchAction(repo, git_operations_info.branch_name)

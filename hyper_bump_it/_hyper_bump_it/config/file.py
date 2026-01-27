@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Annotated, Optional, TypeAlias, Union, cast
+from typing import Annotated, TypeAlias, cast
 
 import tomlkit
 from pydantic import (
@@ -51,7 +51,7 @@ class HyperBaseMode(BaseModel):
 
 
 def _check_action(
-    value: Optional[object], handler: ValidatorFunctionWrapHandler
+    value: object | None, handler: ValidatorFunctionWrapHandler
 ) -> GitAction:
     if isinstance(value, str):
         for action in GitAction:
@@ -80,7 +80,7 @@ class GitActions(HyperBaseMode):
 
 
 def _check_branches(
-    value: Optional[object], handler: ValidatorFunctionWrapHandler
+    value: object | None, handler: ValidatorFunctionWrapHandler
 ) -> frozenset[str]:
     if isinstance(value, list):
         value = frozenset(value)
@@ -105,21 +105,21 @@ class File(HyperBaseMode):
     file_glob: str  # relative to project root directory
     keystone: bool = False
     search_format_pattern: str = DEFAULT_SEARCH_PATTERN
-    replace_format_pattern: Optional[str] = None
+    replace_format_pattern: str | None = None
 
 
-HyperConfigFileValues: TypeAlias = dict[str, Union[list[File], Optional[str], Git]]
+HyperConfigFileValues: TypeAlias = dict[str, list[File] | str | None | Git]
 
 
 def _check_version(
-    value: Optional[object], handler: ValidatorFunctionWrapHandler
-) -> Optional[Version]:
+    value: object | None, handler: ValidatorFunctionWrapHandler
+) -> Version | None:
     if isinstance(value, str):
         return Version.parse(value)
     return cast(Version, handler(value))
 
 
-OptionalVersion = Annotated[Optional[Version], WrapValidator(_check_version)]
+OptionalVersion = Annotated[Version | None, WrapValidator(_check_version)]
 
 
 class ConfigFile(HyperBaseMode):
@@ -145,7 +145,7 @@ class ConfigFile(HyperBaseMode):
         return self
 
     @property
-    def keystone_config(self) -> Optional[tuple[str, str]]:
+    def keystone_config(self) -> tuple[str, str] | None:
         for file in self.files:
             if file.keystone:
                 return file.file_glob, file.search_format_pattern
@@ -159,7 +159,7 @@ class ConfigVersionUpdater:
         project_root: Path,
         full_document: TOMLDocument,
         config_table: TOMLDocument,
-        newline: Optional[str],
+        newline: str | None,
     ) -> None:
         """
         Initialize instance.
@@ -201,10 +201,10 @@ class ConfigVersionUpdater:
         return tomlkit.dumps(self._full_document)
 
 
-ConfigReadResult: TypeAlias = tuple[ConfigFile, Optional[ConfigVersionUpdater]]
+ConfigReadResult: TypeAlias = tuple[ConfigFile, ConfigVersionUpdater | None]
 
 
-def read_config(config_file: Optional[Path], project_root: Path) -> ConfigReadResult:
+def read_config(config_file: Path | None, project_root: Path) -> ConfigReadResult:
     """
     Read the appropriate configuration file.
 

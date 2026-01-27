@@ -5,7 +5,6 @@ version from a keystone file.
 
 from pathlib import Path
 from re import Match
-from typing import Optional
 
 from ..error import IncompleteKeystoneVersionError, VersionNotFound
 from ..format_pattern import create_matching_pattern, keys
@@ -36,7 +35,7 @@ def find_current_version(
     raise VersionNotFound(file, search_pattern)
 
 
-def _version_string_from_match(match: Match[str]) -> Optional[str]:
+def _version_string_from_match(match: Match[str]) -> str | None:
     # Work through the matched groups to rebuild the version data.
     # Prefer general keys to explicit current keys.
     # Ignore explicit new and extra keys
@@ -64,7 +63,7 @@ def _version_string_from_match(match: Match[str]) -> Optional[str]:
     return _build_version(values)
 
 
-def _build_version(values: dict[str, str]) -> Optional[str]:
+def _build_version(values: dict[str, str]) -> str | None:
     try:
         version_string = "{major}.{minor}.{patch}".format(
             major=values["major"],
@@ -75,7 +74,7 @@ def _build_version(values: dict[str, str]) -> Optional[str]:
         return None
 
     if "prerelease" in values:
-        version_string = f'{version_string}-{values["prerelease"]}'
+        version_string = f"{version_string}-{values['prerelease']}"
     if "build" in values:
-        version_string = f'{version_string}+{values["build"]}'
+        version_string = f"{version_string}+{values['build']}"
     return version_string

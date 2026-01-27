@@ -3,7 +3,6 @@ Go through a series of prompts to construct a custom files configuration.
 """
 
 from enum import Enum
-from typing import Optional
 
 from rich.text import Text
 
@@ -105,7 +104,7 @@ def _prompt_file_menu() -> FilesMenu:
     )
 
 
-def _prompt_file_glob(default: Optional[str]) -> str:
+def _prompt_file_glob(default: str | None) -> str:
     if default is None:
         return ui.ask("Enter the glob pattern to match one or more files")
 
@@ -118,7 +117,7 @@ def _prompt_file_glob(default: Optional[str]) -> str:
 
 
 def _prompt_definition(
-    current: Optional[FileDefinition],
+    current: FileDefinition | None,
     has_keystone: bool,
     validator: DefinitionValidator,
 ) -> FileDefinition:
@@ -168,7 +167,7 @@ def _prompt_definition(
         current = definition
 
 
-def _keystone_selection(has_keystone: bool, current_keystone: Optional[bool]) -> bool:
+def _keystone_selection(has_keystone: bool, current_keystone: bool | None) -> bool:
     if has_keystone:
         if current_keystone:
             return _prompt_keystone(default=True)
@@ -214,8 +213,8 @@ def _prompt_search_format_pattern(current: str, new: bool) -> str:
 
 
 def _prompt_replace_format_pattern(
-    current: Optional[str], search_pattern: str
-) -> Optional[str]:
+    current: str | None, search_pattern: str
+) -> str | None:
     use_search_pattern = ui.confirm(
         "The replace format pattern can be omitted. In this case, the search format pattern value "
         "is used.\n"

@@ -2,8 +2,9 @@
 Initialize configuration command.
 """
 
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Annotated, Mapping
+from typing import Annotated
 
 import tomlkit
 import typer

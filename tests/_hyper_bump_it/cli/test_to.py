@@ -207,9 +207,9 @@ def test_to__allowed_init_branch_not_given__not_included_in_args(mocker):
 
     assert_success(result)
     mock_config_for_bump_to.assert_called_once()
-    assert (
-        mock_config_for_bump_to.call_args.args[0].allowed_initial_branches is None
-    ), result.output
+    assert mock_config_for_bump_to.call_args.args[0].allowed_initial_branches is None, (
+        result.output
+    )
 
 
 def test_to__allow_any_branch__other_branches_cleared(mocker):

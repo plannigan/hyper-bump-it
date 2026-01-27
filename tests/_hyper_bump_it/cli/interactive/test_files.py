@@ -1,5 +1,5 @@
 from io import StringIO
-from typing import Optional, cast
+from typing import cast
 
 import pytest
 from rich.text import Text
@@ -26,7 +26,7 @@ def create_invalid_first(
 ) -> DefinitionValidator:
     was_called = False
 
-    def _validator(_) -> Optional[ValidationFailure]:
+    def _validator(_) -> ValidationFailure | None:
         nonlocal was_called
         if was_called:
             return None

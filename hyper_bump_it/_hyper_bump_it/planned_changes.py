@@ -6,7 +6,6 @@ import difflib
 from dataclasses import InitVar, dataclass, field
 from functools import cached_property
 from pathlib import Path
-from typing import Optional
 
 _LINE_FEED = b"\n"[0]
 _CARRIAGE_RETURN = b"\r"[0]
@@ -19,7 +18,7 @@ class PlannedChange:
     relative_file: Path = field(init=False)
     old_content: str
     new_content: str
-    newline: Optional[str]
+    newline: str | None
 
     def __post_init__(self, project_root: Path) -> None:
         self.relative_file = self.file.relative_to(project_root)
@@ -40,7 +39,7 @@ class PlannedChange:
         )
 
     @staticmethod
-    def detect_line_ending(data: bytes) -> Optional[str]:
+    def detect_line_ending(data: bytes) -> str | None:
         """
         Attempt to determine the line ending used within a file.
 

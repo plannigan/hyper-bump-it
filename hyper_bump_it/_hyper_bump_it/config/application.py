@@ -2,9 +2,10 @@
 Program configuration
 """
 
+from collections.abc import Callable
 from dataclasses import astuple, dataclass
 from pathlib import Path
-from typing import Callable, Optional, Union, cast
+from typing import cast
 
 from ..error import KeystoneFileGlobError
 from ..version import Version
@@ -61,7 +62,7 @@ class Config:
     dry_run: bool
     patch: bool
     show_confirm_prompt: bool
-    config_version_updater: Optional[file.ConfigVersionUpdater]
+    config_version_updater: file.ConfigVersionUpdater | None
 
     @property
     def no_execute_plan(self) -> bool:
@@ -135,7 +136,7 @@ def config_for_bump_by(args: BumpByArgs) -> Config:
 
 
 def _current_version(
-    args_version: Optional[Version], file_config: file.ConfigFile, project_root: Path
+    args_version: Version | None, file_config: file.ConfigFile, project_root: Path
 ) -> Version:
     if args_version is not None:
         return args_version
@@ -166,7 +167,7 @@ def _convert_files(config_files: list[file.File]) -> list[File]:
     ]
 
 
-def _convert_git(args: Union[BumpToArgs, BumpByArgs], git: file.Git) -> Git:
+def _convert_git(args: BumpToArgs | BumpByArgs, git: file.Git) -> Git:
     return Git(
         remote=args.remote or git.remote,
         commit_format_pattern=args.commit_format_pattern or git.commit_format_pattern,
@@ -189,7 +190,7 @@ def _convert_git(args: Union[BumpToArgs, BumpByArgs], git: file.Git) -> Git:
 
 
 def _merge_allowed_branches(
-    arg_branches: Optional[frozenset[str]],
+    arg_branches: frozenset[str] | None,
     file_branches: frozenset[str],
     file_extend_branches: frozenset[str],
 ) -> frozenset[str]:
@@ -199,7 +200,7 @@ def _merge_allowed_branches(
 
 
 def _show_confirm_prompt(
-    file_show_confirm: bool, cli_skip_confirm_prompt: Optional[bool]
+    file_show_confirm: bool, cli_skip_confirm_prompt: bool | None
 ) -> bool:
     return (
         file_show_confirm
