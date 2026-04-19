@@ -17,7 +17,7 @@ if sys.version_info < (3, 11):
         pass
 
 else:
-    from enum import StrEnum
+    from enum import StrEnum as StrEnum
     from typing import (
         LiteralString as LiteralString,  # this is available in python 3.11+
     )
