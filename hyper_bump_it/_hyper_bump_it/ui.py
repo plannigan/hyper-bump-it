@@ -4,7 +4,7 @@ Display interface for working with rich.
 
 from collections.abc import Iterable, Mapping
 from enum import Enum
-from typing import Optional, TypeAlias, TypeVar, Union, cast, overload
+from typing import Optional, TypeAlias, TypeVar, Union, overload
 
 from rich import prompt
 from rich.align import AlignMethod
@@ -16,7 +16,7 @@ from rich.syntax import Syntax
 from rich.text import Text
 from rich.theme import Theme
 
-from .compat import LiteralString
+from .compat import LiteralString, StrEnum
 
 TextType: TypeAlias = Union[Text, LiteralString]
 PanelMessage: TypeAlias = Union[RichCast, str]
@@ -150,21 +150,22 @@ def choice_int(
     )
 
 
-EnumT = TypeVar("EnumT", bound=Enum)
+StrEnumT = TypeVar("StrEnumT", bound=StrEnum)
 
 
 def choice_enum(
     message: TextType,
-    option_descriptions: Mapping[EnumT, TextType],
-    default: EnumT,
-) -> EnumT:
+    option_descriptions: Mapping[StrEnumT, TextType],
+    default: StrEnumT,
+) -> StrEnumT:
     enum_type = type(default)
-    default_value = cast(str, default.value)
-    all_enum_values: set[EnumT] = set(enum_type)
-    if all_enum_values != option_descriptions.keys():
-        missing_values = all_enum_values - option_descriptions.keys()
+    default_value = default.value
+    all_enum_values: set[StrEnumT] = set(enum_type)
+    option_keys = set(option_descriptions.keys())
+    if all_enum_values != option_keys:
+        missing_values = all_enum_values - option_keys
         raise ValueError(
-            f"Missing description for: {','.join(cast(str, x.value) for x in missing_values)}"
+            f"Missing description for: {','.join(x.value for x in missing_values)}"
         )
     prompt_text = message if isinstance(message, Text) else Text(message)
     prompt_text.append("\n")

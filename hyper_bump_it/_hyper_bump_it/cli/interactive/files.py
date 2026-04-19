@@ -2,12 +2,12 @@
 Go through a series of prompts to construct a custom files configuration.
 """
 
-from enum import Enum
 from typing import Optional
 
 from rich.text import Text
 
 from ... import ui
+from ...compat import StrEnum
 from ...config import DEFAULT_SEARCH_PATTERN, FileDefinition
 from ..common import EXAMPLE_FILE_GLOB
 from .file_validation import DefinitionValidator
@@ -15,7 +15,7 @@ from .file_validation import DefinitionValidator
 _EXAMPLE_DEFINITION = FileDefinition(file_glob=EXAMPLE_FILE_GLOB)
 
 
-class FilesMenu(Enum):
+class FilesMenu(StrEnum):
     Add = "add"
     Remove = "remove"
     Edit = "edit"

@@ -2,13 +2,13 @@
 Go through a series of prompts to construct a custom Git integration configuration.
 """
 
-from enum import Enum
 from typing import Optional, TypeVar, Union
 
 from pydantic import ValidationError
 from rich.text import Text
 
 from ... import ui
+from ...compat import StrEnum
 from ...config import (
     DEFAULT_BRANCH_ACTION,
     DEFAULT_BRANCH_FORMAT_PATTERN,
@@ -26,7 +26,7 @@ from ...config.core import DEFAULT_ALLOWED_INITIAL_BRANCHES
 from ...error import first_error_message
 
 
-class GitMenu(Enum):
+class GitMenu(StrEnum):
     Remote = "remote"
     CommitFormatPattern = "commit"
     BranchFormatPattern = "branch"
@@ -236,7 +236,7 @@ def _default_message(current_value: T, default: T) -> Text:
     return Text()
 
 
-class AllowedBranchesMenu(Enum):
+class AllowedBranchesMenu(StrEnum):
     Add = "add"
     Remove = "remove"
     Clear = "clear"

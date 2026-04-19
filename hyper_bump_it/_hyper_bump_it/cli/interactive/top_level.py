@@ -2,13 +2,13 @@
 Go through a series of prompts to construct a custom configuration.
 """
 
-from enum import Enum
 from pathlib import Path
 from typing import Set
 
 from rich.text import Text
 
 from ... import ui
+from ...compat import StrEnum
 from ...config import HYPER_CONFIG_FILE_NAME, PYPROJECT_FILE_NAME, ConfigFile
 from ...version import Version
 from .file_validation import DefinitionValidator
@@ -16,7 +16,7 @@ from .files import FilesConfigEditor
 from .git import GitConfigEditor
 
 
-class TopMenu(Enum):
+class TopMenu(StrEnum):
     General = "general"
     Files = "files"
     Git = "git"
